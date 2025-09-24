@@ -3,16 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MyCharacterBase.h"
-#include "MyCharacter.generated.h"
+#include "GameFramework/GameModeBase.h"
+#include "MyGameModeBase.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class MYARUA_API AMyCharacter : public AMyCharacterBase
+class MYARUA_API AMyGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-public:
-	AMyCharacter();
+	
 };
