@@ -55,12 +55,12 @@ void AAruaCharacter::OnRep_PlayerState()
 
 void AAruaCharacter::InitialAbilityActorInfo()
 {
-	AMyPlayerState* PlayerState=GetPlayerState<AMyPlayerState>();
-	check(PlayerState);
+	AMyPlayerState* TempPlayerState=GetPlayerState<AMyPlayerState>();
+	check(TempPlayerState);
 	//初始化PlayState中的能力组件
-	PlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(PlayerState,this);
+	TempPlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(TempPlayerState,this);
 	//将PlayerState的能力组件赋值到AruaCharacter的能力组件
-	AbilitySystemComponent=PlayerState->GetAbilitySystemComponent();
-	AttributeSet=PlayerState->GetAttributeSet();
+	AbilitySystemComponent=TempPlayerState->GetAbilitySystemComponent();
+	AttributeSet=TempPlayerState->GetAttributeSet();
 }
 
