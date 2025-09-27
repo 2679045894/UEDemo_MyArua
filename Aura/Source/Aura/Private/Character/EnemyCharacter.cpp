@@ -4,9 +4,23 @@
 #include "Character/EnemyCharacter.h"
 
 
+void AEnemyCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	//敌人初始化，Owner和Avatar都是自己
+	AbilitySystemComponent->InitAbilityActorInfo(this,this);
+}
+
 AEnemyCharacter::AEnemyCharacter()
 {
 	GetMesh()->SetCollisionResponseToChannel(ECC_Visibility,ECR_Block);
+
+	AbilitySystemComponent=CreateDefaultSubobject<UAbilitySystemComponent>("AbilitySystemComponent");
+	//启用游戏能力系统组件（GAS）的网络复制功能。
+	AbilitySystemComponent->SetIsReplicated(true);
+	AttributeSet=CreateDefaultSubobject<UAttributeSet>("AttributeSet");
+	//设置复制模式
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 }
 
 void AEnemyCharacter::HighlightActor()

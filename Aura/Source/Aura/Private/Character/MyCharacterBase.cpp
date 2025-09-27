@@ -11,6 +11,8 @@ AMyCharacterBase::AMyCharacterBase()
 	Weapon=CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
 	Weapon->SetupAttachment(GetMesh(),FName("WeaponHandSocket"));
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+
 	
 }
 
@@ -33,5 +35,10 @@ void AMyCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+UAbilitySystemComponent* AMyCharacterBase::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
 }
 

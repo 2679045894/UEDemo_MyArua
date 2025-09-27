@@ -4,6 +4,7 @@
 #include "Character/AruaCharacter.h"
 
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Player/MyPlayerState.h"
 
 AAruaCharacter::AAruaCharacter()
 {
@@ -37,5 +38,29 @@ void AAruaCharacter::BeginPlay()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
+}
+
+void AAruaCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+	InitialAbilityActorInfo();
+}
+
+
+void AAruaCharacter::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+	InitialAbilityActorInfo();
+}
+
+void AAruaCharacter::InitialAbilityActorInfo()
+{
+	AMyPlayerState* PlayerState=GetPlayerState<AMyPlayerState>();
+	check(PlayerState);
+	//初始化PlayState中的能力组件
+	PlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(PlayerState,this);
+	//将PlayerState的能力组件赋值到AruaCharacter的能力组件
+	AbilitySystemComponent=PlayerState->GetAbilitySystemComponent();
+	AttributeSet=PlayerState->GetAttributeSet();
 }
 
