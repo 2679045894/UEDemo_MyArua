@@ -15,6 +15,7 @@ class AURA_API AAruaCharacter : public AMyCharacterBase
 	GENERATED_BODY()
 public:
 	AAruaCharacter();
+	
 
 	virtual void BeginPlay() override;
 	

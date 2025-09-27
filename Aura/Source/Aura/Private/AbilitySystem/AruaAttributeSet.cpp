@@ -7,7 +7,10 @@
 
 UAruaAttributeSet::UAruaAttributeSet()
 {
-	
+	InitHealth(100.f);
+	InitMaxHealth(100.f);
+	InitMana(100.f);
+	InitMaxMana(100.f);
 }
 
 void UAruaAttributeSet::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
@@ -41,12 +44,12 @@ void UAruaAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHeal
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UAruaAttributeSet,MaxHealth,OldMaxHealth);
 }
 
-void UAruaAttributeSet::Rep_Mana(const FGameplayAttributeData& OldMana) const
+void UAruaAttributeSet::OnRep_Mana(const FGameplayAttributeData& OldMana) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UAruaAttributeSet,Mana,OldMana);
 }
 
-void UAruaAttributeSet::Rep_MaxMana(const FGameplayAttributeData& OldMana) const
+void UAruaAttributeSet::OnRep_MaxMana(const FGameplayAttributeData& OldMana) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UAruaAttributeSet,MaxMana,OldMana);
 }

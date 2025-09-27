@@ -8,7 +8,7 @@
 
 AAruaCharacter::AAruaCharacter()
 {
-
+	//UAruaAttributeSet* 
 }
 
 void AAruaCharacter::BeginPlay()

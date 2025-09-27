@@ -3,6 +3,8 @@
 
 #include "Player/MyPlayerState.h"
 
+#include "AbilitySystem/AruaAttributeSet.h"
+
 AMyPlayerState::AMyPlayerState()
 {
 	//网络更新频率的设置
@@ -10,7 +12,7 @@ AMyPlayerState::AMyPlayerState()
 	AbilitySystemComponent=CreateDefaultSubobject<UAbilitySystemComponent>("AbilitySystemComponent");
 	//启用网络复制
 	AbilitySystemComponent->SetIsReplicated(true);
-	AttributeSet=CreateDefaultSubobject<UAttributeSet>("AttributeSet");
+	AttributeSet=CreateDefaultSubobject<UAruaAttributeSet>("AttributeSet");
 	//设置复制模式
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
 }
@@ -19,3 +21,4 @@ UAbilitySystemComponent* AMyPlayerState::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
 }
+
