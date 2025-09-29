@@ -5,7 +5,6 @@
 
 #include "AbilitySystemInterface.h"
 #include "GameFramework/Pawn.h"           // 包含APawn的头文件
-#include "GameFramework/PlayerState.h" 
 #include "AbilitySystem/AruaAttributeSet.h"
 
 
@@ -63,49 +62,6 @@ void AEffectActor::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* O
 	
 }
 
-/*void AEffectActor::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	if (IAbilitySystemInterface* ASCInterface = Cast<IAbilitySystemInterface>(OtherActor))
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("✓ 实现了IAbilitySystemInterface"));
-        
-		if (UAbilitySystemComponent* ASCComp = ASCInterface->GetAbilitySystemComponent())
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("1.1 - 找到ASC"));
-            
-			// 详细调试：先检查GetAttributeSet方法是否返回任何东西
-			const UAttributeSet* BaseAttributeSet = ASCComp->GetAttributeSet(UAruaAttributeSet::StaticClass());
-			if (BaseAttributeSet)
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, 
-					FString::Printf(TEXT("GetAttributeSet返回: %s"), *BaseAttributeSet->GetClass()->GetName()));
-			}
-			else
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("GetAttributeSet返回nullptr"));
-			}
-            
-			const UAruaAttributeSet* AruaAttributeSet = Cast<UAruaAttributeSet>(BaseAttributeSet);
-			if (AruaAttributeSet)
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("1.2 - 成功获取UAruaAttributeSet"));
-			}
-			else
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("1.2 - Cast到UAruaAttributeSet失败"));
-			}
-		}
-		else
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("ASC为nullptr"));
-		}
-	}
-	else
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("未实现IAbilitySystemInterface"));
-	}
-}*/
 
 
 
