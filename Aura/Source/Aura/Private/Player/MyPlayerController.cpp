@@ -7,7 +7,7 @@
 
 AMyPlayerController::AMyPlayerController()
 {
-	
+	bReplicates=true;
 }
 
 void AMyPlayerController::BeginPlay()
@@ -19,10 +19,14 @@ void AMyPlayerController::BeginPlay()
 	//获取Enhanced Input子系统
 	UEnhancedInputLocalPlayerSubsystem *Subsystem=
 		ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-	check(Subsystem);
+	/*check(Subsystem);
 	// 添加输入映射上下文到子系统（优先级为0） 
-	Subsystem->AddMappingContext(AuraContext,0);
-
+	Subsystem->AddMappingContext(AuraContext,0);*/
+	///??????????为什么换成的个就不会崩溃？？？？？？？？？？？？
+	if (Subsystem)
+	{
+		Subsystem->AddMappingContext(AuraContext,0);
+	}
 	bShowMouseCursor=true;
 	FInputModeGameAndUI InputModeData;
 	InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayEffect.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/Actor.h"
 #include "EffectActor.generated.h"
@@ -13,18 +14,17 @@ class AURA_API AEffectActor : public AActor
 	GENERATED_BODY()
 	
 public:	
-
 	AEffectActor();
 
 protected:
 	virtual void BeginPlay() override;
 
 public:
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	TObjectPtr<USphereComponent> SphereComponent;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	TObjectPtr<UStaticMeshComponent> StaticMeshComponent;
-
-	UFUNCTION()
-	void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="SceneComponents")
+	TObjectPtr<USceneComponent> SceneComponent;
+	UPROPERTY(EditAnywhere,Blueprintable,Category="Applied Effects")
+	TSubclassOf<UGameplayEffect> InstantGameplayEffectClass;
+	UFUNCTION(BlueprintCallable)
+	//效果应用器
+	void ApplyEffectToActor(AActor* TargetActor,TSubclassOf<UGameplayEffect> GameplayEffectClass);
 };
