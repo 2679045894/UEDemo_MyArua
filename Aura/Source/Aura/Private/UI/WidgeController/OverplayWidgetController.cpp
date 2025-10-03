@@ -42,7 +42,7 @@ void UOverplayWidgetController::HealthChanged(const FOnAttributeChangeData& Data
 
 void UOverplayWidgetController::MaxHealthChanged(const FOnAttributeChangeData& Data) const
 {
-	OnHealthChanged.Broadcast(Data.NewValue);
+	OnMaxHealthChanged.Broadcast(Data.NewValue);
 }
 
 void UOverplayWidgetController::ManaChanged(const FOnAttributeChangeData& Data) const
