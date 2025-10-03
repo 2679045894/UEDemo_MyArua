@@ -15,7 +15,6 @@ UCLASS()
 class AURA_API AAuraHUD : public AHUD
 {
 	GENERATED_BODY()
-	virtual void BeginPlay() override;
 public:
 	UFUNCTION(BlueprintCallable)
 	void InitOverlay(APlayerController* PC,APlayerState* PS,UAbilitySystemComponent* ASC,UAttributeSet* AS);

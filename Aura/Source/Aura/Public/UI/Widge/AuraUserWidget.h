@@ -24,7 +24,6 @@ public:
 	void WidgetControllerSet();*/
 protected:
 	UFUNCTION(BlueprintImplementableEvent)
-	///？？？///
+	///？？？///用于蓝图中调用
 	void WidgetControllerSet();
-	
 };

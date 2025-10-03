@@ -51,4 +51,8 @@ public:
 	void OnRep_Mana(const FGameplayAttributeData& OldMana) const;
 	UFUNCTION()
 	void OnRep_MaxMana(const FGameplayAttributeData& OldMana) const;
+
+	UFUNCTION()
+	void InitAttributeSet();
+	
 };

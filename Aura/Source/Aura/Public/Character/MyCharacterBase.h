@@ -36,10 +36,10 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	TObjectPtr<USkeletalMeshComponent> Weapon;
 protected:
-	UPROPERTY()
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 	
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<UAttributeSet> AttributeSet;
 	
 };

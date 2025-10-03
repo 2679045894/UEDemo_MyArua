@@ -7,11 +7,14 @@
 
 UAruaAttributeSet::UAruaAttributeSet()
 {
-	InitHealth(100.f);
+	//GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Black,TEXT("调用构造"));
+	InitHealth(50.f);
 	InitMaxHealth(100.f);
-	InitMana(100.f);
-	InitMaxMana(100.f);
+	InitMana(50.f);
+	InitMaxMana(50.f);
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,FString::Printf(TEXT("%f"),this->GetHealth()));
 }
+
 
 void UAruaAttributeSet::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -54,3 +57,22 @@ void UAruaAttributeSet::OnRep_MaxMana(const FGameplayAttributeData& OldMana) con
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UAruaAttributeSet,MaxMana,OldMana);
 }
 
+/*void UAruaAttributeSet::InitAttributeSet()
+{
+	InitHealth(70.f);
+	InitMaxHealth(100.f);
+	InitMana(50.f);
+	InitMaxMana(50.f);
+}*/
+void UAruaAttributeSet::InitAttributeSet()
+{
+	GEngine->AddOnScreenDebugMessage(5, 10.f, FColor::Blue, 
+		FString::Printf(TEXT("进入 InitAttributeSet - 当前Health: %f"), GetHealth()));
+    
+	InitHealth(70.f);
+	InitMaxHealth(100.f);
+	InitMana(50.f);
+	InitMaxMana(100.f);
+	GEngine->AddOnScreenDebugMessage(6, 10.f, FColor::Purple, 
+		FString::Printf(TEXT("离开 InitAttributeSet - 新Health: %f"), GetHealth()));
+}

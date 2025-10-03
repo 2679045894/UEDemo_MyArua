@@ -64,6 +64,11 @@ void AAruaCharacter::InitialAbilityActorInfo()
 	//将PlayerState的能力组件赋值到AruaCharacter的能力组件
 	AbilitySystemComponent=TempPlayerState->GetAbilitySystemComponent();
 	AttributeSet=TempPlayerState->GetAttributeSet();
+	UAruaAttributeSet* AruaAttributeSet=Cast<UAruaAttributeSet>(AttributeSet);
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,FString::Printf(TEXT("123456  %f"),AruaAttributeSet->GetHealth()));
+
+	AruaAttributeSet->InitAttributeSet();
+	
 	if (AMyPlayerController* AruaController=Cast<AMyPlayerController>(GetController()))
 	{
 		if (AAuraHUD* AuraHUD=Cast<AAuraHUD>(AruaController->GetHUD()))
@@ -72,4 +77,5 @@ void AAruaCharacter::InitialAbilityActorInfo()
 		}
 	}
 }
+
 

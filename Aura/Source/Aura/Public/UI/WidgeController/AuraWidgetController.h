@@ -6,6 +6,7 @@
 #include "AbilitySystemComponent.h"
 #include "AuraWidgetController.generated.h"
 
+
 USTRUCT(Blueprintable)
 struct FWidgetControllerParams
 {
@@ -32,6 +33,8 @@ public:
 	//将外部传入的结构体4个变量内容一一对应赋值
 	UFUNCTION(BlueprintCallable)
 	void SetWidgetController(const FWidgetControllerParams& WCParams);
+	virtual void BroadcastInitialValues();
+	virtual void BindCallbacksToDependencies();
 	
 	UPROPERTY(BlueprintReadOnly,Category="WidgetController")
 	TObjectPtr<APlayerController> PlayerController;
@@ -41,5 +44,7 @@ public:
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 	UPROPERTY(BlueprintReadOnly,Category="WidgetController")
 	TObjectPtr<UAttributeSet> AttributeSet;
+
+	
 };
 	
