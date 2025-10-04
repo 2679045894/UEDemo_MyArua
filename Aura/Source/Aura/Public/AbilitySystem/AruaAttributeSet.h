@@ -54,5 +54,7 @@ public:
 
 	UFUNCTION()
 	void InitAttributeSet();
+
+	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 	
 };

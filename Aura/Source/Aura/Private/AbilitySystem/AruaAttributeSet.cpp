@@ -76,3 +76,17 @@ void UAruaAttributeSet::InitAttributeSet()
 	GEngine->AddOnScreenDebugMessage(6, 10.f, FColor::Purple, 
 		FString::Printf(TEXT("离开 InitAttributeSet - 新Health: %f"), GetHealth()));
 }
+
+void UAruaAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
+{
+	Super::PreAttributeChange(Attribute, NewValue);
+	if (Attribute==GetHealthAttribute())
+	{
+		NewValue=FMath::Clamp(NewValue,0,GetMaxHealth());
+	}
+	if (Attribute==GetManaAttribute())
+	{
+		NewValue=FMath::Clamp(NewValue,0,GetMaxMana());
+	}
+	
+}
