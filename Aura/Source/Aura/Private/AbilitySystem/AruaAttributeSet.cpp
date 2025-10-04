@@ -2,8 +2,13 @@
 
 
 #include "AbilitySystem/AruaAttributeSet.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "GameplayEffectExtension.h" // 添加这个包含
+#include "GameplayEffectTypes.h"
+#include "GameFramework/Character.h"
 
 UAruaAttributeSet::UAruaAttributeSet()
 {
@@ -88,5 +93,88 @@ void UAruaAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, 
 	{
 		NewValue=FMath::Clamp(NewValue,0,GetMaxMana());
 	}
-	
+}
+
+void UAruaAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data)
+{
+	Super::PostGameplayEffectExecute(Data);
+	FEffectProperties Props;
+	SetEffectProperties(Data,Props);
+}
+
+void UAruaAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const
+{
+    Props.EffectContextHandle = Data.EffectSpec.GetContext();
+    
+    // ========== SOURCE 逻辑 ==========
+
+	//从EffectContextHandle获取ASC
+    Props.SourceASC = Props.EffectContextHandle.GetOriginalInstigatorAbilitySystemComponent();
+    
+    if (IsValid(Props.SourceASC) && Props.SourceASC->AbilityActorInfo.IsValid())
+    {
+        Props.SourceAvatarActor = Props.SourceASC->GetAvatarActor();
+        
+        if (IsValid(Props.SourceAvatarActor))
+        {
+            // 方法1：直接从AbilityActorInfo获取Controller
+            Props.SourceController = Props.SourceASC->AbilityActorInfo->PlayerController.Get();
+            
+            // 方法2：如果方法1失败，从Pawn获取Controller（备用方案）
+            if (!Props.SourceController)
+            {
+                if (APawn* SourcePawn = Cast<APawn>(Props.SourceAvatarActor))
+                {
+                    Props.SourceController = SourcePawn->GetController();
+                }
+            }
+            
+            // 获取SourceCharacter
+            if (Props.SourceController)
+            {
+                Props.SourceCharacter = Cast<ACharacter>(Props.SourceController->GetPawn());
+            }
+            
+            // 备用方案：直接从AvatarActor转换
+            if (!Props.SourceCharacter)
+            {
+                Props.SourceCharacter = Cast<ACharacter>(Props.SourceAvatarActor);
+            }
+        }
+    }
+    
+    // ========== TARGET 逻辑 ==========
+    // 应该添加与Source类似的安全检查
+    if (Data.Target.AbilityActorInfo.IsValid())
+    {
+        Props.TargetAvatarActor = Data.Target.GetAvatarActor();
+        Props.TargetASC = &Data.Target; // 直接使用Data.Target，它就是Target的ASC
+        
+        if (IsValid(Props.TargetAvatarActor))
+        {
+            // 与方法1类似的Controller获取逻辑
+            Props.TargetController = Data.Target.AbilityActorInfo->PlayerController.Get();
+            
+            // 备用方案
+            if (!Props.TargetController)
+            {
+                if (APawn* TargetPawn = Cast<APawn>(Props.TargetAvatarActor))
+                {
+                    Props.TargetController = TargetPawn->GetController();
+                }
+            }
+            
+            // 获取TargetCharacter
+            if (Props.TargetController)
+            {
+                Props.TargetCharacter = Cast<ACharacter>(Props.TargetController->GetPawn());
+            }
+            
+            // 备用方案
+            if (!Props.TargetCharacter)
+            {
+                Props.TargetCharacter = Cast<ACharacter>(Props.TargetAvatarActor);
+            }
+        }
+    }
 }

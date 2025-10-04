@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
 #include "AttributeSet.h"
+#include "MyActor/EffectActor.h"
 #include "AruaAttributeSet.generated.h"
 
 #define ATTRIBUTE_ACCESSORS(ClassName, PropertyName) \
@@ -12,6 +13,30 @@
 	GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName) \
 	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
+
+USTRUCT(BlueprintType,Blueprintable)
+struct FEffectProperties
+{
+	GENERATED_BODY()
+	FEffectProperties(){}
+	FGameplayEffectContextHandle EffectContextHandle;
+	UPROPERTY()
+	UAbilitySystemComponent* SourceASC=nullptr;
+	UPROPERTY()
+	AActor* SourceAvatarActor=nullptr;
+	UPROPERTY()
+	AController* SourceController=nullptr;
+	UPROPERTY()
+	ACharacter* SourceCharacter=nullptr;
+	UPROPERTY()
+	UAbilitySystemComponent* TargetASC = nullptr;
+	UPROPERTY()
+	AActor* TargetAvatarActor = nullptr;
+	UPROPERTY()
+	AController* TargetController = nullptr;
+	UPROPERTY()
+	ACharacter* TargetCharacter = nullptr;
+};
 /**
  * 
  */
@@ -55,6 +80,10 @@ public:
 	UFUNCTION()
 	void InitAttributeSet();
 
+	//属性预处理
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
-	
+	//属性刚刚被改变的这个瞬间，插入自己的游戏逻辑
+	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
+	//用于存储效果源和效果对象
+	void SetEffectProperties(const FGameplayEffectModCallbackData& Data,FEffectProperties& Props) const;
 };
