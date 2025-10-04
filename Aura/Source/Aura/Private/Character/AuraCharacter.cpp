@@ -1,19 +1,21 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Character/AruaCharacter.h"
+#include "Character/AuraCharacter.h"
 
+#include "InterchangeResult.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Player/MyPlayerController.h"
 #include "Player/MyPlayerState.h"
+#include "AbilitySystem//AuraAbilitySystemComponent.h"
 #include "UI/HUD/AuraHUD.h"
 
-AAruaCharacter::AAruaCharacter()
+AAuraCharacter::AAuraCharacter()
 {
 	//UAruaAttributeSet* 
 }
 
-void AAruaCharacter::BeginPlay()
+void AAuraCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -42,30 +44,54 @@ void AAruaCharacter::BeginPlay()
 	bUseControllerRotationRoll = false;
 }
 
-void AAruaCharacter::PossessedBy(AController* NewController)
+void AAuraCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 	InitialAbilityActorInfo();
 }
 
 
-void AAruaCharacter::OnRep_PlayerState()
+void AAuraCharacter::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
 	InitialAbilityActorInfo();
 }
 
-void AAruaCharacter::InitialAbilityActorInfo()
+void AAuraCharacter::InitialAbilityActorInfo()
 {
 	AMyPlayerState* TempPlayerState=GetPlayerState<AMyPlayerState>();
-	check(TempPlayerState);
 	//初始化PlayState中的能力组件
 	TempPlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(TempPlayerState,this);
+	//调用AuraASC中的封装好的绑定委托方法AbilityActorInfoSet
+	Cast<UAuraAbilitySystemComponent>(TempPlayerState->GetAbilitySystemComponent())->AbilityActorInfoSet();
+	/*if (TempPlayerState)
+	{
+		UAbilitySystemComponent* ASC = TempPlayerState->GetAbilitySystemComponent();
+		if (ASC)
+		{
+			UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(ASC);
+			if (AuraASC)
+			{
+				AuraASC->AbilityActorInfoSet();
+			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("Failed to cast ASC to UAuraAbilitySystemComponent"));
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("GetAbilitySystemComponent returned null"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("TempPlayerState is null"));
+	}*/
 	//将PlayerState的能力组件赋值到AruaCharacter的能力组件
 	AbilitySystemComponent=TempPlayerState->GetAbilitySystemComponent();
 	AttributeSet=TempPlayerState->GetAttributeSet();
-	UAruaAttributeSet* AruaAttributeSet=Cast<UAruaAttributeSet>(AttributeSet);
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,FString::Printf(TEXT("123456  %f"),AruaAttributeSet->GetHealth()));
+	UAuraAttributeSet* AruaAttributeSet=Cast<UAuraAttributeSet>(AttributeSet);
 
 	AruaAttributeSet->InitAttributeSet();
 	
@@ -77,5 +103,7 @@ void AAruaCharacter::InitialAbilityActorInfo()
 		}
 	}
 }
+
+
 
 

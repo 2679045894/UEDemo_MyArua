@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
-#include "AbilitySystem/AruaAttributeSet.h"
-#include "AbilitySystem/MyAbilitySystemComponent.h"
+#include "AbilitySystem/AuraAttributeSet.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "GameFramework/PlayerState.h"
 #include "MyPlayerState.generated.h"
 
@@ -19,17 +19,17 @@ class AURA_API AMyPlayerState : public APlayerState,public IAbilitySystemInterfa
 	AMyPlayerState();
 protected:
 	UPROPERTY()
-	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+	TObjectPtr<UAuraAbilitySystemComponent> AbilitySystemComponent;
 	/**
 	 * 
 	 */
 	UPROPERTY()
 	//TObjectPtr<UAttributeSet> AttributeSet;
-	TObjectPtr<UAruaAttributeSet> AttributeSet;
+	TObjectPtr<UAuraAttributeSet> AttributeSet;
 public:
 	//封装，属性是私有的，外部只能通过这两个函数分别访问AbilitySystemComponent和AttributeSet变量
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-	UAruaAttributeSet* GetAttributeSet() const{ return AttributeSet; }
+	virtual UAuraAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	UAuraAttributeSet* GetAttributeSet() const{ return AttributeSet; }
 
 	//void CheckAttributeSetRegistration() const;
 };

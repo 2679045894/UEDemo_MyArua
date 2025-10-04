@@ -5,7 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
-#include "AbilitySystem/AruaAttributeSet.h"
+#include "AbilitySystem/AuraAttributeSet.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"  // 添加这行！
 #include "MyCharacterBase.generated.h"
 
 UCLASS()
@@ -28,7 +29,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	//必须实现这个函数，因为调用了接口
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	virtual UAuraAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	//自定义的一个函数，用于外部访问私有变量（AttributeSet）
 	UAttributeSet* GetAttributeSet() const {return AttributeSet;}
@@ -37,9 +38,10 @@ public:
 	TObjectPtr<USkeletalMeshComponent> Weapon;
 protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+	TObjectPtr<UAuraAbilitySystemComponent> AbilitySystemComponent;
 	
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<UAttributeSet> AttributeSet;
-	
+
+	virtual void InitialAbilityActorInfo();
 };

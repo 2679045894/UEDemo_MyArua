@@ -5,8 +5,8 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameFramework/Pawn.h"           // 包含APawn的头文件
-#include "AbilitySystem/AruaAttributeSet.h"
-#include "Character/AruaCharacter.h"
+#include "AbilitySystem/AuraAttributeSet.h"
+#include "Character/AuraCharacter.h"
 
 AEffectActor::AEffectActor()
 {
@@ -33,7 +33,7 @@ void AEffectActor::ApplyEffectToActor(AActor* TargetActor, TSubclassOf<UGameplay
 	//设置效果来源
 	EffectContextHandle.AddSourceObject(this);
 	//创建GameplayEffect规格
-	FGameplayEffectSpecHandle EffectSpecHandle=TargetASC->MakeOutgoingSpec(GameplayEffectClass,1.f,EffectContextHandle);
+	FGameplayEffectSpecHandle EffectSpecHandle=TargetASC->MakeOutgoingSpec(GameplayEffectClass,ActorLevel,EffectContextHandle);
 	
 	//应用效果到目标自身，同时返回一个变量(用于记录该效果)
 	const FActiveGameplayEffectHandle ActiveEffectHandle=TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());

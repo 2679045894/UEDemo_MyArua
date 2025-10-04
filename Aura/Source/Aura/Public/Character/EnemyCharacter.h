@@ -22,4 +22,6 @@ public:
 	virtual void UnHighlightActor() override;
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Highlighting")
 	bool bHighlight;
+
+	virtual void InitialAbilityActorInfo() override;
 };

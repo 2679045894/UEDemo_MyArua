@@ -11,16 +11,12 @@ AMyCharacterBase::AMyCharacterBase()
 	Weapon=CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
 	Weapon->SetupAttachment(GetMesh(),FName("WeaponHandSocket"));
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
-
-	
 }
 
 // Called when the game starts or when spawned
 void AMyCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
@@ -37,8 +33,13 @@ void AMyCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 }
 
-UAbilitySystemComponent* AMyCharacterBase::GetAbilitySystemComponent() const
+UAuraAbilitySystemComponent* AMyCharacterBase::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
+}
+
+void AMyCharacterBase::InitialAbilityActorInfo()
+{
+	
 }
 

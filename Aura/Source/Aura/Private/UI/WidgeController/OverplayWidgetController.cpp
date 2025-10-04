@@ -3,12 +3,12 @@
 
 #include "UI/WidgeController/OverplayWidgetController.h"
 
-#include "AbilitySystem/AruaAttributeSet.h"
+#include "AbilitySystem/AuraAttributeSet.h"
 
 
 void UOverplayWidgetController::BroadcastInitialValues()
 {
-	if (UAruaAttributeSet* AruaAttributeSet=Cast<UAruaAttributeSet>(AttributeSet))
+	if (UAuraAttributeSet* AruaAttributeSet=Cast<UAuraAttributeSet>(AttributeSet))
 	{
 		OnHealthChanged.Broadcast(AruaAttributeSet->GetHealth());
 		OnMaxHealthChanged.Broadcast(AruaAttributeSet->GetMaxHealth());
@@ -20,7 +20,7 @@ void UOverplayWidgetController::BroadcastInitialValues()
 //告诉 GAS："当这些属性发生变化时，请自动调用我指定的函数"。
 void UOverplayWidgetController::BindCallbacksToDependencies()
 {
-	if (UAruaAttributeSet* AruaAttributeSet=Cast<UAruaAttributeSet>(AttributeSet))
+	if (UAuraAttributeSet* AruaAttributeSet=Cast<UAuraAttributeSet>(AttributeSet))
 	{
 		//AruaAttributeSet->GetHealthAttribute()为什么不直接gethealth
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(

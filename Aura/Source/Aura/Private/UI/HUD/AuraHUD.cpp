@@ -3,7 +3,7 @@
 
 #include "UI/HUD/AuraHUD.h"
 
-#include "AbilitySystem/AruaAttributeSet.h"
+#include "AbilitySystem/AuraAttributeSet.h"
 
 
 

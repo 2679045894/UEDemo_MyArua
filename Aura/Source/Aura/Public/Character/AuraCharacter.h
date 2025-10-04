@@ -4,17 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "Character/MyCharacterBase.h"
-#include "AruaCharacter.generated.h"
+#include "AuraCharacter.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class AURA_API AAruaCharacter : public AMyCharacterBase
+class AURA_API AAuraCharacter : public AMyCharacterBase
 {
 	GENERATED_BODY()
 public:
-	AAruaCharacter();
+	AAuraCharacter();
 	
 
 	virtual void BeginPlay() override;
@@ -24,5 +24,5 @@ public:
 	//OnRep_PlayerState（针对客户端）它在客户端的 PlayerState 被复制更新时自动调用
 	virtual void OnRep_PlayerState() override;
 private:
-	void InitialAbilityActorInfo();
+	virtual void InitialAbilityActorInfo()override;
 };

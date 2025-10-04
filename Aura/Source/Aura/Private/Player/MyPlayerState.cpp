@@ -2,22 +2,22 @@
 
 
 #include "Player/MyPlayerState.h"
-
-#include "AbilitySystem/AruaAttributeSet.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"  // 添加这行！
+#include "AbilitySystem/AuraAttributeSet.h"
 
 AMyPlayerState::AMyPlayerState()
 {
 	//网络更新频率的设置
 	NetUpdateFrequency=100.0f;
-	AbilitySystemComponent=CreateDefaultSubobject<UAbilitySystemComponent>("AbilitySystemComponent");
+	AbilitySystemComponent=CreateDefaultSubobject<UAuraAbilitySystemComponent>("AbilitySystemComponent");
 	//启用网络复制
 	AbilitySystemComponent->SetIsReplicated(true);
-	AttributeSet=CreateDefaultSubobject<UAruaAttributeSet>("AttributeSet");
+	AttributeSet=CreateDefaultSubobject<UAuraAttributeSet>("AttributeSet");
 	//设置复制模式
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
 }
 
-UAbilitySystemComponent* AMyPlayerState::GetAbilitySystemComponent() const
+UAuraAbilitySystemComponent* AMyPlayerState::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
 }

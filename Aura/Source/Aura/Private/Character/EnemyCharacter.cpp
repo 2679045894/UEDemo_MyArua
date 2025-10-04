@@ -3,22 +3,24 @@
 
 #include "Character/EnemyCharacter.h"
 
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
+
 
 void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	//敌人初始化，Owner和Avatar都是自己
-	AbilitySystemComponent->InitAbilityActorInfo(this,this);
+	InitialAbilityActorInfo();
 }
 
 AEnemyCharacter::AEnemyCharacter()
 {
 	GetMesh()->SetCollisionResponseToChannel(ECC_Visibility,ECR_Block);
 
-	AbilitySystemComponent=CreateDefaultSubobject<UAbilitySystemComponent>("AbilitySystemComponent");
+	AbilitySystemComponent=CreateDefaultSubobject<UAuraAbilitySystemComponent>("AbilitySystemComponent");
 	//启用游戏能力系统组件（GAS）的网络复制功能。
 	AbilitySystemComponent->SetIsReplicated(true);
-	AttributeSet=CreateDefaultSubobject<UAttributeSet>("AttributeSet");
+	AttributeSet=CreateDefaultSubobject<UAuraAttributeSet>("AttributeSet");
 	//设置复制模式
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 }
@@ -40,4 +42,11 @@ void AEnemyCharacter::UnHighlightActor()
 	GetMesh()->SetRenderCustomDepth(false);
 	Weapon->SetRenderCustomDepth(false);
 	//GetMesh()->SetCustomDepthStencilValue(250);
+}
+
+void AEnemyCharacter::InitialAbilityActorInfo()
+{
+	// 初始化基础 Ability Actor Info
+	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+    Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
 }

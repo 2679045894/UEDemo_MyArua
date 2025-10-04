@@ -6,7 +6,7 @@
 #include "AbilitySystemComponent.h"
 #include "AttributeSet.h"
 #include "MyActor/EffectActor.h"
-#include "AruaAttributeSet.generated.h"
+#include "AuraAttributeSet.generated.h"
 
 #define ATTRIBUTE_ACCESSORS(ClassName, PropertyName) \
 	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName, PropertyName) \
@@ -41,11 +41,11 @@ struct FEffectProperties
  * 
  */
 UCLASS()
-class AURA_API UAruaAttributeSet : public UAttributeSet
+class AURA_API UAuraAttributeSet : public UAttributeSet
 {
 	GENERATED_BODY()
 public:
-	UAruaAttributeSet();
+	UAuraAttributeSet();
 	//函数中定义哪些属性需要在网络中进行同步复制。
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 	//当客户端从服务器接收到这个变量的更新时，不会立刻应用新值，而是会先调用这个指定的函数
@@ -53,19 +53,19 @@ public:
 	FGameplayAttributeData Health;
 	//GAMEPLAYATTRIBUTE_PROPERTY_GETTER(UAruaAttributeSet,Health);  单个宏只会生成Getter函数
 	//自动为Health属性创建了一整套标准的访问器函数 set get init
-	ATTRIBUTE_ACCESSORS(UAruaAttributeSet,Health);
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet,Health);
 	
 	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_MaxHealth,Category="Vital Attribute")
 	FGameplayAttributeData MaxHealth;
-	ATTRIBUTE_ACCESSORS(UAruaAttributeSet,MaxHealth);
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet,MaxHealth);
 	
 	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_Mana,Category="Vital Attriubute")
 	FGameplayAttributeData Mana;
-	ATTRIBUTE_ACCESSORS(UAruaAttributeSet,Mana);
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet,Mana);
 	
 	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_MaxMana,Category="Vital Attribute")
 	FGameplayAttributeData MaxMana;
-	ATTRIBUTE_ACCESSORS(UAruaAttributeSet,MaxMana);
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet,MaxMana);
 
 	//接收属性变化之前的值，变量(Health)更新时调用这个函数
 	UFUNCTION()

@@ -70,4 +70,9 @@ public:
 
 	//跟踪和管理应用的无限持续时间效果。
 	TMap<FActiveGameplayEffectHandle,UAbilitySystemComponent*> ActiveEffectHandles;
+
+	//物品级别
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="EffectActor Level")
+	float ActorLevel=1.f;
+	
 };
