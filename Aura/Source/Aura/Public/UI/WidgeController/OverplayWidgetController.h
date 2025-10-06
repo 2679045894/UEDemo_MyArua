@@ -5,12 +5,27 @@
 #include "CoreMinimal.h"
 #include "UI/WidgeController/AuraWidgetController.h"
 #include "GameplayEffectTypes.h"
+#include "UI/Widge/AuraUserWidget.h"
 #include "OverplayWidgetController.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChangedSignature, float, NewHealth);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMaxHealthChangeSignature,float,NewMaxHealth);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnManaChangeSignature,float,NewMana);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMaxManaChangedSignature,float,NewMaxMana);
+
+USTRUCT(BlueprintType,Blueprintable)
+struct FUIWidgetRow:public FTableRowBase
+{
+	GENERATED_BODY();
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	FGameplayTag MessageTag;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
+	FText Message;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
+	TSubclassOf<UAuraUserWidget> MessageWidget;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
+	UTexture2D* Image;
+};
 /**
  * 
  */
@@ -19,10 +34,12 @@ class AURA_API UOverplayWidgetController : public UAuraWidgetController
 {
 	GENERATED_BODY()
 public:
+	//WidgetController 被创建后，系统自动调用这两个函数
 	//确保 UI 控件在创建时就能显示正确的初始属性值
 	virtual void BroadcastInitialValues() override;
 	//绑定属性变化委托，建立属性变化时的回调机制。
 	virtual void BindCallbacksToDependencies() override;
+	
 	//多播委托定义  可在蓝图中bind
 	UPROPERTY(BlueprintAssignable,Category="GAS|Attributes")
 	FOnHealthChangedSignature OnHealthChanged;
@@ -35,6 +52,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable,Category="GAS|Attributes")
 	FOnMaxManaChangedSignature OnMaxManaChanged;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	TObjectPtr<UDataTable> MessageWidgetDataTable;
 
 	
 protected:

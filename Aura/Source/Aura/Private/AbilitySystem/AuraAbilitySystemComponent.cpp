@@ -3,6 +3,7 @@
 
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 
+
 void UAuraAbilitySystemComponent::AbilityActorInfoSet()
 {
 	//将委托和函数绑定()
@@ -13,5 +14,13 @@ void UAuraAbilitySystemComponent::AbilityActorInfoSet()
 void UAuraAbilitySystemComponent::EffectApplied(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& EffectSpec,
 	FActiveGameplayEffectHandle ActiveEffectHandle)
 {
-	GEngine->AddOnScreenDebugMessage(-1,5.0f,FColor::Red,"EffectApplied for AbilitySystemComponent");
+	//标签容器，用于存储某个效果/对象的所有附加的标签
+	FGameplayTagContainer TagContainer;
+	EffectSpec.GetAllAssetTags(TagContainer);
+	EffectAssetTags.Broadcast(TagContainer);
+	/*for (auto Tag: TagContainer)
+	{
+		GEngine->AddOnScreenDebugMessage(-1,5.0f,FColor::Red,
+			FString::Printf(TEXT("%s"), *Tag.ToString()));
+	}*/
 }

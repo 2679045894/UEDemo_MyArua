@@ -3,6 +3,7 @@
 
 #include "UI/WidgeController/OverplayWidgetController.h"
 
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 
 
@@ -10,6 +11,7 @@ void UOverplayWidgetController::BroadcastInitialValues()
 {
 	if (UAuraAttributeSet* AruaAttributeSet=Cast<UAuraAttributeSet>(AttributeSet))
 	{
+		//传入的值进行广播，在蓝图中调用该委托的时候会提供一个参数(GetHealth)
 		OnHealthChanged.Broadcast(AruaAttributeSet->GetHealth());
 		OnMaxHealthChanged.Broadcast(AruaAttributeSet->GetMaxHealth());
 		OnManaChanged.Broadcast(AruaAttributeSet->GetMana());
@@ -18,6 +20,7 @@ void UOverplayWidgetController::BroadcastInitialValues()
 }
 // 绑定属性变化委托，建立属性变化时的回调机制。自动调用
 //告诉 GAS："当这些属性发生变化时，请自动调用我指定的函数"。
+//初始化时调用一次(建立绑定关系)
 void UOverplayWidgetController::BindCallbacksToDependencies()
 {
 	if (UAuraAttributeSet* AruaAttributeSet=Cast<UAuraAttributeSet>(AttributeSet))
@@ -32,9 +35,20 @@ void UOverplayWidgetController::BindCallbacksToDependencies()
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
 			AruaAttributeSet->GetMaxManaAttribute()).AddUObject(this,&UOverplayWidgetController::MaxManaChanged);
 	}
+	//获取委托，通过lambda表达式添加绑定函数
+	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->EffectAssetTags.AddLambda(
+		[](FGameplayTagContainer& TagContainer)
+		{
+			for (auto Tag :TagContainer)
+			{
+				GEngine->AddOnScreenDebugMessage(-1,5.0f,FColor::Red,
+	FString::Printf(TEXT("%s"), *Tag.ToString()));
+			}
+		}
+	);
 }
 
-
+//广播新值
 void UOverplayWidgetController::HealthChanged(const FOnAttributeChangeData& Data) const
 {
 	OnHealthChanged.Broadcast(Data.NewValue);
