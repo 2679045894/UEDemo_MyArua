@@ -37,12 +37,17 @@ void UOverplayWidgetController::BindCallbacksToDependencies()
 	}
 	//获取委托，通过lambda表达式添加绑定函数
 	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->EffectAssetTags.AddLambda(
-		[](FGameplayTagContainer& TagContainer)
+		[this/*!!!!*/](FGameplayTagContainer& TagContainer)
 		{
 			for (auto Tag :TagContainer)
 			{
-				GEngine->AddOnScreenDebugMessage(-1,5.0f,FColor::Red,
-	FString::Printf(TEXT("%s"), *Tag.ToString()));
+				//这相当于一个过滤器，过滤出Message的子标签，因为hi有这些标签才有对应的行命名信息，如果不是Message下的标签，则会报空
+				FGameplayTag MessageTag=FGameplayTag::RequestGameplayTag(FName("Message"));
+				if (Tag.MatchesTag(MessageTag))
+				{	//模板函数
+					FUIWidgetRow* Row=GetDataTableRowByTag<FUIWidgetRow>(MessageWidgetDataTable,Tag);
+					MessageWidgetRowDelegate.Broadcast(*Row);
+				}
 			}
 		}
 	);

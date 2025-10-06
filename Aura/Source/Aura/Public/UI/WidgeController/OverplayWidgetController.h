@@ -8,11 +8,6 @@
 #include "UI/Widge/AuraUserWidget.h"
 #include "OverplayWidgetController.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChangedSignature, float, NewHealth);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMaxHealthChangeSignature,float,NewMaxHealth);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnManaChangeSignature,float,NewMana);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMaxManaChangedSignature,float,NewMaxMana);
-
 USTRUCT(BlueprintType,Blueprintable)
 struct FUIWidgetRow:public FTableRowBase
 {
@@ -26,6 +21,14 @@ struct FUIWidgetRow:public FTableRowBase
 	UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	UTexture2D* Image;
 };
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChangedSignature, float, NewHealth);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMaxHealthChangeSignature,float,NewMaxHealth);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnManaChangeSignature,float,NewMana);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMaxManaChangedSignature,float,NewMaxMana);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowSignature,FUIWidgetRow,Row);
+
 /**
  * 
  */
@@ -53,6 +56,9 @@ public:
 	UPROPERTY(BlueprintAssignable,Category="GAS|Attributes")
 	FOnMaxManaChangedSignature OnMaxManaChanged;
 
+	UPROPERTY(BlueprintAssignable,Category="GAS|Message")
+	FMessageWidgetRowSignature MessageWidgetRowDelegate;
+
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	TObjectPtr<UDataTable> MessageWidgetDataTable;
 
@@ -64,5 +70,16 @@ protected:
 	void ManaChanged(const FOnAttributeChangeData& Data) const;
 	void MaxManaChanged(const FOnAttributeChangeData& Data) const;
 
+	//通过标签名获取行命名信息（确保行命名和标签名一致）
+	//传入目标数据表格以及当前标签
+	template<typename T>
+	T* GetDataTableRowByTag(UDataTable* DataTable,FGameplayTag Tag);
 };
+
+//模板函数  返回指针节省开销，如果返回的是结构体信息，内存占用较大
+template <typename T>
+T* UOverplayWidgetController::GetDataTableRowByTag(UDataTable* DataTable, FGameplayTag Tag)
+{
+	return DataTable->FindRow<T>(Tag.GetTagName(),TEXT("find failure"));
+}
 
