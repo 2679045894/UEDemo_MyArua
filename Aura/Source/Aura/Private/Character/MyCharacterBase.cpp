@@ -47,14 +47,17 @@ void AMyCharacterBase::InitializePrimaryAttribute()
 {
 	if (UAuraAbilitySystemComponent* ASC=GetAbilitySystemComponent())
 	{
+		//获取效果上下文
 		FGameplayEffectContextHandle EffectContextHandle=ASC->MakeEffectContext();
+		//添加源对象
 		EffectContextHandle.AddSourceObject(this);
+		//创建效果范围
 		FGameplayEffectSpecHandle SpecHandle=ASC->MakeOutgoingSpec(DefaultPrimaryAttribute,1.f,EffectContextHandle);
 		if (SpecHandle.IsValid())
 		{
+			//应用效果
 			ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 		}
 	}
-
 }
 

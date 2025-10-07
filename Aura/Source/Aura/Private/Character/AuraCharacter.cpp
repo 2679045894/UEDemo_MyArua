@@ -90,7 +90,7 @@ void AAuraCharacter::InitialAbilityActorInfo()
 	//将PlayerState的能力组件赋值到AruaCharacter的能力组件
 	AbilitySystemComponent=TempPlayerState->GetAbilitySystemComponent();
 	AttributeSet=TempPlayerState->GetAttributeSet();
-	//AruaAttributeSet->InitAttributeSet();
+	Cast<UAuraAttributeSet>(AttributeSet)->InitAttributeSet();
 	if (AMyPlayerController* AruaController=Cast<AMyPlayerController>(GetController()))
 	{
 		if (AAuraHUD* AuraHUD=Cast<AAuraHUD>(AruaController->GetHUD()))

@@ -43,10 +43,11 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<UAttributeSet> AttributeSet;
 
+	//初始化属性_游戏效果
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="InitialAttributes")
 	TSubclassOf<UGameplayEffect> DefaultPrimaryAttribute;
 	
 	virtual void InitialAbilityActorInfo();
-	
+	//初始化属性(应用初始化游戏效果)
 	void InitializePrimaryAttribute();
 };
