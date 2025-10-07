@@ -3,7 +3,6 @@
 
 #include "Character/AuraCharacter.h"
 
-#include "InterchangeResult.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Player/MyPlayerController.h"
 #include "Player/MyPlayerState.h"
@@ -91,10 +90,7 @@ void AAuraCharacter::InitialAbilityActorInfo()
 	//将PlayerState的能力组件赋值到AruaCharacter的能力组件
 	AbilitySystemComponent=TempPlayerState->GetAbilitySystemComponent();
 	AttributeSet=TempPlayerState->GetAttributeSet();
-	UAuraAttributeSet* AruaAttributeSet=Cast<UAuraAttributeSet>(AttributeSet);
-
-	AruaAttributeSet->InitAttributeSet();
-	
+	//AruaAttributeSet->InitAttributeSet();
 	if (AMyPlayerController* AruaController=Cast<AMyPlayerController>(GetController()))
 	{
 		if (AAuraHUD* AuraHUD=Cast<AAuraHUD>(AruaController->GetHUD()))
@@ -102,6 +98,7 @@ void AAuraCharacter::InitialAbilityActorInfo()
 			AuraHUD->InitOverlay(AruaController,TempPlayerState,AbilitySystemComponent,AttributeSet);
 		}
 	}
+	InitializePrimaryAttribute();
 }
 
 

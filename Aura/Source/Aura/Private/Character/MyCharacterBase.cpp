@@ -43,3 +43,18 @@ void AMyCharacterBase::InitialAbilityActorInfo()
 	
 }
 
+void AMyCharacterBase::InitializePrimaryAttribute()
+{
+	if (UAuraAbilitySystemComponent* ASC=GetAbilitySystemComponent())
+	{
+		FGameplayEffectContextHandle EffectContextHandle=ASC->MakeEffectContext();
+		EffectContextHandle.AddSourceObject(this);
+		FGameplayEffectSpecHandle SpecHandle=ASC->MakeOutgoingSpec(DefaultPrimaryAttribute,1.f,EffectContextHandle);
+		if (SpecHandle.IsValid())
+		{
+			ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+		}
+	}
+
+}
+
