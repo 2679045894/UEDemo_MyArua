@@ -43,20 +43,23 @@ void AMyCharacterBase::InitialAbilityActorInfo()
 	
 }
 
-void AMyCharacterBase::InitializePrimaryAttribute()
+void AMyCharacterBase::InitializeDefaultAttributes() const
 {
-	if (UAuraAbilitySystemComponent* ASC=GetAbilitySystemComponent())
+	ApplyEffectToSelf(DefaultPrimaryAttribute,1.f);
+	ApplyEffectToSelf(DefaultSecondaryAttributes,1.f);
+}
+
+void AMyCharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const
+{
+	if (UAuraAbilitySystemComponent* TargetASC=Cast<UAuraAbilitySystemComponent>(GetAbilitySystemComponent()))
 	{
-		//获取效果上下文
-		FGameplayEffectContextHandle EffectContextHandle=ASC->MakeEffectContext();
-		//添加源对象
+		FGameplayEffectContextHandle EffectContextHandle=TargetASC->MakeEffectContext();
 		EffectContextHandle.AddSourceObject(this);
-		//创建效果范围
-		FGameplayEffectSpecHandle SpecHandle=ASC->MakeOutgoingSpec(DefaultPrimaryAttribute,1.f,EffectContextHandle);
-		if (SpecHandle.IsValid())
+		FGameplayEffectSpecHandle EffectSpec=TargetASC->MakeOutgoingSpec(GameplayEffectClass,Level,EffectContextHandle);
+		if (EffectSpec.IsValid())
 		{
-			//应用效果
-			ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+			TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpec.Data.Get());
+			GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Black,TEXT("成功"));
 		}
 	}
 }

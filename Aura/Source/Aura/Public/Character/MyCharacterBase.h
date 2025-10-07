@@ -46,8 +46,12 @@ protected:
 	//初始化属性_游戏效果
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="InitialAttributes")
 	TSubclassOf<UGameplayEffect> DefaultPrimaryAttribute;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="InitialAttributes")
+	TSubclassOf<UGameplayEffect> DefaultSecondaryAttributes;
 	
 	virtual void InitialAbilityActorInfo();
 	//初始化属性(应用初始化游戏效果)
-	void InitializePrimaryAttribute();
+	void InitializeDefaultAttributes() const;
+	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass,float Level) const;
 };

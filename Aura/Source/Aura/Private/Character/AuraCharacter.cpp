@@ -63,30 +63,6 @@ void AAuraCharacter::InitialAbilityActorInfo()
 	TempPlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(TempPlayerState,this);
 	//调用AuraASC中的封装好的绑定委托方法AbilityActorInfoSet
 	Cast<UAuraAbilitySystemComponent>(TempPlayerState->GetAbilitySystemComponent())->AbilityActorInfoSet();
-	/*if (TempPlayerState)
-	{
-		UAbilitySystemComponent* ASC = TempPlayerState->GetAbilitySystemComponent();
-		if (ASC)
-		{
-			UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(ASC);
-			if (AuraASC)
-			{
-				AuraASC->AbilityActorInfoSet();
-			}
-			else
-			{
-				UE_LOG(LogTemp, Error, TEXT("Failed to cast ASC to UAuraAbilitySystemComponent"));
-			}
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("GetAbilitySystemComponent returned null"));
-		}
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("TempPlayerState is null"));
-	}*/
 	//将PlayerState的能力组件赋值到AruaCharacter的能力组件
 	AbilitySystemComponent=TempPlayerState->GetAbilitySystemComponent();
 	AttributeSet=TempPlayerState->GetAttributeSet();
@@ -98,7 +74,7 @@ void AAuraCharacter::InitialAbilityActorInfo()
 			AuraHUD->InitOverlay(AruaController,TempPlayerState,AbilitySystemComponent,AttributeSet);
 		}
 	}
-	InitializePrimaryAttribute();
+	InitializeDefaultAttributes();
 }
 
 
