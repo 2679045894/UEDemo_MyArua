@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "UI/WidgeController/AuraWidgetController.h"
-#include "GameplayEffectTypes.h"
 #include "UI/Widge/AuraUserWidget.h"
 #include "OverplayWidgetController.generated.h"
 
@@ -22,10 +21,7 @@ struct FUIWidgetRow:public FTableRowBase
 	UTexture2D* Image;
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChangedSignature, float, NewHealth);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMaxHealthChangeSignature,float,NewMaxHealth);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnManaChangeSignature,float,NewMana);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMaxManaChangedSignature,float,NewMaxMana);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float, NewValue);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowSignature,FUIWidgetRow,Row);
 
@@ -40,21 +36,21 @@ public:
 	//WidgetController 被创建后，系统自动调用这两个函数
 	//确保 UI 控件在创建时就能显示正确的初始属性值
 	virtual void BroadcastInitialValues() override;
-	//绑定属性变化委托，建立属性变化时的回调机制。
+	//绑定属性变化委托，建立属性变化时的回调机制
 	virtual void BindCallbacksToDependencies() override;
 	
 	//多播委托定义  可在蓝图中bind
 	UPROPERTY(BlueprintAssignable,Category="GAS|Attributes")
-	FOnHealthChangedSignature OnHealthChanged;
+	FOnAttributeChangedSignature OnHealthChanged;
 
 	UPROPERTY(BlueprintAssignable,Category="GAS|Attributes")
-	FOnMaxHealthChangeSignature OnMaxHealthChanged;
+	FOnAttributeChangedSignature OnMaxHealthChanged;
 
 	UPROPERTY(BlueprintAssignable,Category="GAS|Attributes")
-	FOnManaChangeSignature OnManaChanged;
+	FOnAttributeChangedSignature OnManaChanged;
 
 	UPROPERTY(BlueprintAssignable,Category="GAS|Attributes")
-	FOnMaxManaChangedSignature OnMaxManaChanged;
+	FOnAttributeChangedSignature OnMaxManaChanged;
 
 	UPROPERTY(BlueprintAssignable,Category="GAS|Message")
 	FMessageWidgetRowSignature MessageWidgetRowDelegate;
@@ -64,12 +60,6 @@ public:
 
 	
 protected:
-	//FOnAttributeChangeData 是一个 非 UObject 类型 的结构体，因此不能加宏
-	void HealthChanged(const FOnAttributeChangeData& Data) const;
-	void MaxHealthChanged(const FOnAttributeChangeData& Data) const;
-	void ManaChanged(const FOnAttributeChangeData& Data) const;
-	void MaxManaChanged(const FOnAttributeChangeData& Data) const;
-
 	//通过标签名获取行命名信息（确保行命名和标签名一致）
 	//传入目标数据表格以及当前标签
 	template<typename T>

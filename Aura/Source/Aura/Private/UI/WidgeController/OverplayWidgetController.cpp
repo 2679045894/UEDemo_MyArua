@@ -27,13 +27,25 @@ void UOverplayWidgetController::BindCallbacksToDependencies()
 	{
 		//AruaAttributeSet->GetHealthAttribute()为什么不直接gethealth
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
-			AruaAttributeSet->GetHealthAttribute()).AddUObject(this,&UOverplayWidgetController::HealthChanged);
+			AruaAttributeSet->GetHealthAttribute()).AddLambda([this](const FOnAttributeChangeData &Data)
+			{
+				OnHealthChanged.Broadcast(Data.NewValue);
+			});
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
-			AruaAttributeSet->GetMaxHealthAttribute()).AddUObject(this,&UOverplayWidgetController::MaxHealthChanged);
+			AruaAttributeSet->GetMaxHealthAttribute()).AddLambda([this](const FOnAttributeChangeData &Data)
+			{
+				OnMaxHealthChanged.Broadcast(Data.NewValue);
+			});
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
-			AruaAttributeSet->GetManaAttribute()).AddUObject(this,&UOverplayWidgetController::ManaChanged);
+			AruaAttributeSet->GetManaAttribute()).AddLambda([this](const FOnAttributeChangeData &Data)
+			{
+				OnManaChanged.Broadcast(Data.NewValue);
+			});
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
-			AruaAttributeSet->GetMaxManaAttribute()).AddUObject(this,&UOverplayWidgetController::MaxManaChanged);
+			AruaAttributeSet->GetMaxManaAttribute()).AddLambda([this](const FOnAttributeChangeData &Data)
+			{
+				OnHealthChanged.Broadcast(Data.NewValue);
+			});
 	}
 	//获取委托，通过lambda表达式添加绑定函数
 	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->EffectAssetTags.AddLambda(
@@ -53,26 +65,6 @@ void UOverplayWidgetController::BindCallbacksToDependencies()
 	);
 }
 
-//广播新值
-void UOverplayWidgetController::HealthChanged(const FOnAttributeChangeData& Data) const
-{
-	OnHealthChanged.Broadcast(Data.NewValue);
-}
-
-void UOverplayWidgetController::MaxHealthChanged(const FOnAttributeChangeData& Data) const
-{
-	OnMaxHealthChanged.Broadcast(Data.NewValue);
-}
-
-void UOverplayWidgetController::ManaChanged(const FOnAttributeChangeData& Data) const
-{
-	OnManaChanged.Broadcast(Data.NewValue);
-}
-
-void UOverplayWidgetController::MaxManaChanged(const FOnAttributeChangeData& Data) const
-{
-	OnMaxManaChanged.Broadcast(Data.NewValue);
-}
 
 
 

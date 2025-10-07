@@ -18,7 +18,7 @@ class AURA_API AMyPlayerState : public APlayerState,public IAbilitySystemInterfa
 	GENERATED_BODY()
 	AMyPlayerState();
 protected:
-	UPROPERTY()
+	UPROPERTY(EditAnywhere,BlueprintReadOnly);
 	TObjectPtr<UAuraAbilitySystemComponent> AbilitySystemComponent;
 	/**
 	 * 
