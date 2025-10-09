@@ -7,10 +7,11 @@
 #include "AbilitySystemInterface.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"  // 添加这行！
+#include "Interaction/CombatInterface.h"
 #include "MyCharacterBase.generated.h"
 
 UCLASS()
-class AURA_API AMyCharacterBase : public ACharacter,public IAbilitySystemInterface
+class AURA_API AMyCharacterBase : public ACharacter,public IAbilitySystemInterface,public ICombatInterface
 {
 	GENERATED_BODY()
 
@@ -54,4 +55,7 @@ protected:
 	//初始化属性(应用初始化游戏效果)
 	void InitializeDefaultAttributes() const;
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass,float Level) const;
+
+	//实现战斗接口的获取等级方法
+	virtual int32 GetPlayerLevel() override;
 };

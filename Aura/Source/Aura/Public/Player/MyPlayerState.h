@@ -17,19 +17,29 @@ class AURA_API AMyPlayerState : public APlayerState,public IAbilitySystemInterfa
 {
 	GENERATED_BODY()
 	AMyPlayerState();
+
 protected:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly);
 	TObjectPtr<UAuraAbilitySystemComponent> AbilitySystemComponent;
-	/**
-	 * 
-	 */
+	
 	UPROPERTY()
 	//TObjectPtr<UAttributeSet> AttributeSet;
 	TObjectPtr<UAuraAttributeSet> AttributeSet;
+
+	
 public:
 	//封装，属性是私有的，外部只能通过这两个函数分别访问AbilitySystemComponent和AttributeSet变量
 	virtual UAuraAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAuraAttributeSet* GetAttributeSet() const{ return AttributeSet; }
 
-	//void CheckAttributeSetRegistration() const;
+	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_Level,Category="Level")
+	int32 Level=1;
+
+	void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+
+	UFUNCTION()
+	void OnRep_Level(int32 OldLevel) const;
+	
+	//forceinling 关键优化：强制编译器在调用点直接展开函数体代码，避免函数调用开销
+	FORCEINLINE int32 GetPlayerLevel() const{return Level;}
 };

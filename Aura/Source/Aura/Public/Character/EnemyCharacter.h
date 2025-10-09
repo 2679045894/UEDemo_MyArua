@@ -24,4 +24,9 @@ public:
 	bool bHighlight;
 
 	virtual void InitialAbilityActorInfo() override;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Level")
+	int32 Level=1;
+
+	virtual int32 GetPlayerLevel() override;
 };

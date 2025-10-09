@@ -16,7 +16,6 @@ class AURA_API AAuraCharacter : public AMyCharacterBase
 public:
 	AAuraCharacter();
 	
-
 	virtual void BeginPlay() override;
 	
 	//PossessedBy(针对服务器)：当Pawn被Controller占据（控制）时，执行服务器端的初始化设置。（因此针对玩家初始化要使用这个函数）
@@ -25,4 +24,6 @@ public:
 	virtual void OnRep_PlayerState() override;
 private:
 	virtual void InitialAbilityActorInfo()override;
+	
+	virtual int32 GetPlayerLevel() override;
 };

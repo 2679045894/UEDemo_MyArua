@@ -64,3 +64,9 @@ void AMyCharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEf
 	}
 }
 
+int32 AMyCharacterBase::GetPlayerLevel()
+{
+	//空逻辑，让子类实现
+	return ICombatInterface::GetPlayerLevel();
+}
+
