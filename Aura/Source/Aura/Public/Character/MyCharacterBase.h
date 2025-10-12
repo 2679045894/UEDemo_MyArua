@@ -47,14 +47,18 @@ protected:
 	//初始化属性_游戏效果
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="InitialAttributes")
 	TSubclassOf<UGameplayEffect> DefaultPrimaryAttribute;
-
+	//初始化次级属性
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="InitialAttributes")
 	TSubclassOf<UGameplayEffect> DefaultSecondaryAttributes;
+	//初始化重要属性
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="InitialAttribute")
+	TSubclassOf<UGameplayEffect> DefaultVitalAttributes;
 	
 	virtual void InitialAbilityActorInfo();
 	//初始化属性(应用初始化游戏效果)
 	void InitializeDefaultAttributes() const;
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass,float Level) const;
+
 
 	//实现战斗接口的获取等级方法
 	virtual int32 GetPlayerLevel() override;

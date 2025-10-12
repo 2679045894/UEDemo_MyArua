@@ -18,7 +18,7 @@ UMMC_MaxHealth::UMMC_MaxHealth()
 	RelevantAttributesToCapture.Add(VigorDef);
 }
 
-float UMMC_MaxHealth::CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec& Spec) const override
+float UMMC_MaxHealth::CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec& Spec) const
 {
 	//获取效果施放者和目标的游戏标签
 	//意义: 标签可以影响计算逻辑，比如某些职业或状态可能有加成

@@ -44,7 +44,7 @@ void UOverplayWidgetController::BindCallbacksToDependencies()
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
 			AruaAttributeSet->GetMaxManaAttribute()).AddLambda([this](const FOnAttributeChangeData &Data)
 			{
-				OnHealthChanged.Broadcast(Data.NewValue);
+				OnMaxManaChanged.Broadcast(Data.NewValue);
 			});
 	}
 	//获取委托，通过lambda表达式添加绑定函数

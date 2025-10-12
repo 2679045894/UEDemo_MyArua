@@ -12,11 +12,6 @@
 
 UAuraAttributeSet::UAuraAttributeSet()
 {
-	//GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Black,TEXT("调用构造"));
-	InitHealth(50.f);
-	InitMaxHealth(100.f);
-	InitMana(50.f);
-	InitMaxMana(50.f);
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,FString::Printf(TEXT("%f"),this->GetHealth()));
 }
 
@@ -141,10 +136,10 @@ void UAuraAttributeSet::OnRep_ManaRegeneration(const FGameplayAttributeData& Old
 
 void UAuraAttributeSet::InitAttributeSet()
 {
-	InitHealth(70.f);
+	/*InitHealth(70.f);
 	InitMaxHealth(100.f);
 	InitMana(50.f);
-	InitMaxMana(100.f);
+	InitMaxMana(100.f);*/
 }
 
 void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
