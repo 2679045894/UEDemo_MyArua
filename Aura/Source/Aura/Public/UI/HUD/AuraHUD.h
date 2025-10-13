@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
 #include "UI/Widge/AuraUserWidget.h"
+#include "UI/WidgeController/AttributeMenuWidgetController.h"
 #include "UI/WidgeController/OverplayWidgetController.h"
 #include "AuraHUD.generated.h"
 
@@ -25,6 +26,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	//获取当前的OverplayWidgetController，如果没有就创建一个（NewObject）
 	UOverplayWidgetController* GetOverPlayWidgetController(const FWidgetControllerParams& WCParams);
+
+	//获取当前的AttirbuteMenu，如果没有就创建一个（NewObject）
+	UAttributeMenuWidgetController* GetAttributeMenuWidgetController(const FWidgetControllerParams &WCParams);
 	
 
 private:
@@ -36,4 +40,10 @@ private:
 	TObjectPtr<UOverplayWidgetController> OverplayWidgetController;
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UOverplayWidgetController> OverplayWidgetControllerClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UAttributeMenuWidgetController> AttributeMenuWidgetControllerClass;
+
+	UPROPERTY()
+	TObjectPtr<UAttributeMenuWidgetController> AttributeMenuWidgetController;
 };

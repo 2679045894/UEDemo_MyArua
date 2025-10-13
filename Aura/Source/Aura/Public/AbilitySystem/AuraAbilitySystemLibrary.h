@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "UI/WidgeController/AttributeMenuWidgetController.h"
 #include "AuraAbilitySystemLibrary.generated.h"
 
 /**
@@ -15,4 +16,7 @@ class AURA_API UAuraAbilitySystemLibrary : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 	UFUNCTION(BlueprintPure)
 	static UOverplayWidgetController* GetOverlayWidgetController(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintPure)
+	static UAttributeMenuWidgetController* GetAttributeMenuController(const UObject* WorldContextObject);
 };

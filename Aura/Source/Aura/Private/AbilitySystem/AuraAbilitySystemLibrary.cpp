@@ -10,13 +10,29 @@ UOverplayWidgetController* UAuraAbilitySystemLibrary::GetOverlayWidgetController
 {
 	if (APlayerController* PlayerController=UGameplayStatics::GetPlayerController(WorldContextObject,0))
 	{
-		if (AAuraHUD* AuraHUD=Cast<AAuraHUD>(PlayerController))
+		if (AAuraHUD* AuraHUD=Cast<AAuraHUD>(PlayerController->GetHUD()))
 		{
 			AMyPlayerState* PS=PlayerController->GetPlayerState<AMyPlayerState>();
 			UAuraAbilitySystemComponent* ASC=PS->GetAbilitySystemComponent();
 			UAuraAttributeSet* AS=PS->GetAttributeSet();
 			const FWidgetControllerParams WCParams(PlayerController, PS, ASC, AS);
 			return  AuraHUD->GetOverPlayWidgetController(WCParams);
+		}
+	}
+	return nullptr;
+}
+
+UAttributeMenuWidgetController* UAuraAbilitySystemLibrary::GetAttributeMenuController(const UObject* WorldContextObject)
+{
+	if (APlayerController* PlayerController=UGameplayStatics::GetPlayerController(WorldContextObject,0))
+	{
+		if (AAuraHUD* AuraHUD=Cast<AAuraHUD>(PlayerController->GetHUD()))
+		{
+			AMyPlayerState* PS=PlayerController->GetPlayerState<AMyPlayerState>();
+			UAuraAbilitySystemComponent* ASC=PS->GetAbilitySystemComponent();
+			UAuraAttributeSet* AS=PS->GetAttributeSet();
+			const FWidgetControllerParams WCParams(PlayerController,PS,ASC,AS);
+			return AuraHUD->GetAttributeMenuWidgetController(WCParams);
 		}
 	}
 	return nullptr;
