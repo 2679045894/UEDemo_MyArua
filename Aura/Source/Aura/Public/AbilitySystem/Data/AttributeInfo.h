@@ -19,7 +19,7 @@ public:
 	FText AttributeName;
 
 	UPROPERTY(BlueprintReadOnly)
-	float AttributeValue=0.f;
+	float AttributeValue=10.f;
 };
 UCLASS()
 class AURA_API UAttributeInfo : public UDataAsset
