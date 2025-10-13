@@ -14,6 +14,7 @@ public:
 	//静态初始化方法
 	static void InitializeNativeGameplayTags();
 
+	//单个标签
 	FGameplayTag Attributes_Primary_Strength;
 	FGameplayTag Attributes_Primary_Intelligence;
 	FGameplayTag Attributes_Primary_Resilience;
@@ -27,10 +28,13 @@ public:
 	FGameplayTag Attributes_Secondary_CriticalHitResistance;
 	FGameplayTag Attributes_Secondary_HealthRegeneration;
 	FGameplayTag Attributes_Secondary_ManaRegeneration;
+	FGameplayTag Attributes_Secondary_MaxHealth;
+	FGameplayTag Attributes_Secondary_MaxMana;
 	
 	
 private:
 	//静态单例实例，整个程序生命周期内存在
+	//全局唯一标签容器
 	static FAuraGameplayTags GameplayTags;
 
 protected:

@@ -21,6 +21,7 @@ public:
 protected:
 	UPROPERTY()
 	TObjectPtr<UAuraUserWidget> OverplayWidget;
+public:
 	UFUNCTION(BlueprintCallable)
 	//获取当前的OverplayWidgetController，如果没有就创建一个（NewObject）
 	UOverplayWidgetController* GetOverPlayWidgetController(const FWidgetControllerParams& WCParams);

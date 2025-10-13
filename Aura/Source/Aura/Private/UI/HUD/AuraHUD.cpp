@@ -29,7 +29,6 @@ void AAuraHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySyst
 
 	UUserWidget* Widget = CreateWidget<UUserWidget>(GetWorld(), OverplayWidgetClass);
 	OverplayWidget = Cast<UAuraUserWidget>(Widget);
-    
 	const FWidgetControllerParams WidgetControllerParams(PC, PS, ASC, AS);
 	UOverplayWidgetController* WidgetController = GetOverPlayWidgetController(WidgetControllerParams);
 

@@ -18,8 +18,10 @@ private:
 	
 
 public:
+	//获取自定义AssetManager(AuraAssetManager)的全局实例
 	static UAuraAssetManager& Get();
 
-	void StartInitialLoading() override;
+	//资源初始化，自动调用
+	virtual void StartInitialLoading() override;
 	
 };

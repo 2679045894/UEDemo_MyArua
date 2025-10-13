@@ -12,6 +12,7 @@ UAuraAssetManager::UAuraAssetManager()
 UAuraAssetManager& UAuraAssetManager::Get()
 {
 	check(GEngine);
+	//在外部配置ini文件
 	UAuraAssetManager* AuraAssetManager=Cast<UAuraAssetManager>(GEngine->AssetManager);
 	return *AuraAssetManager;
 }

@@ -3,7 +3,6 @@
 
 #include "UI/Widge/AuraUserWidget.h"
 
-#include "UI/WidgeController/OverplayWidgetController.h"
 
 class UOverplayWidgetController;
 void UAuraUserWidget::SetWidgetController(UObject* InWidgetController)
