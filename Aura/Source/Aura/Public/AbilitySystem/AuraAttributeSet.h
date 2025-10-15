@@ -14,6 +14,10 @@
 	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
+//！！！？？？？？？？？？？？？？？？？？
+template<class T>
+using TStaticFunPtr=typename TBaseStaticDelegateInstance<T,FDefaultDelegateUserPolicy>::FFuncPtr;
+
 USTRUCT(BlueprintType,Blueprintable)
 struct FEffectProperties
 {
@@ -164,5 +168,8 @@ public:
 	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 	//用于存储效果源和效果对象
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data,FEffectProperties& Props) const;
+
+	//为属性和标签添加映射
+	TMap<FGameplayTag,TStaticFunPtr<FGameplayAttribute()>> TagsToAttributes;
 	
 };
