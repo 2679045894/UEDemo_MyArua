@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Input/AuraInputConfig.h"
 #include "Interaction/EnemyInterface.h"
 #include "MyPlayerController.generated.h"
@@ -48,4 +49,9 @@ public:
 	void AbilityInputTagPressed(FGameplayTag InputTag);
 	void AbilityInputTagReleased(FGameplayTag InputTag);
 	void AbilityInputTagHeld(FGameplayTag InputTag);
+
+	UPROPERTY()
+	TObjectPtr<UAuraAbilitySystemComponent> AuraASC;
+	
+	UAuraAbilitySystemComponent* GetASC();
 };

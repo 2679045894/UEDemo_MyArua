@@ -3,6 +3,7 @@
 
 #include "Player/MyPlayerController.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Input/AuraInputComponent.h"
 #include "Interaction/EnemyInterface.h"
 
@@ -103,17 +104,34 @@ void AMyPlayerController::CursorTrace()
 
 void AMyPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, *InputTag.GetTagName().ToString());
+	//这里不需要逻辑因为，按压(Held)的时候必定触发一次按下(Pressed)
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, *InputTag.GetTagName().ToString());
 }
 
 void AMyPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, *InputTag.GetTagName().ToString());
+	if (GetASC()==nullptr)return;
+	GetASC()->AbilityInputTagReleased(InputTag);
 }
 
 void AMyPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, *InputTag.GetTagName().ToString());
+	if (GetASC()==nullptr)
+	{
+		return;
+	}
+	GetASC()->AbilityInputTagHeld(InputTag);
+}
+
+UAuraAbilitySystemComponent* AMyPlayerController::GetASC()
+{
+	if (AuraASC==nullptr)
+	{
+		//通过将APawn转化成AuraASC
+		AuraASC=Cast<UAuraAbilitySystemComponent>
+		(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn<APawn>()));
+	}
+	return AuraASC;
 }
 
 
