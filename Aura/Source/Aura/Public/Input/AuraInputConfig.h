@@ -24,7 +24,7 @@ UCLASS()
 class AURA_API UAuraInputConfig : public UDataAsset
 {
 	GENERATED_BODY()
-
+public:
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FAuraInputAction> AuraInputActions;
 
