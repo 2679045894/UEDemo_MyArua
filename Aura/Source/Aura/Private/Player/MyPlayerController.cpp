@@ -4,12 +4,16 @@
 #include "Player/MyPlayerController.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "AuraGameplayTags.h"
 #include "Input/AuraInputComponent.h"
 #include "Interaction/EnemyInterface.h"
 
 AMyPlayerController::AMyPlayerController()
 {
 	bReplicates=true;
+
+	//创建样条线
+	Spline=CreateDefaultSubobject<USplineComponent>(TEXT("Spline"));
 }
 
 void AMyPlayerController::BeginPlay()
@@ -104,8 +108,13 @@ void AMyPlayerController::CursorTrace()
 
 void AMyPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
-	//这里不需要逻辑因为，按压(Held)的时候必定触发一次按下(Pressed)
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, *InputTag.GetTagName().ToString());
+	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
+	{
+		//判断当前点击的对象是否是敌人，设置目标状态
+		bTargeting=ThisActor?true:false;
+		//取消自动移动
+		bAutoRunning=false;
+	}
 }
 
 void AMyPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
@@ -116,11 +125,49 @@ void AMyPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 
 void AMyPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 {
-	if (GetASC()==nullptr)
+	// 处理非左键输入（技能按键）
+	if (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
+		if (GetASC())
+		{
+			GetASC()->AbilityInputTagHeld(InputTag);
+		}
 		return;
 	}
-	GetASC()->AbilityInputTagHeld(InputTag);
+	//左键按住逻辑
+	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
+	{
+		//如果当前按压的对象是敌人，则发动技能
+		if (bTargeting)
+		{
+			if (GetASC())
+			{
+				GetASC()->AbilityInputTagHeld(InputTag);
+			}
+		}
+
+		// 若当前按压的对象是空对象：移动角色
+		else
+		{
+			// 累计按住时间
+			FollowTime+=GetWorld()->GetTimeSeconds();
+
+			FHitResult HitResult;
+			//将鼠标按下的对象存放至碰撞信息
+			if (GetHitResultUnderCursor(ECC_Visibility,false,HitResult))
+			{
+				// 缓存目标位置
+				CachedDestination=HitResult.ImpactPoint;
+			}
+
+			//获取Pawn进行移动
+			if (APawn* ControlledPawn = GetPawn())
+			{
+				const FVector WorldDirection=(CachedDestination-ControlledPawn->GetActorLocation()).GetSafeNormal();
+				ControlledPawn->AddMovementInput(WorldDirection);
+			}
+		}
+	}
 }
 
 UAuraAbilitySystemComponent* AMyPlayerController::GetASC()

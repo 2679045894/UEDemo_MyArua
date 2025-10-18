@@ -7,6 +7,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "Components/SplineComponent.h"
 #include "Input/AuraInputConfig.h"
 #include "Interaction/EnemyInterface.h"
 #include "MyPlayerController.generated.h"
@@ -54,4 +55,27 @@ public:
 	TObjectPtr<UAuraAbilitySystemComponent> AuraASC;
 	
 	UAuraAbilitySystemComponent* GetASC();
+
+	//点击移动相关
+
+	//缓存鼠标点击的目标位置
+	FVector CachedDestination=FVector::ZeroVector;
+	//鼠标按住的持续时间
+	float FollowTime=0.f;
+	//短按阈值
+	float ShortPressThreshold=0.5f;
+	//是否自动移动
+	bool bAutoRunning=false;
+	//是否正在标准目标
+	bool bTargeting=false;
+
+	//自定移动的接受半径
+	UPROPERTY(EditDefaultsOnly)
+	float AutoRunAcceptanceRadius=50.f;
+
+	//用于路径规划的样条组件
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<USplineComponent> Spline;
+	
+	
 };
