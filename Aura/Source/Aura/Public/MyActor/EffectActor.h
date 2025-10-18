@@ -69,6 +69,7 @@ public:
 	bool bDestroyOnEffectRemoval=false;
 
 	//跟踪和管理应用的无限持续时间效果。
+	UPROPERTY()
 	TMap<FActiveGameplayEffectHandle,UAbilitySystemComponent*> ActiveEffectHandles;
 
 	//物品级别

@@ -24,8 +24,10 @@ public:
 	UPROPERTY(BlueprintAssignable,Category="GAS|Attributes")
 	FAttributeInfoSignature AttributeInfoDelegate;
 
-	//外部添加AuraAttirbuteInfo(DataAsset)
+	//外部添加AuraAttributeInfo(DataAsset)
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UAttributeInfo> AuraAttributeInfo;
+	
+	void BroadcastAttributeInfo(const FGameplayTag& AttributeTag, const FGameplayAttribute& Attribute) const;
 	
 };

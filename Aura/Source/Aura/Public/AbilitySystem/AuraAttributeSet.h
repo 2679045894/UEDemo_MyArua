@@ -16,7 +16,7 @@
 
 //！！！？？？？？？？？？？？？？？？？？
 template<class T>
-using TStaticFunPtr=typename TBaseStaticDelegateInstance<T,FDefaultDelegateUserPolicy>::FFuncPtr;
+using TStaticFunPtr=TBaseStaticDelegateInstance<T,FDefaultDelegateUserPolicy>::FFuncPtr;
 
 USTRUCT(BlueprintType,Blueprintable)
 struct FEffectProperties

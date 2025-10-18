@@ -11,9 +11,6 @@ void UAuraAbilitySystemComponent::AbilityActorInfoSet()
 {
 	//将委托和函数绑定()
 	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this,&UAuraAbilitySystemComponent::EffectApplied);
-	FAuraGameplayTags AuraGameplayTags=FAuraGameplayTags::Get();
-
-	GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Black,FString::Printf(TEXT("%s"),*AuraGameplayTags.Attributes_Secondary_Armor.ToString()));
 }
 
 //回调函数

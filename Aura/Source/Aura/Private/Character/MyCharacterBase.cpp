@@ -61,7 +61,6 @@ void AMyCharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEf
 		if (EffectSpec.IsValid())
 		{
 			TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpec.Data.Get());
-			GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Black,TEXT("成功"));
 		}
 	}
 }
