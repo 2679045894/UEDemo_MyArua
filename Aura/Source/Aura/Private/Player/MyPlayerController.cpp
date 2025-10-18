@@ -3,6 +3,7 @@
 
 #include "Player/MyPlayerController.h"
 
+#include "Input/AuraInputComponent.h"
 #include "Interaction/EnemyInterface.h"
 
 AMyPlayerController::AMyPlayerController()
@@ -38,12 +39,15 @@ void AMyPlayerController::BeginPlay()
 void AMyPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
-	// 将基础的InputComponent转换为EnhancedInputComponent
-	UEnhancedInputComponent* EnhancedInputComponent=CastChecked<UEnhancedInputComponent>(InputComponent);
+	// 将基础的InputComponent转换为AuraInputComponent
+	UAuraInputComponent* AuraInputComponent=CastChecked<UAuraInputComponent>(InputComponent);
 
 	// 绑定MoveAction到Move函数，当Triggered时调用
-	EnhancedInputComponent->BindAction(MoveAction,ETriggerEvent::Triggered,this,&AMyPlayerController::Move);
-	
+	AuraInputComponent->BindAction(MoveAction,ETriggerEvent::Triggered,this,&AMyPlayerController::Move);
+	check(AuraInputConfig);
+	//调用模版函数，该函数里面嵌套了3个BindAction
+	AuraInputComponent->BindAbilityActions(AuraInputConfig,this,
+		&ThisClass::AbilityInputTagPressed,&ThisClass::AbilityInputTagReleased,&ThisClass::AbilityInputTagHeld);
 }
 
 void AMyPlayerController::Move(const FInputActionValue& InputActionValue)
@@ -95,6 +99,21 @@ void AMyPlayerController::CursorTrace()
 		ThisActor=CurrentActor;
 	}
 		
+}
+
+void AMyPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, *InputTag.GetTagName().ToString());
+}
+
+void AMyPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, *InputTag.GetTagName().ToString());
+}
+
+void AMyPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, *InputTag.GetTagName().ToString());
 }
 
 

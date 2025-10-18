@@ -5,8 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "EnhancedInputSubsystems.h"
-#include "EnhancedInputComponent.h"
 #include "InputActionValue.h"
+#include "Input/AuraInputConfig.h"
 #include "Interaction/EnemyInterface.h"
 #include "MyPlayerController.generated.h"
 
@@ -39,4 +39,13 @@ public:
 	IEnemyInterface* ThisActor;
 
 	virtual void CursorTrace();
+
+	//外部传入输入配置信息(DataAsset)
+	UPROPERTY(EditDefaultsOnly)
+	UAuraInputConfig* AuraInputConfig;
+
+	//用于输入映射绑定对应函数
+	void AbilityInputTagPressed(FGameplayTag InputTag);
+	void AbilityInputTagReleased(FGameplayTag InputTag);
+	void AbilityInputTagHeld(FGameplayTag InputTag);
 };
