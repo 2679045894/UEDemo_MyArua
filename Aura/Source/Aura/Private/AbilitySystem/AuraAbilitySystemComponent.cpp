@@ -32,7 +32,9 @@ void UAuraAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf
 {
 	for (TSubclassOf<UGameplayAbility> AbilityClass : StartupAbilities)
 	{
+		//创建技能规格
 		FGameplayAbilitySpec AbilitySpec=FGameplayAbilitySpec(AbilityClass,1);
+		//赋予并激活技能
 		GiveAbilityAndActivateOnce(AbilitySpec);
 	}
 }

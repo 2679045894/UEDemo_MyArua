@@ -71,7 +71,7 @@ int32 AMyCharacterBase::GetPlayerLevel()
 	return ICombatInterface::GetPlayerLevel();
 }
 
-void AMyCharacterBase::AddCharacterAbilities()
+void AMyCharacterBase::AddCharacterAbilities() const
 {
 	UAuraAbilitySystemComponent* AuraASC=GetAbilitySystemComponent();
 	if (!HasAuthority())return;
