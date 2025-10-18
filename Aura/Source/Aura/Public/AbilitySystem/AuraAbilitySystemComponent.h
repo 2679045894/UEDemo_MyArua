@@ -22,4 +22,6 @@ public:
 protected:
 	//当任何 Gameplay Effect 应用到拥有此 ASC 的 Actor 时触发的回调函数。
 	void EffectApplied(UAbilitySystemComponent* ASC,const FGameplayEffectSpec& EffectSpec,FActiveGameplayEffectHandle ActiveEffectHandle);
+public:
+	void AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>> &StartupAbilities);
 };

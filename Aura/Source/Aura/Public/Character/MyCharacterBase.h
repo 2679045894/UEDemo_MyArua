@@ -10,6 +10,8 @@
 #include "Interaction/CombatInterface.h"
 #include "MyCharacterBase.generated.h"
 
+class  UGameplayAbility;
+
 UCLASS()
 class AURA_API AMyCharacterBase : public ACharacter,public IAbilitySystemInterface,public ICombatInterface
 {
@@ -62,4 +64,9 @@ protected:
 
 	//实现战斗接口的获取等级方法
 	virtual int32 GetPlayerLevel() override;
+
+	UPROPERTY(EditAnywhere,Category="Abilities")
+	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
+
+	void AddCharacterAbilities();
 };

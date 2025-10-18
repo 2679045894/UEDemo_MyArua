@@ -7,7 +7,7 @@
 AMyCharacterBase::AMyCharacterBase()
 {
 
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 	Weapon=CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
 	Weapon->SetupAttachment(GetMesh(),FName("WeaponHandSocket"));
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -69,5 +69,12 @@ int32 AMyCharacterBase::GetPlayerLevel()
 {
 	//空逻辑，让子类实现
 	return ICombatInterface::GetPlayerLevel();
+}
+
+void AMyCharacterBase::AddCharacterAbilities()
+{
+	UAuraAbilitySystemComponent* AuraASC=GetAbilitySystemComponent();
+	if (!HasAuthority())return;
+	AuraASC->AddCharacterAbilities(StartupAbilities);
 }
 
