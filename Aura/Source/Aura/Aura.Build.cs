@@ -20,7 +20,8 @@ public class Aura : ModuleRules
 			"UMG",
 			"Slate",
 			"SlateCore",
-			"AIModule"
+			"AIModule",
+			"NavigationSystem"
 		});
 
 		// 私有依赖模块 - 仅本模块内部使用

@@ -63,7 +63,7 @@ public:
 	//鼠标按住的持续时间
 	float FollowTime=0.f;
 	//短按阈值
-	float ShortPressThreshold=0.5f;
+	float ShortPressThreshold=500.f;
 	//是否自动移动
 	bool bAutoRunning=false;
 	//是否正在标准目标
@@ -76,6 +76,7 @@ public:
 	//用于路径规划的样条组件
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USplineComponent> Spline;
-	
+
+	void AutoRun();
 	
 };

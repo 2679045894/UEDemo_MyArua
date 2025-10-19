@@ -5,6 +5,8 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AuraGameplayTags.h"
+#include "NavigationPath.h"
+#include "NavigationSystem.h"
 #include "Input/AuraInputComponent.h"
 #include "Interaction/EnemyInterface.h"
 
@@ -80,6 +82,7 @@ void AMyPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
 	CursorTrace();
+	AutoRun();
 }
 
 void AMyPlayerController::CursorTrace()
@@ -119,8 +122,47 @@ void AMyPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 
 void AMyPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 {
-	if (GetASC()==nullptr)return;
-	GetASC()->AbilityInputTagReleased(InputTag);
+	if (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
+	{
+		if (GetASC())
+		{
+			GetASC()->AbilityInputTagReleased(InputTag);
+		}
+		return;
+	}
+	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
+	{
+		if (bTargeting)
+		{
+			if (GetASC())
+			{
+				GetASC()->AbilityInputTagReleased(InputTag);
+			}
+		}
+		else
+		{
+			APawn* ControllerPawn=GetPawn<APawn>();
+			if (FollowTime<=ShortPressThreshold&&ControllerPawn)
+			{
+				//同步查找从当前Pawn位置到CachedDestination（缓存目的地）的导航路径
+				if (UNavigationPath* NavigationPath=UNavigationSystemV1::FindPathToLocationSynchronously(
+					this,ControllerPawn->GetActorLocation(),CachedDestination))
+				{
+					Spline->ClearSplinePoints();
+					for (const FVector& PointLocation:NavigationPath->PathPoints)
+					{
+						//绘制样条线
+						Spline->AddSplinePoint(PointLocation,ESplineCoordinateSpace::Type::World);
+						DrawDebugSphere(GetWorld(),PointLocation,8.f,8,FColor::Green,false,5.f);
+					}
+					CachedDestination=NavigationPath->PathPoints[NavigationPath->PathPoints.Num()-1];
+					bAutoRunning=true;
+				}
+			}
+		}
+		FollowTime=0.f;
+		bTargeting=false;
+	}
 }
 
 void AMyPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
@@ -179,6 +221,28 @@ UAuraAbilitySystemComponent* AMyPlayerController::GetASC()
 		(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn<APawn>()));
 	}
 	return AuraASC;
+}
+
+void AMyPlayerController::AutoRun()
+{
+	if (!bAutoRunning) return;
+	if (APawn* ControllerPawn=GetPawn())
+	{
+		// 在Spline上找到离Pawn当前位置最近的点坐标
+		const FVector LocationOnSpline=Spline->
+		FindLocationClosestToWorldLocation(ControllerPawn->GetActorLocation(),ESplineCoordinateSpace::World);
+		// 获取在Spline上该点的切线方向（即移动方向）
+		const FVector Direction=Spline->FindDirectionClosestToWorldLocation(LocationOnSpline,ESplineCoordinateSpace::World);
+		// 向Pawn添加移动输入，使其沿Spline方向移动
+		ControllerPawn->AddMovementInput(Direction);
+
+		// 计算当前位置与目标位置之间的距离
+		const float DistanceToDestination=(LocationOnSpline-CachedDestination).Length();
+		if (DistanceToDestination<=AutoRunAcceptanceRadius)
+		{
+			bAutoRunning=false;
+		}
+	}
 }
 
 
