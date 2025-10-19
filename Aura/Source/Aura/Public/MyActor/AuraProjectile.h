@@ -3,7 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/SphereComponent.h"
 #include "GameFramework/Actor.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "AuraProjectile.generated.h"
 
 UCLASS()
@@ -18,7 +20,10 @@ protected:
 
 	virtual void BeginPlay() override;
 
-public:	
-
+public:
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<USphereComponent> SphereComponent;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent;
 
 };

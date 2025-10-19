@@ -7,20 +7,25 @@
 AAuraProjectile::AAuraProjectile()
 {
 	PrimaryActorTick.bCanEverTick = false;
+	SphereComponent=CreateDefaultSubobject<USphereComponent>(FName("SphereComponent"));
+	SetRootComponent(SphereComponent);
+	SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	SphereComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
+	SphereComponent->SetCollisionResponseToChannel(ECC_WorldDynamic,ECR_Overlap);
+	SphereComponent->SetCollisionResponseToChannel(ECC_WorldStatic,ECR_Overlap);
+	SphereComponent->SetCollisionResponseToChannel(ECC_Pawn,ECR_Overlap);
 
+	ProjectileMovementComponent=CreateDefaultSubobject<UProjectileMovementComponent>(FName("ProjectileMovementComponent"));
+	ProjectileMovementComponent->InitialSpeed=450.f;
+	ProjectileMovementComponent->MaxSpeed=550.f;
+	ProjectileMovementComponent->ProjectileGravityScale=0.f;
 }
 
-// Called when the game starts or when spawned
+
 void AAuraProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
-// Called every frame
-void AAuraProjectile::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
 
