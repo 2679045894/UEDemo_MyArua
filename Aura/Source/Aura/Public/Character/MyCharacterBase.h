@@ -70,4 +70,10 @@ protected:
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
 
 	void AddCharacterAbilities() const;
+
+	//武器插槽名(投射点)
+	UPROPERTY(EditAnywhere,Category="Combat")
+	FName WeaponTioSocketName;
+
+	virtual FVector GetCombatSocketLocation() override;
 };

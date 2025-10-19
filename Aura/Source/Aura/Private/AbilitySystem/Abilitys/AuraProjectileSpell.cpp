@@ -3,14 +3,33 @@
 
 #include "AbilitySystem/Abilitys/AuraProjectileSpell.h"
 
-#include "Kismet/KismetSystemLibrary.h"
+#include "Interaction/CombatInterface.h"
+#include "MyActor/AuraProjectile.h"
 
 void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
-                                            const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
-                                            const FGameplayEventData* TriggerEventData)
+                                           const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
+                                           const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+	//在服务器调用
+	const bool bIsServer=HasAuthority(&ActivationInfo);
+	if (!bIsServer)return;
+	
+	if (ICombatInterface* CombatInterface=Cast<ICombatInterface>(GetAvatarActorFromActorInfo()))
+	{
+		//自动转化调用Base中的GetCombatSocketLocation方法
+		const FVector SocketLocation=CombatInterface->GetCombatSocketLocation();
+		FTransform SpawnTransform;
+		SpawnTransform.SetLocation(SocketLocation);
 
-	UKismetSystemLibrary::PrintString(this,FString("火球术(c++)"),true,true,FColor::Green,5.f);
+		AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(
+			ProjectileClass,//生成对象类
+			SpawnTransform,//生成位置
+			GetOwningActorFromActorInfo(),  // 拥有者
+			Cast<APawn>(GetOwningActorFromActorInfo()),  // 引发者
+			ESpawnActorCollisionHandlingMethod::AlwaysSpawn);//碰撞处理方式
+		check(Projectile);
+		Projectile->FinishSpawning(SpawnTransform);
+	}
 	
 }
