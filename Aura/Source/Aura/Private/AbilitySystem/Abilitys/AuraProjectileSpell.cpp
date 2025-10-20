@@ -17,7 +17,6 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 
 void UAuraProjectileSpell::SpawnProjectile()
 {
-	GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Black,TEXT("发射"));
 	//在服务器调用
 	const bool bIsServer=GetAvatarActorFromActorInfo()->HasAuthority();
 	if (!bIsServer)return;

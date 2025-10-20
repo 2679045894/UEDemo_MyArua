@@ -20,6 +20,7 @@ class AURA_API UAuraProjectileSpell : public UAuraGameplayAbility
 
 	UFUNCTION(BlueprintCallable,Category="Projectile")
 	virtual void SpawnProjectile();
+	
 	//火球类
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AAuraProjectile> ProjectileClass;
