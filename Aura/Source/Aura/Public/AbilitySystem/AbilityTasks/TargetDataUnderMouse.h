@@ -6,7 +6,7 @@
 #include "Abilities/Tasks/AbilityTask.h"
 #include "TargetDataUnderMouse.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMouseTargetDataSignature,const FVector&,Data);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMouseTargetDataSignature,const FGameplayAbilityTargetDataHandle&,DataHandle);
 
 UCLASS()
 class AURA_API UTargetDataUnderMouse : public UAbilityTask
@@ -23,4 +23,6 @@ public:
 private:
 	virtual void Activate() override;
 
+	//将客户端数据(鼠标位置)传递到服务器
+	void SendMouseCursorData() const;
 };
