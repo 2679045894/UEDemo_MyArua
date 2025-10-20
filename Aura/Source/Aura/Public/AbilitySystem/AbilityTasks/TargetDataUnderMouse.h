@@ -25,4 +25,6 @@ private:
 
 	//将客户端数据(鼠标位置)传递到服务器
 	void SendMouseCursorData() const;
+
+	void OnTargetDataReplicatedCallback(const FGameplayAbilityTargetDataHandle& DataHandle, FGameplayTag ActivationTag) const;
 };

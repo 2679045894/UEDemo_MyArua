@@ -19,11 +19,26 @@ void UTargetDataUnderMouse::Activate()
 	bool bIsLocallyControlled=Ability->GetCurrentActorInfo()->IsLocallyControlled();
 	if (bIsLocallyControlled)
 	{
+		//客户端
 		SendMouseCursorData();
 	}
 	else
 	{
-		
+		//服务器
+		//获取技能标识符
+		const FGameplayAbilitySpecHandle SpecHandle=GetAbilitySpecHandle();
+		//获取预测键
+		const FPredictionKey ActivationPredictionKey=GetActivationPredictionKey();
+		//注册数据到达委托
+		AbilitySystemComponent.Get()->AbilityTargetDataSetDelegate(SpecHandle,ActivationPredictionKey).
+		AddUObject(this,&UTargetDataUnderMouse::OnTargetDataReplicatedCallback);
+		//检查缓存数据
+		const bool bCalledDelegate=AbilitySystemComponent.Get()->CallReplicatedTargetDataDelegatesIfSet(SpecHandle,ActivationPredictionKey);
+		//设置等待状态
+		if (!bCalledDelegate)
+		{
+			SetWaitingOnRemotePlayerData();
+		}
 	}
 
 }
@@ -56,4 +71,16 @@ void UTargetDataUnderMouse::SendMouseCursorData() const
 		ValidData.Broadcast(DataHandle);
 	}
 	
+}
+
+void UTargetDataUnderMouse::OnTargetDataReplicatedCallback(const FGameplayAbilityTargetDataHandle& DataHandle,
+	FGameplayTag ActivationTag) const
+{
+	//消费客户端赋值的目标数据
+	AbilitySystemComponent->ConsumeClientReplicatedTargetData(GetAbilitySpecHandle(),GetActivationPredictionKey());
+	//检查是否应该广播Ability Task委托
+	if (ShouldBroadcastAbilityTaskDelegates())
+	{
+		ValidData.Broadcast(DataHandle);
+	}
 }
