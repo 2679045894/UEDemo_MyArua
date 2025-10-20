@@ -11,8 +11,15 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
                                            const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+
+	
+}
+
+void UAuraProjectileSpell::SpawnProjectile()
+{
+	GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Black,TEXT("发射"));
 	//在服务器调用
-	const bool bIsServer=HasAuthority(&ActivationInfo);
+	const bool bIsServer=GetAvatarActorFromActorInfo()->HasAuthority();
 	if (!bIsServer)return;
 	
 	if (ICombatInterface* CombatInterface=Cast<ICombatInterface>(GetAvatarActorFromActorInfo()))
@@ -31,5 +38,4 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 		check(Projectile);
 		Projectile->FinishSpawning(SpawnTransform);
 	}
-	
 }

@@ -69,6 +69,7 @@ protected:
 	UPROPERTY(EditAnywhere,Category="Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
 
+	//添加技能
 	void AddCharacterAbilities() const;
 
 	//武器插槽名(投射点)

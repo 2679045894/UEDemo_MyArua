@@ -39,7 +39,6 @@ void UAuraAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf
 			//3.赋予技能
 			GiveAbility(AbilitySpec);
 		}
-		
 	}
 }
 
