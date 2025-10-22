@@ -21,10 +21,12 @@ public:
 	FMouseTargetDataSignature ValidData;
 	
 private:
+	//激活流程
 	virtual void Activate() override;
 
 	//将客户端数据(鼠标位置)传递到服务器
 	void SendMouseCursorData() const;
 
+	//回调函数
 	void OnTargetDataReplicatedCallback(const FGameplayAbilityTargetDataHandle& DataHandle, FGameplayTag ActivationTag) const;
 };

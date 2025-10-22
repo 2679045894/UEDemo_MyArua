@@ -12,7 +12,7 @@ UTargetDataUnderMouse* UTargetDataUnderMouse::CreateTargetDataUnderMouse(UGamepl
 	return MyObj;
 }
 
-
+//激活流程
 void UTargetDataUnderMouse::Activate()
 {
 	//检查当前是否由本地控制
@@ -29,12 +29,13 @@ void UTargetDataUnderMouse::Activate()
 		const FGameplayAbilitySpecHandle SpecHandle=GetAbilitySpecHandle();
 		//获取预测键
 		const FPredictionKey ActivationPredictionKey=GetActivationPredictionKey();
+		//检查缓存数据(判断数据是否到达)
+		const bool bCalledDelegate=AbilitySystemComponent.Get()->CallReplicatedTargetDataDelegatesIfSet(SpecHandle,ActivationPredictionKey);
 		//注册数据到达委托
 		AbilitySystemComponent.Get()->AbilityTargetDataSetDelegate(SpecHandle,ActivationPredictionKey).
 		AddUObject(this,&UTargetDataUnderMouse::OnTargetDataReplicatedCallback);
-		//检查缓存数据
-		const bool bCalledDelegate=AbilitySystemComponent.Get()->CallReplicatedTargetDataDelegatesIfSet(SpecHandle,ActivationPredictionKey);
-		//设置等待状态
+		
+		//设置等待状态(等待管理)
 		if (!bCalledDelegate)
 		{
 			SetWaitingOnRemotePlayerData();
@@ -45,6 +46,7 @@ void UTargetDataUnderMouse::Activate()
 
 void UTargetDataUnderMouse::SendMouseCursorData() const
 {
+	//预测窗口：创建作用域预测窗口，支持客户端预测
 	FScopedPredictionWindow ScopedPredictionWindow(AbilitySystemComponent.Get());
 	APlayerController* PC=Ability->GetCurrentActorInfo()->PlayerController.Get();
 	FHitResult Hit;
@@ -59,6 +61,7 @@ void UTargetDataUnderMouse::SendMouseCursorData() const
 	//将数据添加到容器中
 	DataHandle.Add(Data);
 
+	//发送数据
 	AbilitySystemComponent->ServerSetReplicatedTargetData(
 		GetAbilitySpecHandle(),
 		GetActivationPredictionKey(),
@@ -66,6 +69,7 @@ void UTargetDataUnderMouse::SendMouseCursorData() const
 		FGameplayTag(),
 		AbilitySystemComponent->ScopedPredictionKey);
 
+	//本地广播
 	if (ShouldBroadcastAbilityTaskDelegates())
 	{
 		ValidData.Broadcast(DataHandle);
