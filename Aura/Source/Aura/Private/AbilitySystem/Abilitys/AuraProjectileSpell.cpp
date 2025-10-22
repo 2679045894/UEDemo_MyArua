@@ -11,11 +11,10 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
                                            const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-
 	
 }
 
-void UAuraProjectileSpell::SpawnProjectile()
+void UAuraProjectileSpell::SpawnProjectile(const FVector & ProjectileTargetLocation)
 {
 	//在服务器调用
 	const bool bIsServer=GetAvatarActorFromActorInfo()->HasAuthority();
@@ -25,8 +24,11 @@ void UAuraProjectileSpell::SpawnProjectile()
 	{
 		//自动转化调用Base中的GetCombatSocketLocation方法
 		const FVector SocketLocation=CombatInterface->GetCombatSocketLocation();
+		FRotator Rotaion=(ProjectileTargetLocation-SocketLocation).Rotation();
+		Rotaion.Pitch=0.0f;
 		FTransform SpawnTransform;
 		SpawnTransform.SetLocation(SocketLocation);
+		SpawnTransform.SetRotation(Rotaion.Quaternion());
 
 		AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(
 			ProjectileClass,//生成对象类

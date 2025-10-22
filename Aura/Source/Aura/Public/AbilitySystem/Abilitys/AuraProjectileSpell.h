@@ -19,7 +19,7 @@ class AURA_API UAuraProjectileSpell : public UAuraGameplayAbility
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 	UFUNCTION(BlueprintCallable,Category="Projectile")
-	virtual void SpawnProjectile();
+	virtual void SpawnProjectile(const FVector & ProjectileTargetLocation);
 	
 	//火球类
 	UPROPERTY(EditAnywhere)

@@ -78,5 +78,10 @@ public:
 	TObjectPtr<USplineComponent> Spline;
 
 	void AutoRun();
-	
+
+	bool bShiftKeyDown=false;
+	void ShiftPressed(){bShiftKeyDown=true;};
+	void ShiftReleased(){bShiftKeyDown=false;};
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UInputAction> ShiftAction;
 };

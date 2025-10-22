@@ -51,6 +51,8 @@ void AMyPlayerController::SetupInputComponent()
 
 	// 绑定MoveAction到Move函数，当Triggered时调用
 	AuraInputComponent->BindAction(MoveAction,ETriggerEvent::Triggered,this,&AMyPlayerController::Move);
+	AuraInputComponent->BindAction(ShiftAction,ETriggerEvent::Started,this,&AMyPlayerController::ShiftPressed);
+	AuraInputComponent->BindAction(ShiftAction,ETriggerEvent::Completed,this,&AMyPlayerController::ShiftReleased);
 	check(AuraInputConfig);
 	//调用模版函数，该函数里面嵌套了3个BindAction
 	AuraInputComponent->BindAbilityActions(AuraInputConfig,this,
@@ -130,16 +132,10 @@ void AMyPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 		}
 		return;
 	}
+	if (GetASC())GetASC()->AbilityInputTagReleased(InputTag);
 	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
-		if (bTargeting)
-		{
-			if (GetASC())
-			{
-				GetASC()->AbilityInputTagReleased(InputTag);
-			}
-		}
-		else
+		if (!bTargeting&&!bShiftKeyDown)
 		{
 			APawn* ControllerPawn=GetPawn<APawn>();
 			if (FollowTime<=ShortPressThreshold&&ControllerPawn)
@@ -160,6 +156,7 @@ void AMyPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 				}
 			}
 		}
+
 		FollowTime=0.f;
 		bTargeting=false;
 	}
@@ -179,8 +176,8 @@ void AMyPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 	//左键按住逻辑
 	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
-		//如果当前按压的对象是敌人，则发动技能
-		if (bTargeting)
+		//如果当前按压的对象是敌人或者按下了Shift键，则发动技能
+		if (bTargeting||bShiftKeyDown)
 		{
 			if (GetASC())
 			{
