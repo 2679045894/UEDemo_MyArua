@@ -2,7 +2,6 @@
 
 
 #include "Character/EnemyCharacter.h"
-
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 
 
@@ -11,6 +10,27 @@ void AEnemyCharacter::BeginPlay()
 	Super::BeginPlay();
 	//敌人初始化，Owner和Avatar都是自己
 	InitialAbilityActorInfo();
+	if (UAuraUserWidget* AuraUserWidget=Cast<UAuraUserWidget>(HealthBar->GetUserWidgetObject()))
+	{
+		AuraUserWidget->SetWidgetController(this);
+	}
+	if (UAuraAttributeSet* AuraAttributeSet=Cast<UAuraAttributeSet>(GetAttributeSet()))
+	{
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetHealthAttribute()).AddLambda(
+			[this](const FOnAttributeChangeData& Data)
+			{
+				OnHealthChange.Broadcast(Data.NewValue);
+			});
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetMaxHealthAttribute()).AddLambda(
+			[this](const FOnAttributeChangeData& Data)
+			{
+				OnMaxHealthChange.Broadcast(Data.NewValue);
+			});
+
+		OnHealthChange.Broadcast(AuraAttributeSet->GetHealth());
+		OnMaxHealthChange.Broadcast(AuraAttributeSet->GetMaxHealth());
+		
+	}
 }
 
 AEnemyCharacter::AEnemyCharacter()
@@ -23,6 +43,8 @@ AEnemyCharacter::AEnemyCharacter()
 	AttributeSet=CreateDefaultSubobject<UAuraAttributeSet>("AttributeSet");
 	//设置复制模式
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
+	HealthBar=CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBar"));
+	HealthBar->SetupAttachment(RootComponent);
 }
 
 void AEnemyCharacter::HighlightActor()
