@@ -2,7 +2,11 @@
 
 
 #include "MyActor/AuraProjectile.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
 #include "NiagaraFunctionLibrary.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
+#include "Aura/Aura.h"
 #include "Components/AudioComponent.h"
 #include "kismet/GameplayStatics.h"
 
@@ -18,6 +22,7 @@ AAuraProjectile::AAuraProjectile()
 	SphereComponent->SetCollisionResponseToChannel(ECC_WorldDynamic,ECR_Overlap);
 	SphereComponent->SetCollisionResponseToChannel(ECC_WorldStatic,ECR_Overlap);
 	SphereComponent->SetCollisionResponseToChannel(ECC_Pawn,ECR_Overlap);
+	SphereComponent->SetCollisionObjectType(ECC_Projectile);
 
 	ProjectileMovementComponent=CreateDefaultSubobject<UProjectileMovementComponent>(FName("ProjectileMovementComponent"));
 	ProjectileMovementComponent->InitialSpeed=450.f;
@@ -31,12 +36,34 @@ AAuraProjectile::AAuraProjectile()
 void AAuraProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	SphereComponent->OnComponentBeginOverlap.AddDynamic(this,&AAuraProjectile::OnSphereOverlap);
-	//设置自动销毁时间
+    
+	if (SphereComponent)
+	{
+		SphereComponent->OnComponentBeginOverlap.AddDynamic(this,&AAuraProjectile::OnSphereOverlap);
+	}
+    
 	SetLifeSpan(LifeSpan);
-	//将飞行过程中的循环音效添加到组件上
-	LoopingSoundComponent=UGameplayStatics::SpawnSoundAttached(LoopingSound,GetRootComponent());
+    
+	/*// 只在服务器创建音效组件，客户端跳过
+	if (HasAuthority()) // 或者使用 GetNetMode() != NM_Client
+	{
+		if (LoopingSound && GetRootComponent())
+		{
+			LoopingSoundComponent = UGameplayStatics::SpawnSoundAttached(LoopingSound, GetRootComponent());
+			if (LoopingSoundComponent)
+			{
+				UE_LOG(LogTemp, Log, TEXT("Server successfully created LoopingSoundComponent"));
+			}
+		}
+	}
+	else
+	{
+		// 客户端明确设置为nullptr
+		LoopingSoundComponent = nullptr;
+		UE_LOG(LogTemp, Verbose, TEXT("Client skipping LoopingSoundComponent creation"));
+	}*/
 }
+
 
 void AAuraProjectile::Destroyed()
 {
@@ -46,7 +73,15 @@ void AAuraProjectile::Destroyed()
 		//播放爆炸特效和声音
 		UGameplayStatics::PlaySoundAtLocation(this,ImpactSound,GetActorLocation());
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this,ImpactEffect,GetActorLocation());
-		LoopingSoundComponent->Stop();
+		/*if (LoopingSoundComponent)
+		{
+			LoopingSoundComponent->Stop();
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("找不到"));
+		}*/
+		
 	}
 	Super::Destroyed();
 }
@@ -58,10 +93,21 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 	//命中时播放特效和声音
 	UGameplayStatics::PlaySoundAtLocation(this,ImpactSound,GetActorLocation());
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this,ImpactEffect,GetActorLocation());
-	LoopingSoundComponent->Stop();
+	/*if (LoopingSoundComponent)
+	{
+		LoopingSoundComponent->Stop();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("找不到"));
+	}*/
 	//服务器执行销毁函数
 	if (HasAuthority())
 	{
+		if (UAbilitySystemComponent* TargetASC=UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
+		{
+			TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
+		}
 		Destroy();
 	}
 	//客户端设置销毁状态为Ture
@@ -70,5 +116,6 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 		bHit=true;
 	}
 }
+
 
 

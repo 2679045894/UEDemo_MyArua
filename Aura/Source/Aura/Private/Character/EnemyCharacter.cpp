@@ -49,6 +49,7 @@ void AEnemyCharacter::InitialAbilityActorInfo()
 	// 初始化基础 Ability Actor Info
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
     Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
+	InitializeDefaultAttributes();
 }
 
 int32 AEnemyCharacter::GetPlayerLevel()

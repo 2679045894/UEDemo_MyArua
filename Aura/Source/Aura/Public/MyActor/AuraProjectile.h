@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayEffect.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -39,8 +40,8 @@ public:
 	UPROPERTY(EditAnywhere,Category="Imapct")
 	TObjectPtr<UNiagaraSystem> ImpactEffect;
 	//飞行过程中的循环音效组件
-	UPROPERTY()
-	TObjectPtr<UAudioComponent> LoopingSoundComponent;
+	/*UPROPERTY()
+	TObjectPtr<UAudioComponent> LoopingSoundComponent;*/
 	
 
 	UPROPERTY(EditDefaultsOnly)
@@ -50,4 +51,7 @@ public:
 	bool bHit=false;
 	UFUNCTION(BlueprintCallable)
 	void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+
+	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = true))
+	FGameplayEffectSpecHandle DamageEffectSpecHandle;
 };

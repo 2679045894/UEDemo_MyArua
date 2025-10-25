@@ -24,4 +24,7 @@ class AURA_API UAuraProjectileSpell : public UAuraGameplayAbility
 	//火球类
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AAuraProjectile> ProjectileClass;
+
+	UPROPERTY(EditAnywhere,Category="Projectile")
+	TSubclassOf<UGameplayEffect> DamageEffectClass;
 };

@@ -163,14 +163,7 @@ void UAuraAttributeSet::InitAttributeSet()
 void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
 {
 	Super::PreAttributeChange(Attribute, NewValue);
-	if (Attribute==GetHealthAttribute())
-	{
-		NewValue=FMath::Clamp(NewValue,0,GetMaxHealth());
-	}
-	if (Attribute==GetManaAttribute())
-	{
-		NewValue=FMath::Clamp(NewValue,0,GetMaxMana());
-	}
+
 }
 
 void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data)
@@ -178,8 +171,18 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 	Super::PostGameplayEffectExecute(Data);
 	FEffectProperties Props;
 	SetEffectProperties(Data,Props);
-}
 
+
+	if (Data.EvaluatedData.Attribute==GetHealthAttribute())
+	{
+		SetHealth(FMath::Clamp(GetHealth(),0,GetMaxHealth()));
+		GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Cyan,FString::Printf(TEXT("Health: %f"),GetHealth()));
+	}
+	if (Data.EvaluatedData.Attribute==GetManaAttribute())
+	{
+		SetMana(FMath::Clamp(GetMana(),0,GetMaxMana()));
+	}
+}
 
 
 void UAuraAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const
