@@ -21,7 +21,8 @@ public class Aura : ModuleRules
 			"Slate",
 			"SlateCore",
 			"AIModule",
-			"NavigationSystem"
+			"NavigationSystem",
+			"Niagara"
 		});
 
 		// 私有依赖模块 - 仅本模块内部使用
