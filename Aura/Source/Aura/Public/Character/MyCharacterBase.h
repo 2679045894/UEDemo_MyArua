@@ -58,7 +58,7 @@ protected:
 	
 	virtual void InitialAbilityActorInfo();
 	//初始化属性(应用初始化游戏效果)
-	void InitializeDefaultAttributes() const;
+	virtual void InitializeDefaultAttributes() const;
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass,float Level) const;
 
 

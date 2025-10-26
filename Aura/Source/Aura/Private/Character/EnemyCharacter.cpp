@@ -3,6 +3,7 @@
 
 #include "Character/EnemyCharacter.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 
 
 void AEnemyCharacter::BeginPlay()
@@ -15,8 +16,9 @@ void AEnemyCharacter::BeginPlay()
 	{
 		AuraUserWidget->SetWidgetController(this);
 	}
-	if (UAuraAttributeSet* AuraAttributeSet=Cast<UAuraAttributeSet>(GetAttributeSet()))
+	/*if (UAuraAttributeSet* AuraAttributeSet=Cast<UAuraAttributeSet>(GetAttributeSet()))
 	{
+		GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Green,FString::Printf(TEXT("1最大生命：%f"),AuraAttributeSet->GetMaxHealth()));
 		//绑定委托函数
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetHealthAttribute()).AddLambda(
 			[this](const FOnAttributeChangeData& Data)
@@ -26,13 +28,31 @@ void AEnemyCharacter::BeginPlay()
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetMaxHealthAttribute()).AddLambda(
 			[this](const FOnAttributeChangeData& Data)
 			{
-				OnMaxHealthChange.Broadcast(Data.NewValue);
+				OnMaxHealthChange.Broadcast(AuraAttributeSet->GetMaxHealth());
 			});
-
 		//初始化血条
 		OnHealthChange.Broadcast(AuraAttributeSet->GetHealth());
 		OnMaxHealthChange.Broadcast(AuraAttributeSet->GetMaxHealth());
 		
+	}*/
+	if (UAuraAttributeSet* AuraAttributeSet = Cast<UAuraAttributeSet>(GetAttributeSet()))
+	{
+		// 绑定委托函数
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetHealthAttribute()).AddLambda(
+			[this](const FOnAttributeChangeData& Data)
+			{
+				OnHealthChange.Broadcast(Data.NewValue);
+			});
+    
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetMaxHealthAttribute()).AddLambda(
+			[this, AuraAttributeSet](const FOnAttributeChangeData& Data) // 显式捕获AuraAttributeSet
+			{
+				OnMaxHealthChange.Broadcast(AuraAttributeSet->GetMaxHealth());
+			});
+    
+		// 初始化血条
+		OnHealthChange.Broadcast(AuraAttributeSet->GetHealth());
+		OnMaxHealthChange.Broadcast(AuraAttributeSet->GetMaxHealth());
 	}
 }
 
@@ -75,6 +95,12 @@ void AEnemyCharacter::InitialAbilityActorInfo()
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
     Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
 	InitializeDefaultAttributes();
+}
+
+void AEnemyCharacter::InitializeDefaultAttributes() const
+{
+	
+	UAuraAbilitySystemLibrary::InitializeDefaultAttributes(this,CharacterClass,Level,AbilitySystemComponent);
 }
 
 int32 AEnemyCharacter::GetPlayerLevel()

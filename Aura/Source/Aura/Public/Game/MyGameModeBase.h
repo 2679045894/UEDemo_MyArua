@@ -6,12 +6,12 @@
 #include "GameFramework/GameModeBase.h"
 #include "MyGameModeBase.generated.h"
 
-/**
- * 
- */
+class UCharacterClassInfo;
 UCLASS()
 class AURA_API AMyGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
+public:
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	UCharacterClassInfo* CharacterClassInfo;
 };

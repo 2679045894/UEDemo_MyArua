@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "Character/MyCharacterBase.h"
 #include "Components/WidgetComponent.h"
 #include "Interaction/EnemyInterface.h"
@@ -27,6 +28,8 @@ public:
 
 	virtual void InitialAbilityActorInfo() override;
 
+	virtual void InitializeDefaultAttributes() const override;
+
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Level")
 	int32 Level=1;
 
@@ -38,4 +41,7 @@ public:
 	FOnAttributeChangedSignature OnMaxHealthChange;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UWidgetComponent> HealthBar;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	ECharacterClass CharacterClass=ECharacterClass::Elementalist;
 };
