@@ -10,12 +10,14 @@ void AEnemyCharacter::BeginPlay()
 	Super::BeginPlay();
 	//敌人初始化，Owner和Avatar都是自己
 	InitialAbilityActorInfo();
+	//GetUserWidgetObject()：获取组件所指向的控件
 	if (UAuraUserWidget* AuraUserWidget=Cast<UAuraUserWidget>(HealthBar->GetUserWidgetObject()))
 	{
 		AuraUserWidget->SetWidgetController(this);
 	}
 	if (UAuraAttributeSet* AuraAttributeSet=Cast<UAuraAttributeSet>(GetAttributeSet()))
 	{
+		//绑定委托函数
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetHealthAttribute()).AddLambda(
 			[this](const FOnAttributeChangeData& Data)
 			{
@@ -27,6 +29,7 @@ void AEnemyCharacter::BeginPlay()
 				OnMaxHealthChange.Broadcast(Data.NewValue);
 			});
 
+		//初始化血条
 		OnHealthChange.Broadcast(AuraAttributeSet->GetHealth());
 		OnMaxHealthChange.Broadcast(AuraAttributeSet->GetMaxHealth());
 		

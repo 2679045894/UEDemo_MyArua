@@ -31,7 +31,7 @@ public:
 	int32 Level=1;
 
 	virtual int32 GetPlayerLevel() override;
-
+	
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangedSignature OnHealthChange;
 	UPROPERTY(BlueprintAssignable)
