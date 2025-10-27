@@ -38,7 +38,8 @@ public:
 	FGameplayTag InputTag_2;
 	FGameplayTag InputTag_3;
 	FGameplayTag InputTag_4;
-	
+
+	FGameplayTag Damage;
 	
 private:
 	//静态单例实例，整个程序生命周期内存在

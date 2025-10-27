@@ -4,6 +4,7 @@
 #include "AbilitySystem/Abilitys/AuraProjectileSpell.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Interaction/CombatInterface.h"
 #include "MyActor/AuraProjectile.h"
@@ -26,11 +27,11 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector & ProjectileTargetLocat
 	{
 		//自动转化调用Base中的GetCombatSocketLocation方法
 		const FVector SocketLocation=CombatInterface->GetCombatSocketLocation();
-		FRotator Rotaion=(ProjectileTargetLocation-SocketLocation).Rotation();
-		Rotaion.Pitch=0.0f;
+		FRotator Rotation=(ProjectileTargetLocation-SocketLocation).Rotation();
+		Rotation.Pitch=0.0f;
 		FTransform SpawnTransform;
 		SpawnTransform.SetLocation(SocketLocation);
-		SpawnTransform.SetRotation(Rotaion.Quaternion());
+		SpawnTransform.SetRotation(Rotation.Quaternion());
 
 		AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(
 			ProjectileClass,//生成对象类
@@ -43,6 +44,9 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector & ProjectileTargetLocat
 		UAbilitySystemComponent* SourceASC=UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
 		FGameplayEffectSpecHandle SpecHandle=SourceASC->MakeOutgoingSpec(DamageEffectClass,GetAbilityLevel(),SourceASC->MakeEffectContext());
 		Projectile->DamageEffectSpecHandle=SpecHandle;
+
+		FAuraGameplayTags AuraGameplayTags=FAuraGameplayTags::Get();
+		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle,AuraGameplayTags.Damage,50.f);
 		
 		Projectile->FinishSpawning(SpawnTransform);
 	}
