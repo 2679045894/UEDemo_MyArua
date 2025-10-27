@@ -43,7 +43,6 @@ void AEnemyCharacter::BeginPlay()
 			{
 				OnHealthChange.Broadcast(Data.NewValue);
 			});
-    
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetMaxHealthAttribute()).AddLambda(
 			[this, AuraAttributeSet](const FOnAttributeChangeData& Data) // 显式捕获AuraAttributeSet
 			{
@@ -99,7 +98,6 @@ void AEnemyCharacter::InitialAbilityActorInfo()
 
 void AEnemyCharacter::InitializeDefaultAttributes() const
 {
-	
 	UAuraAbilitySystemLibrary::InitializeDefaultAttributes(this,CharacterClass,Level,AbilitySystemComponent);
 }
 

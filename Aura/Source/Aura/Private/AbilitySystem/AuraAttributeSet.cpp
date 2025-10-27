@@ -176,11 +176,23 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 	if (Data.EvaluatedData.Attribute==GetHealthAttribute())
 	{
 		SetHealth(FMath::Clamp(GetHealth(),0,GetMaxHealth()));
-		GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Cyan,FString::Printf(TEXT("Health: %f"),GetHealth()));
 	}
 	if (Data.EvaluatedData.Attribute==GetManaAttribute())
 	{
 		SetMana(FMath::Clamp(GetMana(),0,GetMaxMana()));
+	}
+	//GE_Damage被应用的时候调用
+	if (Data.EvaluatedData.Attribute==GetIncomingDamageAttribute())
+	{
+		const float LocalIncomingDamage=GetIncomingDamage();
+		if (LocalIncomingDamage>0)
+		{
+			const float NewHealth=GetHealth()-LocalIncomingDamage;
+			SetHealth(FMath::Clamp(NewHealth,0.f,GetMaxHealth()));
+			//??
+			const bool bFatal=NewHealth<=0.f;
+			
+		}
 	}
 }
 
