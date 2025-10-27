@@ -41,15 +41,27 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector & ProjectileTargetLocat
 			ESpawnActorCollisionHandlingMethod::AlwaysSpawn);//碰撞处理方式
 		check(Projectile);
 
+		//将当前的SpecHandle传递给生成的Projectile
 		UAbilitySystemComponent* SourceASC=UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
 		FGameplayEffectSpecHandle SpecHandle=SourceASC->MakeOutgoingSpec(DamageEffectClass,GetAbilityLevel(),SourceASC->MakeEffectContext());
 		Projectile->DamageEffectSpecHandle=SpecHandle;
-
+		
+		//获取当前等级对应的伤害
+		const float ScaleDamage=Damage.GetValueAtLevel(GetAbilityLevel());
 		FAuraGameplayTags AuraGameplayTags=FAuraGameplayTags::Get();
-		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle,AuraGameplayTags.Damage,50.f);
+		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle,AuraGameplayTags.Damage,ScaleDamage);
 		
 		Projectile->FinishSpawning(SpawnTransform);
 	}
 }
+
+
+
+
+
+
+
+
+
 
 
