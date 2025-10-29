@@ -44,4 +44,24 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	ECharacterClass CharacterClass=ECharacterClass::Elementalist;
+
+	UPROPERTY(BlueprintReadOnly)
+	float BaseWalkSpeed=250.f;
+	UPROPERTY(BlueprintReadOnly)
+	bool bHitReacting=false;
+
+	//委托绑定函数
+	UFUNCTION()
+	void HitReactTagChanged(const FGameplayTag GameplayTag,int32 NewCount);
+	//当前敌人的受击动画蒙太奇
+	UPROPERTY(EditDefaultsOnly,Category="Combat")
+	TObjectPtr<UAnimMontage> HitReactMontage;
+	//重写战斗接口的获取蒙太奇函数
+	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
+
+	float LifeSpan=5.f;
+
+	virtual void Die() override;
+	
+
 };

@@ -41,6 +41,8 @@ public:
 
 	FGameplayTag Damage;
 	
+	FGameplayTag Effect_HitReact;
+	
 private:
 	//静态单例实例，整个程序生命周期内存在
 	//全局唯一标签容器

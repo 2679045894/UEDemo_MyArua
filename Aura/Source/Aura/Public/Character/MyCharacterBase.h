@@ -77,4 +77,23 @@ protected:
 	FName WeaponTioSocketName;
 
 	virtual FVector GetCombatSocketLocation() override;
+
+	virtual void Die() override;
+
+	//物理模拟死亡效果
+	UFUNCTION(NetMulticast,Reliable)
+	virtual void MulticastHandleDeath();
+
+	UPROPERTY(EditAnywhere,Category="Dissolve")
+	TObjectPtr<UMaterialInstance> DissolveMaterialInstance;
+	UPROPERTY(EditAnywhere,Category="Dissolve")
+	TObjectPtr<UMaterialInstance> WeaponDissolveMaterialInstance;
+
+	void Dissolve();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartDissolveTimeline(UMaterialInstanceDynamic* DynamicMaterialInstance);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartWeaponDissolveTimeline(UMaterialInstanceDynamic* DynamicMaterialInstance);
 };

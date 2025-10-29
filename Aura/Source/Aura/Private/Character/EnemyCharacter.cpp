@@ -2,39 +2,27 @@
 
 
 #include "Character/EnemyCharacter.h"
+
+#include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 
 void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	GetCharacterMovement()->MaxWalkSpeed=BaseWalkSpeed;
 	//敌人初始化，Owner和Avatar都是自己
 	InitialAbilityActorInfo();
+
+	UAuraAbilitySystemLibrary::GiveStartupAbilities(this,AbilitySystemComponent);
+	
 	//GetUserWidgetObject()：获取组件所指向的控件
 	if (UAuraUserWidget* AuraUserWidget=Cast<UAuraUserWidget>(HealthBar->GetUserWidgetObject()))
 	{
 		AuraUserWidget->SetWidgetController(this);
 	}
-	/*if (UAuraAttributeSet* AuraAttributeSet=Cast<UAuraAttributeSet>(GetAttributeSet()))
-	{
-		GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Green,FString::Printf(TEXT("1最大生命：%f"),AuraAttributeSet->GetMaxHealth()));
-		//绑定委托函数
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetHealthAttribute()).AddLambda(
-			[this](const FOnAttributeChangeData& Data)
-			{
-				OnHealthChange.Broadcast(Data.NewValue);
-			});
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetMaxHealthAttribute()).AddLambda(
-			[this](const FOnAttributeChangeData& Data)
-			{
-				OnMaxHealthChange.Broadcast(AuraAttributeSet->GetMaxHealth());
-			});
-		//初始化血条
-		OnHealthChange.Broadcast(AuraAttributeSet->GetHealth());
-		OnMaxHealthChange.Broadcast(AuraAttributeSet->GetMaxHealth());
-		
-	}*/
 	if (UAuraAttributeSet* AuraAttributeSet = Cast<UAuraAttributeSet>(GetAttributeSet()))
 	{
 		// 绑定委托函数
@@ -53,6 +41,11 @@ void AEnemyCharacter::BeginPlay()
 		OnHealthChange.Broadcast(AuraAttributeSet->GetHealth());
 		OnMaxHealthChange.Broadcast(AuraAttributeSet->GetMaxHealth());
 	}
+
+	FAuraGameplayTags AuraGameplayTags=FAuraGameplayTags::Get();
+	AbilitySystemComponent->RegisterGameplayTagEvent(AuraGameplayTags.Effect_HitReact,EGameplayTagEventType::NewOrRemoved).AddUObject(
+			this,
+			&AEnemyCharacter::HitReactTagChanged);
 }
 
 AEnemyCharacter::AEnemyCharacter()
@@ -104,4 +97,22 @@ void AEnemyCharacter::InitializeDefaultAttributes() const
 int32 AEnemyCharacter::GetPlayerLevel()
 {
 	return Level;
+}
+
+void AEnemyCharacter::HitReactTagChanged(const FGameplayTag GameplayTag, int32 NewCount)
+{
+	//NewCount是自动更新的，应用Effect的时候+1
+	bHitReacting=NewCount>0;
+	GetCharacterMovement()->MaxWalkSpeed=bHitReacting?0.f:BaseWalkSpeed;
+}
+
+UAnimMontage* AEnemyCharacter::GetHitReactMontage_Implementation()
+{
+	return HitReactMontage;
+}
+
+void AEnemyCharacter::Die()
+{
+	SetLifeSpan(LifeSpan);
+	Super::Die();
 }

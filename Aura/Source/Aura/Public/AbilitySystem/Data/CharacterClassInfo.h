@@ -41,4 +41,8 @@ public:
 	TSubclassOf<UGameplayEffect> VitalAttributeClass;
 	
 	FCharacterClassDefault GetCharacterClassDefaultInfo(ECharacterClass CharacterClass);
+
+	//为所有职业的角色提供一套通用的、共享的游戏能力。
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,Category="Class Default")
+	TArray<TSubclassOf<UGameplayAbility>> CommonAbilitiesClass;
 };

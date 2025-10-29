@@ -10,6 +10,8 @@
 #include "GameplayEffectExtension.h" // 添加这个包含
 #include "GameplayEffectTypes.h"
 #include "GameFramework/Character.h"
+#include "Interaction/CombatInterface.h"
+#include "Interaction/EnemyInterface.h"
 
 UAuraAttributeSet::UAuraAttributeSet()
 {
@@ -189,9 +191,23 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 		{
 			const float NewHealth=GetHealth()-LocalIncomingDamage;
 			SetHealth(FMath::Clamp(NewHealth,0.f,GetMaxHealth()));
-			//??
+			//致命伤害
 			const bool bFatal=NewHealth<=0.f;
-			
+			if (bFatal)
+			{
+				if (ICombatInterface* CombatInterface=Cast<ICombatInterface>(Props.TargetAvatarActor))
+				{
+					CombatInterface->Die();
+				}
+			}
+			else
+			{
+				FGameplayTagContainer TagContainer;
+				TagContainer.AddTag(FAuraGameplayTags::Get().Effect_HitReact);
+				//在目标的AbilitySystemComponent中查找所有拥有该标签的GameplayAbility
+				//自动激活找到的第一个符合条件的Ability
+				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+			}
 		}
 	}
 }

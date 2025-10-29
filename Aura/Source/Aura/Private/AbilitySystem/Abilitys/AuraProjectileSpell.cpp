@@ -47,7 +47,7 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector & ProjectileTargetLocat
 		Projectile->DamageEffectSpecHandle=SpecHandle;
 		
 		//获取当前等级对应的伤害
-		const float ScaleDamage=Damage.GetValueAtLevel(GetAbilityLevel());
+		const float ScaleDamage=Damage.GetValueAtLevel(20);
 		FAuraGameplayTags AuraGameplayTags=FAuraGameplayTags::Get();
 		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle,AuraGameplayTags.Damage,ScaleDamage);
 		
