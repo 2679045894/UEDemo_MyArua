@@ -7,6 +7,7 @@
 #include "AuraGameplayTags.h"
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
+#include "GameFramework/Character.h"
 #include "Input/AuraInputComponent.h"
 #include "Interaction/EnemyInterface.h"
 
@@ -239,6 +240,19 @@ void AMyPlayerController::AutoRun()
 		{
 			bAutoRunning=false;
 		}
+	}
+}
+
+void AMyPlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter)
+{
+	if (TargetCharacter&&DamageTextComponentClass)
+	{
+		UDamageTextComponent* DamageTextComponent=NewObject<UDamageTextComponent>(TargetCharacter,DamageTextComponentClass);
+		//将组件注册到游戏世界中,对于 Widget Component：创建实际的 UMG Widget
+		DamageTextComponent->RegisterComponent();
+		FVector WorldLocation=TargetCharacter->GetActorLocation()+FVector(-250,100,0);
+		DamageTextComponent->SetWorldLocation(WorldLocation);
+		DamageTextComponent->SetDamageText(DamageAmount);
 	}
 }
 

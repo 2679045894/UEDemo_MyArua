@@ -9,9 +9,12 @@
 #include "Net/UnrealNetwork.h"
 #include "GameplayEffectExtension.h" // 添加这个包含
 #include "GameplayEffectTypes.h"
+#include "Character/MyCharacterBase.h"
 #include "GameFramework/Character.h"
 #include "Interaction/CombatInterface.h"
 #include "Interaction/EnemyInterface.h"
+#include "Kismet/GameplayStatics.h"
+#include "Player/MyPlayerController.h"
 
 UAuraAttributeSet::UAuraAttributeSet()
 {
@@ -208,6 +211,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 				//自动激活找到的第一个符合条件的Ability
 				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
 			}
+			ShowFloatingText(Props,LocalIncomingDamage);
 		}
 	}
 }
@@ -288,4 +292,15 @@ void UAuraAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData
             }
         }
     }
+}
+
+void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage) const
+{
+	if (Props.TargetCharacter!=Props.SourceAvatarActor)
+	{
+		if (AMyPlayerController* PC=Cast<AMyPlayerController>(UGameplayStatics::GetPlayerController(Props.SourceCharacter,0)))
+		{
+			PC->ShowDamageNumber(Damage,Props.TargetCharacter);
+		}
+	}
 }

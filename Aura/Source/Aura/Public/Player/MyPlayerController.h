@@ -10,6 +10,7 @@
 #include "Components/SplineComponent.h"
 #include "Input/AuraInputConfig.h"
 #include "Interaction/EnemyInterface.h"
+#include "UI/Widge/DamageTextComponent.h"
 #include "MyPlayerController.generated.h"
 
 /**
@@ -84,4 +85,10 @@ public:
 	void ShiftReleased(){bShiftKeyDown=false;};
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UInputAction> ShiftAction;
+
+	UFUNCTION(Client,Reliable)
+	void ShowDamageNumber(float DamageAmount,ACharacter* TargetCharacter);
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
 };
