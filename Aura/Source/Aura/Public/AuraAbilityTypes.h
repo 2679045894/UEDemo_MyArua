@@ -28,20 +28,19 @@ public:
 	//自己实现   实现 FGameplayEffectContext 对象的网络同步。
 	virtual bool NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess) override;
 
-	//特化 为虚幻的底层类型系统提供元数据。
-	template<>
-	struct TStructOpsTypeTraits<FAuraGameplayContext>:public TStructOpsTypeTraitsBase2<FAuraGameplayContext>
-	{
-		enum
-		{
-			WithNetSerializer=true,
-			WithCopy=true
-		};
-	};
-
 private:
 	UPROPERTY()
 	bool bIsBlockedHit=false;
 	UPROPERTY()
 	bool bIsCriticalHit=false;
+};
+//特化 为虚幻的底层类型系统提供元数据。
+template<>
+struct TStructOpsTypeTraits<FAuraGameplayContext>:public TStructOpsTypeTraitsBase2<FAuraGameplayContext>
+{
+	enum
+	{
+		WithNetSerializer=true,
+		WithCopy=true
+	};
 };
