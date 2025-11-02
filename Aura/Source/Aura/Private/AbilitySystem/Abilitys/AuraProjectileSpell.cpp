@@ -45,6 +45,8 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector & ProjectileTargetLocat
 		UAbilitySystemComponent* SourceASC=UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
 		//空上下文
 		//FGameplayEffectSpecHandle SpecHandle=SourceASC->MakeOutgoingSpec(DamageEffectClass,GetAbilityLevel(),SourceASC->MakeEffectContext());
+
+		//完善上下文内容 填充Context
 		FGameplayEffectContextHandle EffectContextHandle=SourceASC->MakeEffectContext();
 		EffectContextHandle.SetAbility(this);
 		EffectContextHandle.AddSourceObject(Projectile);
@@ -55,6 +57,7 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector & ProjectileTargetLocat
 		FHitResult HitResult;
 		HitResult.Location=ProjectileTargetLocation;
 		EffectContextHandle.AddHitResult(HitResult);
+		
 		FGameplayEffectSpecHandle SpecHandle=SourceASC->MakeOutgoingSpec(DamageEffectClass,GetAbilityLevel(),EffectContextHandle);
 		Projectile->DamageEffectSpecHandle=SpecHandle;
 		
