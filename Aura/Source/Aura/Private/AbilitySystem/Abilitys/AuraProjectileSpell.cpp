@@ -43,7 +43,19 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector & ProjectileTargetLocat
 
 		//将当前的SpecHandle传递给生成的Projectile
 		UAbilitySystemComponent* SourceASC=UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
-		FGameplayEffectSpecHandle SpecHandle=SourceASC->MakeOutgoingSpec(DamageEffectClass,GetAbilityLevel(),SourceASC->MakeEffectContext());
+		//空上下文
+		//FGameplayEffectSpecHandle SpecHandle=SourceASC->MakeOutgoingSpec(DamageEffectClass,GetAbilityLevel(),SourceASC->MakeEffectContext());
+		FGameplayEffectContextHandle EffectContextHandle=SourceASC->MakeEffectContext();
+		EffectContextHandle.SetAbility(this);
+		EffectContextHandle.AddSourceObject(Projectile);
+		//将投射物Actor添加到效果上下文的Actor列表中
+		TArray<TWeakObjectPtr<AActor>> Actors;
+		Actors.Add(Projectile);
+		EffectContextHandle.AddActors(Actors);
+		FHitResult HitResult;
+		HitResult.Location=ProjectileTargetLocation;
+		EffectContextHandle.AddHitResult(HitResult);
+		FGameplayEffectSpecHandle SpecHandle=SourceASC->MakeOutgoingSpec(DamageEffectClass,GetAbilityLevel(),EffectContextHandle);
 		Projectile->DamageEffectSpecHandle=SpecHandle;
 		
 		//获取当前等级对应的伤害

@@ -26,4 +26,7 @@ public:
 
 	UFUNCTION()
 	static void GiveStartupAbilities(const UObject* WorldContext,UAbilitySystemComponent* ASC);
+
+	UFUNCTION()
+	static UCharacterClassInfo* GetCharacterClassInfo(const UObject* WorldContext);
 };

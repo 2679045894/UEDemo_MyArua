@@ -74,10 +74,22 @@ void UAuraAbilitySystemLibrary::GiveStartupAbilities(const UObject* WorldContext
 {
 	AMyGameModeBase* AuraGameMode=Cast<AMyGameModeBase>(UGameplayStatics::GetGameMode(WorldContext));
 	if (!AuraGameMode) return;
-	for (TSubclassOf<UGameplayAbility> AbilityClass:AuraGameMode->CharacterClassInfo->CommonAbilitiesClass)
+	for (TSubclassOf<UGameplayAbility> AbilityClass:GetCharacterClassInfo(WorldContext)->CommonAbilitiesClass)
 	{
 		//定义所有职业共有的基础能力
 		FGameplayAbilitySpec AbilitySpec=FGameplayAbilitySpec(AbilityClass,1);
 		ASC->GiveAbility(AbilitySpec);
 	}
 }
+
+UCharacterClassInfo* UAuraAbilitySystemLibrary::GetCharacterClassInfo(const UObject* WorldContext)
+{
+	if (AMyGameModeBase* AuraGameMode=Cast<AMyGameModeBase>(UGameplayStatics::GetGameMode(WorldContext)))
+	{
+		return AuraGameMode->CharacterClassInfo;
+	}
+	return nullptr;
+}
+
+
+

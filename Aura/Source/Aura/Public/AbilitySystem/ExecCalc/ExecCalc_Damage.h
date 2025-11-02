@@ -11,15 +11,27 @@
 struct AuraDamageStatics
 {
 	//声明一个属性捕获定义变量
+	//FPropertyCaptureDefinition ArmorDef;
 	DECLARE_ATTRIBUTE_CAPTUREDEF(Armor);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(BlockChance);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(ArmorPenetration);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalHitChance);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalHitResistance);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalHitDamage);
 	AuraDamageStatics()
 	{
-		//定义并初始化属性捕获配置
+		//定义并初始化属性捕获配置 相当于：
+		/*ArmorDef = FPropertyCaptureDefinition(
+	     FindFieldChecked<FProperty>(UAuraAttributeSet::StaticClass(), GET_MEMBER_NAME_CHECKED(UAuraAttributeSet, Armor)),
+	     EGameplayEffectAttributeCaptureSource::Target, 
+	     false
+         );*/
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet,Armor,Target,false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet,BlockChance,Target,false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet,ArmorPenetration,Target,false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, CriticalHitChance, Source, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, CriticalHitResistance, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, CriticalHitDamage, Source, false);
 	}
 };
 
