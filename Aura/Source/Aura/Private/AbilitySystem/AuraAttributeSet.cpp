@@ -9,6 +9,7 @@
 #include "Net/UnrealNetwork.h"
 #include "GameplayEffectExtension.h" // 添加这个包含
 #include "GameplayEffectTypes.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "Character/MyCharacterBase.h"
 #include "GameFramework/Character.h"
 #include "Interaction/CombatInterface.h"
@@ -211,7 +212,9 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 				//自动激活找到的第一个符合条件的Ability
 				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
 			}
-			ShowFloatingText(Props,LocalIncomingDamage);
+			const bool bBlockHit=UAuraAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);
+			const bool bCriticalHit=UAuraAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
+			ShowFloatingText(Props,LocalIncomingDamage,bBlockHit,bCriticalHit);
 		}
 	}
 }
@@ -294,7 +297,7 @@ void UAuraAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData
     }
 }
 
-void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage) const
+void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage,bool bBlockedHit,bool bCriticalHit) const
 {
 	if (Props.TargetCharacter!=Props.SourceAvatarActor)
 	{

@@ -177,6 +177,6 @@ public:
 	TMap<FGameplayTag,TStaticFunPtr<FGameplayAttribute()>> TagsToAttributes;
 
 	UFUNCTION()
-	void ShowFloatingText(const FEffectProperties& Props,float Damage) const;
+	void ShowFloatingText(const FEffectProperties& Props,float Damage,bool bBlockHit,bool bCriticalHit) const;
 	
 };

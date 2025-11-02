@@ -29,4 +29,16 @@ public:
 
 	UFUNCTION()
 	static UCharacterClassInfo* GetCharacterClassInfo(const UObject* WorldContext);
+
+	UFUNCTION()
+	static bool IsBlockedHit(const FGameplayEffectContextHandle& ContextHandle);
+
+	UFUNCTION()
+	static bool IsCriticalHit(const FGameplayEffectContextHandle& ContextHandle);
+
+	UFUNCTION()
+	static void SetIsBlockedHit(FGameplayEffectContextHandle& ContextHandle,bool bInIsBlockedHit);
+
+	UFUNCTION()
+	static void SetIsCriticalHit(FGameplayEffectContextHandle& ContextHandle,bool bInIsCriticalHit);
 };

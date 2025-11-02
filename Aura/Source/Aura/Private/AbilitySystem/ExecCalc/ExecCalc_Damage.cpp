@@ -61,18 +61,24 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	
 	FRealCurve* EffectiveArmorCurve=CharacterClassInfo->DamageCalculationCoefficients->FindCurve(FName("EffectiveArmor"),FString());
 	const float EffectiveArmorCoefficient=EffectiveArmorCurve->Eval(TargetCombatInterface->GetPlayerLevel());
-	
+
+	FGameplayEffectContextHandle ContextHandle=Spec.GetContext();
+
 	//格挡
-	if (const bool bBlocked=FMath::RandRange(1,100)<=TargetBlockChance)
+	const bool bBlocked=FMath::RandRange(1,100)<=TargetBlockChance;
+	UAuraAbilitySystemLibrary::SetIsBlockedHit(ContextHandle,bBlocked);
+	if (bBlocked)
 	{
-		Damage/=2.f;
+		Damage/=2;
 	}
 	//护甲和穿透
 	Damage*=(100-EffectiveArmor*EffectiveArmorCoefficient)/100.f;
 	//暴击
 	FRealCurve* TargetCriticalHitResistanceCurve=CharacterClassInfo->DamageCalculationCoefficients->FindCurve(FName("CriticalHitResistance"),FString());
 	const float CriticalHitResistanceCoefficient=TargetCriticalHitResistanceCurve->Eval(TargetCombatInterface->GetPlayerLevel());
-	if (bool bCriticalHit=FMath::RandRange(1,100)<=SourceCriticalHitChance)
+	bool bCriticalHit=FMath::RandRange(1,100)<=SourceCriticalHitChance;
+	UAuraAbilitySystemLibrary::SetIsCriticalHit(ContextHandle,bCriticalHit);
+	if (bCriticalHit)
 	{
 		Damage=Damage*2+SourceCriticalHitDamage-TargetCriticalHitResistance*CriticalHitResistanceCoefficient;
 	}
