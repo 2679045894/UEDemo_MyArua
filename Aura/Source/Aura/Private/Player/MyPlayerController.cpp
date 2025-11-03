@@ -243,7 +243,7 @@ void AMyPlayerController::AutoRun()
 	}
 }
 
-void AMyPlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter)
+void AMyPlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter,bool bBlockedHit,bool bCriticalHit)
 {
 	if (TargetCharacter&&DamageTextComponentClass)
 	{
@@ -252,7 +252,7 @@ void AMyPlayerController::ShowDamageNumber_Implementation(float DamageAmount, AC
 		DamageTextComponent->RegisterComponent();
 		FVector WorldLocation=TargetCharacter->GetActorLocation()+FVector(-250,100,0);
 		DamageTextComponent->SetWorldLocation(WorldLocation);
-		DamageTextComponent->SetDamageText(DamageAmount);
+		DamageTextComponent->SetDamageText(DamageAmount,bBlockedHit,bCriticalHit);
 	}
 }
 

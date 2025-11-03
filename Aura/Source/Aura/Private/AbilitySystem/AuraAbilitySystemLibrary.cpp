@@ -124,10 +124,6 @@ void UAuraAbilitySystemLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& C
 	{
 		AuraContext->SetIsCriticalHit(bInIsCriticalHit);
 	}
-	else
-	{
-		UE_LOG(LogTemp,Warning,TEXT("fa"));
-	}
 }
 
 

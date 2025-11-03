@@ -87,7 +87,7 @@ public:
 	TObjectPtr<UInputAction> ShiftAction;
 
 	UFUNCTION(Client,Reliable)
-	void ShowDamageNumber(float DamageAmount,ACharacter* TargetCharacter);
+	void ShowDamageNumber(float DamageAmount,ACharacter* TargetCharacter,bool bBlockedHit,bool bCriticalHit);
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
