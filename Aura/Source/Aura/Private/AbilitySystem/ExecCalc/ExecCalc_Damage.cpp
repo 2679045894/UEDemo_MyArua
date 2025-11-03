@@ -37,8 +37,12 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	EvaluateParameters.SourceTags=Spec.CapturedSourceTags.GetAggregatedTags();
 	EvaluateParameters.TargetTags=Spec.CapturedTargetTags.GetAggregatedTags();
 	//通过标签获取目标值
-	float Damage=Spec.GetSetByCallerMagnitude(FAuraGameplayTags::Get().Damage);
-
+	/*float Damage=Spec.GetSetByCallerMagnitude(FAuraGameplayTags::Get().Damage);*/
+	float Damage=0.f;
+	for (FGameplayTag DamageTag:FAuraGameplayTags::Get().DamageTypes)
+	{
+		Damage+=Spec.GetSetByCallerMagnitude(DamageTag.GetTagName());
+	}
 	float TargetArmor=0.f;
 	//尝试捕获目标的护甲属性值，结果存储在 Armor 变量中
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().ArmorDef,EvaluateParameters,TargetArmor);
