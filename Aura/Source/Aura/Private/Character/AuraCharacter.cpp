@@ -75,7 +75,11 @@ void AAuraCharacter::InitialAbilityActorInfo()
 			AuraHUD->InitOverlay(AruaController,TempPlayerState,AbilitySystemComponent,AttributeSet);
 		}
 	}
-	InitializeDefaultAttributes();
+	if (HasAuthority())
+	{
+		InitializeDefaultAttributes();
+	}
+
 }
 
 int32 AAuraCharacter::GetPlayerLevel()

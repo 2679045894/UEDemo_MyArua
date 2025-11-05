@@ -245,7 +245,7 @@ void AMyPlayerController::AutoRun()
 
 void AMyPlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter,bool bBlockedHit,bool bCriticalHit)
 {
-	if (TargetCharacter&&DamageTextComponentClass)
+	if (TargetCharacter&&DamageTextComponentClass&&IsLocalController())
 	{
 		UDamageTextComponent* DamageTextComponent=NewObject<UDamageTextComponent>(TargetCharacter,DamageTextComponentClass);
 		//将组件注册到游戏世界中,对于 Widget Component：创建实际的 UMG Widget

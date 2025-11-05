@@ -15,9 +15,10 @@ void AEnemyCharacter::BeginPlay()
 	GetCharacterMovement()->MaxWalkSpeed=BaseWalkSpeed;
 	//敌人初始化，Owner和Avatar都是自己
 	InitialAbilityActorInfo();
-
-	UAuraAbilitySystemLibrary::GiveStartupAbilities(this,AbilitySystemComponent);
-	
+	if (HasAuthority())
+	{
+		UAuraAbilitySystemLibrary::GiveStartupAbilities(this,AbilitySystemComponent);
+	}
 	//GetUserWidgetObject()：获取组件所指向的控件
 	if (UAuraUserWidget* AuraUserWidget=Cast<UAuraUserWidget>(HealthBar->GetUserWidgetObject()))
 	{
