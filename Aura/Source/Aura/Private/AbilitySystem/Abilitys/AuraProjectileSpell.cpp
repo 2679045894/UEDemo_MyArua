@@ -60,16 +60,12 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector & ProjectileTargetLocat
 		FGameplayEffectSpecHandle SpecHandle=SourceASC->MakeOutgoingSpec(DamageEffectClass,GetAbilityLevel(),EffectContextHandle);
 		Projectile->DamageEffectSpecHandle=SpecHandle;
 
-		//获取当前等级对应的伤害
+		//遍历每种伤害类型，为伤害类型标签绑定对应的伤害
 		for (auto Pair:DamageTypes)
 		{
 			const float ScaleDamage=Pair.Value.GetValueAtLevel(GetAbilityLevel());
-			UAbilitySystemBlueprintLibrary::AssignSetByCallerMagnitude(SpecHandle,Pair.Key.GetTagName(),ScaleDamage);
+			UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle,Pair.Key,ScaleDamage);
 		}
-		
-		/*const float ScaleDamage=Damage.GetValueAtLevel(20);
-		FAuraGameplayTags AuraGameplayTags=FAuraGameplayTags::Get();
-		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle,AuraGameplayTags.Damage,ScaleDamage);*/
 		
 		Projectile->FinishSpawning(SpawnTransform);
 	}

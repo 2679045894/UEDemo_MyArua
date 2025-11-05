@@ -123,6 +123,22 @@ public:
 	FGameplayAttributeData IncomingDamage;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet,IncomingDamage);
 
+	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_FireResistance,Category="Resistance Attributes")
+	FGameplayAttributeData FireResistance;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet,FireResistance);
+
+	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_LightningResistance,Category="Resitance Attributes")
+	FGameplayAttributeData LightningResistance;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet,LightningResistance);
+
+	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_ArcaneResistance,Category="Resitance Attributes")
+	FGameplayAttributeData ArcaneResistance;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet,ArcaneResistance);
+
+	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_PhysicalResistance,Category="Resitance Attributes")
+	FGameplayAttributeData PhysicalResistance;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet,PhysicalResistance);
+
 	//接收属性变化之前的值，变量(Health)更新时调用这个函数
 	//重要属性
 	UFUNCTION()
@@ -161,8 +177,16 @@ public:
 	void OnRep_HealthRegeneration(const FGameplayAttributeData& OldHealthRegeneration) const;
 	UFUNCTION()
 	void OnRep_ManaRegeneration(const FGameplayAttributeData& OldManaRegeneration) const;
-	
 
+	UFUNCTION()
+	void OnRep_FireResistance(const FGameplayAttributeData& OldFireResistance) const;
+	UFUNCTION()
+	void OnRep_LightningResistance(const FGameplayAttributeData& OldLightningResistance)const;
+	UFUNCTION()
+	void OnRep_ArcaneResistance(const FGameplayAttributeData& OldArcaneResistance)const;
+	UFUNCTION()
+	void OnRep_PhysicalResistance(const FGameplayAttributeData& OldPhysicalResistance)const;
+	
 	UFUNCTION()
 	void InitAttributeSet();
 

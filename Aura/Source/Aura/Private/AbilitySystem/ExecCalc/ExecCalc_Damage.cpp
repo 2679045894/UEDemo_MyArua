@@ -18,6 +18,11 @@ UExecCalc_Damage::UExecCalc_Damage()
 	RelevantAttributesToCapture.Add(DamageStatics().CriticalHitChanceDef);
 	RelevantAttributesToCapture.Add(DamageStatics().CriticalHitDamageDef);
 	RelevantAttributesToCapture.Add(DamageStatics().CriticalHitResistanceDef);
+
+	RelevantAttributesToCapture.Add(DamageStatics().FireResistanceDef);
+	RelevantAttributesToCapture.Add(DamageStatics().LightningResistanceDef);
+	RelevantAttributesToCapture.Add(DamageStatics().ArcaneResistanceDef);
+	RelevantAttributesToCapture.Add(DamageStatics().PhysicalResistanceDef);
 }
 
 void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
@@ -39,9 +44,20 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	//通过标签获取目标值
 	/*float Damage=Spec.GetSetByCallerMagnitude(FAuraGameplayTags::Get().Damage);*/
 	float Damage=0.f;
-	for (FGameplayTag DamageTag:FAuraGameplayTags::Get().DamageTypes)
+	for (const auto &Pair:FAuraGameplayTags::Get().DamageTypesToResistance)
 	{
-		Damage+=Spec.GetSetByCallerMagnitude(DamageTag.GetTagName());
+		FGameplayTag DamageTypeTag=Pair.Key;
+		FGameplayTag DamageResistanceTag=Pair.Value;
+		checkf(AuraDamageStatics().TagsToCaptureDefs.Contains(DamageResistanceTag),TEXT("TagsToCaptureDefs does not contain Tag"));
+
+		FGameplayEffectAttributeCaptureDefinition CaptureDef=AuraDamageStatics().TagsToCaptureDefs[DamageResistanceTag];
+		//通过标签获取目标值
+		float DamageTypeValue=Spec.GetSetByCallerMagnitude(DamageTypeTag);
+		float Resistance=0.f;
+		//尝试捕获目标的护甲属性值，结果存储在Resistance 变量中
+		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(CaptureDef,EvaluateParameters,Resistance);
+		DamageTypeValue*=(100.f-Resistance)/100.f;
+		Damage+=DamageTypeValue;
 	}
 	float TargetArmor=0.f;
 	//尝试捕获目标的护甲属性值，结果存储在 Armor 变量中
