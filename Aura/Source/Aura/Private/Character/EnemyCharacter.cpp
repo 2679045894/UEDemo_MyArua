@@ -46,7 +46,7 @@ void AEnemyCharacter::BeginPlay()
 	}
 
 	FAuraGameplayTags AuraGameplayTags=FAuraGameplayTags::Get();
-	AbilitySystemComponent->RegisterGameplayTagEvent(AuraGameplayTags.Effect_HitReact,EGameplayTagEventType::NewOrRemoved).AddUObject(
+	AbilitySystemComponent->RegisterGameplayTagEvent(FAuraGameplayTags::Get().Effect_HitReact,EGameplayTagEventType::NewOrRemoved).AddUObject(
 			this,
 			&AEnemyCharacter::HitReactTagChanged);
 }
@@ -105,8 +105,10 @@ int32 AEnemyCharacter::GetPlayerLevel()
 void AEnemyCharacter::HitReactTagChanged(const FGameplayTag GameplayTag, int32 NewCount)
 {
 	//NewCount是自动更新的，应用Effect的时候+1
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,TEXT("123"));
 	bHitReacting=NewCount>0;
 	GetCharacterMovement()->MaxWalkSpeed=bHitReacting?0.f:BaseWalkSpeed;
+	AuraAIController->GetBlackboardComponent()->SetValueAsBool("HitReacting",bHitReacting);
 }
 
 UAnimMontage* AEnemyCharacter::GetHitReactMontage_Implementation()
@@ -127,5 +129,8 @@ void AEnemyCharacter::PossessedBy(AController* NewController)
 	//确保只在服务器中初始化AI行为
 	AuraAIController=Cast<AAuraAIController>(NewController);
 	AuraAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
+	AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("HitReacting"),false);
+	AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("RangeAttack"),CharacterClass!=ECharacterClass::Warrior);
 	AuraAIController->RunBehaviorTree(BehaviorTree);
+	
 }

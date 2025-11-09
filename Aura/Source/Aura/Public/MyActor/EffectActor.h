@@ -66,7 +66,10 @@ public:
 	void OnEndOverlap(AActor* TargetActor);
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Applied Effects")
-	bool bDestroyOnEffectRemoval=false;
+	bool bDestroyOnEffectApplication=false;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Applied Effects")
+	bool bApplyEffectsToEnemies=false;
 
 	//跟踪和管理应用的无限持续时间效果。
 	UPROPERTY()
