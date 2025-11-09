@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystem/Data/CharacterClassInfo.h"
+#include "AI/AuraAIController.h"
+#include "BehaviorTree/BehaviorTree.h"
 #include "Character/MyCharacterBase.h"
 #include "Components/WidgetComponent.h"
 #include "Interaction/EnemyInterface.h"
@@ -62,6 +64,14 @@ public:
 	float LifeSpan=5.f;
 
 	virtual void Die() override;
-	
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category="AI")
+	TObjectPtr<UBehaviorTree> BehaviorTree;
+	UPROPERTY()
+	TObjectPtr<AAuraAIController> AuraAIController;
+
+	UFUNCTION()
+	virtual void PossessedBy(AController* NewController) override;
 
 };
