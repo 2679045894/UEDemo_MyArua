@@ -44,7 +44,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UWidgetComponent> HealthBar;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, Category="CharacterInfo")
 	ECharacterClass CharacterClass=ECharacterClass::Elementalist;
 
 	UPROPERTY(BlueprintReadOnly)
