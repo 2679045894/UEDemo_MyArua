@@ -74,4 +74,11 @@ public:
 	UFUNCTION()
 	virtual void PossessedBy(AController* NewController) override;
 
+	UPROPERTY()
+	TObjectPtr<AActor> TargetActor;
+
+	virtual void SetCombatTarget_Implementation(AActor* InCombatTarget) override;
+
+	virtual AActor* GetCombatTarget_Implementation() override;
+
 };

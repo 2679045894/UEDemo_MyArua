@@ -134,3 +134,13 @@ void AEnemyCharacter::PossessedBy(AController* NewController)
 	AuraAIController->RunBehaviorTree(BehaviorTree);
 	
 }
+
+void AEnemyCharacter::SetCombatTarget_Implementation(AActor* InCombatTarget)
+{
+	TargetActor=InCombatTarget;
+}
+
+AActor* AEnemyCharacter::GetCombatTarget_Implementation()
+{
+	return TargetActor;
+}
