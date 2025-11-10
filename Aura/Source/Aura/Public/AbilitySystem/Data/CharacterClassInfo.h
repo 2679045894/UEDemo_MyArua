@@ -22,6 +22,10 @@ struct FCharacterClassDefault
 	// 职业特定的 - 在结构体中
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,Category="Class Default")
 	TSubclassOf<UGameplayEffect> PrimaryAttributeClass;// 每个职业不同
+
+	//敌人一开始就有的能力
+	UPROPERTY(EditDefaultsOnly,Category="Class Default")
+	TArray<TSubclassOf<UGameplayAbility>> StartupAbilitiesClass;
 };
 
 UCLASS()
@@ -48,4 +52,6 @@ public:
 
 	UPROPERTY(EditDefaultsOnly,Category="Class Default")
 	TObjectPtr<UCurveTable> DamageCalculationCoefficients;
+
+
 };

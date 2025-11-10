@@ -53,6 +53,8 @@ public:
 	TMap<FGameplayTag,FGameplayTag> DamageTypesToResistance;
 	
 	FGameplayTag Effect_HitReact;
+
+	FGameplayTag Abilities_Attack;
 	
 private:
 	//静态单例实例，整个程序生命周期内存在

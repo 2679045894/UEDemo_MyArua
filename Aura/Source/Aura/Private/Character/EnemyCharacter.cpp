@@ -19,7 +19,7 @@ void AEnemyCharacter::BeginPlay()
 	InitialAbilityActorInfo();
 	if (HasAuthority())
 	{
-		UAuraAbilitySystemLibrary::GiveStartupAbilities(this,AbilitySystemComponent);
+		UAuraAbilitySystemLibrary::GiveStartupAbilities(this,AbilitySystemComponent,CharacterClass);
 	}
 	//GetUserWidgetObject()：获取组件所指向的控件
 	if (UAuraUserWidget* AuraUserWidget=Cast<UAuraUserWidget>(HealthBar->GetUserWidgetObject()))
