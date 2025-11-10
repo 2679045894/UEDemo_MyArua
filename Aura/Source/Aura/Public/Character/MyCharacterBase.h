@@ -76,7 +76,7 @@ protected:
 	UPROPERTY(EditAnywhere,Category="Combat")
 	FName WeaponTioSocketName;
 
-	virtual FVector GetCombatSocketLocation() override;
+	virtual FVector GetCombatSocketLocation_Implementation();
 
 	virtual void Die() override;
 
