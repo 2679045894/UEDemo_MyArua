@@ -137,6 +137,38 @@ void UAuraAbilitySystemLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& C
 	}
 }
 
+void UAuraAbilitySystemLibrary::GetLivePlayerWithinRadius(const UObject* WorldContextObject,
+	TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, float Radius,
+	const FVector& SphereOrigin)
+{
+	//创建一个碰撞查询配置
+	FCollisionQueryParams SphereParams;
+	//添加忽略对象
+	SphereParams.AddIgnoredActors(ActorsToIgnore);
+	TArray<FOverlapResult> OverlapResults;
+	//LogAndReturnNull：当无法获取有效的 World 时，不会让游戏崩溃，而是优雅地返回 nullptr。
+	if (UWorld *World=GEngine->GetWorldFromContextObject(WorldContextObject,EGetWorldErrorMode::LogAndReturnNull))
+	{
+		//执行球形范围检测
+		World->OverlapMultiByObjectType(OverlapResults,//输出：存储检测结果
+			SphereOrigin,
+			FQuat::Identity,// 输入：旋转（无旋转）
+			FCollisionObjectQueryParams::InitType::AllDynamicObjects,// 输入：检测对象类型
+			FCollisionShape::MakeSphere(Radius),// 输入：碰撞形状
+			SphereParams);//输入：额外参数
+	}
+	for (FOverlapResult& OverlapResult:OverlapResults)
+	{
+		//将检测到的未死亡的敌人或玩家添加到数组中
+		const bool CombatInterface=OverlapResult.GetActor()->Implements<UCombatInterface>();
+		if (CombatInterface&&!ICombatInterface::Execute_IsDead(OverlapResult.GetActor()))
+		{
+			//AddUnique：如果当前数组中不存在这个对象，才进行add
+			OutOverlappingActors.AddUnique(OverlapResult.GetActor());
+		}
+	}
+}
+
 
 
 

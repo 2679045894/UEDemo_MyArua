@@ -324,9 +324,17 @@ void UAuraAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData
 
 void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage,bool bBlockedHit,bool bCriticalHit) const
 {
+	// 1. 首先检查目标不是自己（避免自伤显示文本）
 	if (Props.TargetCharacter!=Props.SourceAvatarActor)
 	{
+		// 2. 优先尝试从攻击者控制器显示
 		if (AMyPlayerController* PC=Cast<AMyPlayerController>(Props.SourceCharacter->Controller))
+		{
+			PC->ShowDamageNumber(Damage,Props.TargetCharacter,bBlockedHit,bCriticalHit);
+			return;
+		}
+		//3. 如果攻击者不是玩家，尝试从目标控制器显示？？？？？(解决伤害文字显示问题)
+		if (AMyPlayerController* PC=Cast<AMyPlayerController>(Props.TargetCharacter->Controller))
 		{
 			PC->ShowDamageNumber(Damage,Props.TargetCharacter,bBlockedHit,bCriticalHit);
 		}

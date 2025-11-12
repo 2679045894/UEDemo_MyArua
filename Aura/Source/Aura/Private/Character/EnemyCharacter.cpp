@@ -108,7 +108,10 @@ void AEnemyCharacter::HitReactTagChanged(const FGameplayTag GameplayTag, int32 N
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,TEXT("123"));
 	bHitReacting=NewCount>0;
 	GetCharacterMovement()->MaxWalkSpeed=bHitReacting?0.f:BaseWalkSpeed;
-	AuraAIController->GetBlackboardComponent()->SetValueAsBool("HitReacting",bHitReacting);
+	if (AuraAIController&&AuraAIController->GetBlackboardComponent())
+	{
+		AuraAIController->GetBlackboardComponent()->SetValueAsBool("HitReacting",bHitReacting);
+	}
 }
 
 UAnimMontage* AEnemyCharacter::GetHitReactMontage_Implementation()
