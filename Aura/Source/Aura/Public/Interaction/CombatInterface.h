@@ -7,7 +7,7 @@
 #include "CombatInterface.generated.h"
 
 class UAnimMontage;
-UINTERFACE(MinimalAPI,BlueprintType)
+UINTERFACE(MinimalAPI, Blueprintable, BlueprintType)
 class UCombatInterface : public UInterface
 {
 	GENERATED_BODY()
@@ -32,4 +32,10 @@ public:
 
 	UFUNCTION()
 	virtual void Die()=0;
+
+	UFUNCTION(BlueprintNativeEvent,BlueprintCallable)
+	bool IsDead();
+
+	UFUNCTION(BlueprintNativeEvent,BlueprintCallable)
+	AActor* GetAvatar();
 };

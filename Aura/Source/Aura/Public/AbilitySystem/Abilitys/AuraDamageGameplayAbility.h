@@ -19,4 +19,7 @@ public:
 
 	UPROPERTY(EditAnywhere, Category="Projectile")
 	TMap<FGameplayTag,FScalableFloat> DamageTypes;
+
+	UFUNCTION(BlueprintCallable)
+	void CauseDamage(AActor* TargetActor);
 };

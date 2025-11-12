@@ -19,13 +19,13 @@ AMyCharacterBase::AMyCharacterBase()
 void AMyCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
+	bIsDead=false;
 }
 
 // Called every frame
 void AMyCharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
@@ -50,8 +50,6 @@ void AMyCharacterBase::InitializeDefaultAttributes() const
 	ApplyEffectToSelf(DefaultSecondaryAttributes,1.f);
 	ApplyEffectToSelf(DefaultVitalAttributes,1.f);
 }
-
-
 
 void AMyCharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const
 {
@@ -93,6 +91,7 @@ void AMyCharacterBase::Die()
 	// 在网络上多播死亡处理函数，让所有客户端都执行相同的死亡效果
 	MulticastHandleDeath();
 	Dissolve();
+	bIsDead=true;
 }
 
 void AMyCharacterBase::Dissolve()
@@ -116,6 +115,16 @@ void AMyCharacterBase::Dissolve()
 	}
 }
 
+bool AMyCharacterBase::IsDead_Implementation()
+{
+	return bIsDead;
+}
+
+AActor* AMyCharacterBase::GetAvatar_Implementation()
+{
+	return this;
+}
+
 //死亡物理化处理方式
 void AMyCharacterBase::MulticastHandleDeath_Implementation()
 {
@@ -134,4 +143,6 @@ void AMyCharacterBase::MulticastHandleDeath_Implementation()
 	// 禁用角色胶囊体的碰撞，避免死亡后胶囊体还阻挡其他角色
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
+
+
 

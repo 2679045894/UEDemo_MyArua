@@ -96,4 +96,10 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void StartWeaponDissolveTimeline(UMaterialInstanceDynamic* DynamicMaterialInstance);
+
+	UPROPERTY()
+	bool bIsDead=false;
+	virtual bool IsDead_Implementation() override;
+
+	virtual AActor* GetAvatar_Implementation() override;
 };
