@@ -3,6 +3,7 @@
 
 #include "Character/MyCharacterBase.h"
 
+#include "AuraGameplayTags.h"
 #include "Components/CapsuleComponent.h"
 
 // Sets default values
@@ -78,11 +79,28 @@ void AMyCharacterBase::AddCharacterAbilities() const
 	AuraASC->AddCharacterAbilities(StartupAbilities);
 }
 
-FVector AMyCharacterBase::GetCombatSocketLocation_Implementation()
+FVector AMyCharacterBase::GetCombatSocketLocation_Implementation(const FGameplayTag &MontageTag)
 {
-	check(Weapon)
-	return Weapon->GetSocketLocation(WeaponTioSocketName);
+	if (MontageTag==FAuraGameplayTags::Get().Montage_Attack_Weapon)
+	{
+		return Weapon->GetSocketLocation(WeaponTioSocketName);
+	}
+	if (MontageTag==FAuraGameplayTags::Get().Montage_Attack_LeftHand)
+	{
+		return GetMesh()->GetSocketLocation(LeftHandSocketName);
+	}
+	if (MontageTag==FAuraGameplayTags::Get().Montage_Attack_RightHand)
+	{
+		return GetMesh()->GetSocketLocation(RightHandSocketName);
+	}
+	return FVector();
 }
+
+TArray<FTaggedMontage> AMyCharacterBase::GetAttackMontages_Implementation()
+{
+	return AttackMontages;
+}
+
 
 void AMyCharacterBase::Die()
 {

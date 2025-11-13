@@ -76,7 +76,17 @@ protected:
 	UPROPERTY(EditAnywhere,Category="Combat")
 	FName WeaponTioSocketName;
 
-	virtual FVector GetCombatSocketLocation_Implementation();
+	FVector GetCombatSocketLocation_Implementation(const FGameplayTag &MontageTag);
+
+	UPROPERTY(EditAnywhere,Category="Combat")
+	TArray<FTaggedMontage> AttackMontages;
+
+	virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() override;
+
+	UPROPERTY(EditDefaultsOnly,Category="Combat")
+	FName LeftHandSocketName;
+	UPROPERTY(EditDefaultsOnly,Category="Combat")
+	FName RightHandSocketName;
 
 	virtual void Die() override;
 

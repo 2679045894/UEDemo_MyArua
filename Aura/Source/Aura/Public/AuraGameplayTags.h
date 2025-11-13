@@ -55,6 +55,10 @@ public:
 	FGameplayTag Effect_HitReact;
 
 	FGameplayTag Abilities_Attack;
+
+	FGameplayTag Montage_Attack_Weapon;
+	FGameplayTag Montage_Attack_LeftHand;
+	FGameplayTag Montage_Attack_RightHand;
 	
 private:
 	//静态单例实例，整个程序生命周期内存在
