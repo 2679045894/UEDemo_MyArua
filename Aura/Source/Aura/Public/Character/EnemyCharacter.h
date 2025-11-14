@@ -47,7 +47,7 @@ public:
 	UPROPERTY(EditAnywhere, Category="CharacterInfo")
 	ECharacterClass CharacterClass=ECharacterClass::Elementalist;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly, Category="CharacterInfo")
 	float BaseWalkSpeed=250.f;
 	UPROPERTY(BlueprintReadOnly)
 	bool bHitReacting=false;

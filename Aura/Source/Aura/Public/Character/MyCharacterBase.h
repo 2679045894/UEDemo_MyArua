@@ -112,4 +112,5 @@ protected:
 	virtual bool IsDead_Implementation() override;
 
 	virtual AActor* GetAvatar_Implementation() override;
+
 };

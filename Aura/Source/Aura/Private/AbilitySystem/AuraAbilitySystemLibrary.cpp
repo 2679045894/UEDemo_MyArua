@@ -167,6 +167,21 @@ void UAuraAbilitySystemLibrary::GetLivePlayerWithinRadius(const UObject* WorldCo
 			OutOverlappingActors.AddUnique(OverlapResult.GetActor());
 		}
 	}
+
+	
+}
+
+bool UAuraAbilitySystemLibrary::IsNotFriend(AActor* FirstActor, AActor* SecondActor)
+{
+	if (FirstActor->ActorHasTag(FName("Player")))
+	{
+		return !SecondActor->ActorHasTag(FName("Player"));
+	}
+	if (FirstActor->ActorHasTag(FName("Enemy")))
+	{
+		return !SecondActor->ActorHasTag(FName("Enemy"));
+	}
+	return false;
 }
 
 
