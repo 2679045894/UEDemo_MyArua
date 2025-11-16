@@ -29,7 +29,6 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector & ProjectileTargetLocat
 		//const FVector SocketLocation=CombatInterface->GetCombatSocketLocation();
 		const FVector SocketLocation = ICombatInterface::Execute_GetCombatSocketLocation(GetAvatarActorFromActorInfo(),FAuraGameplayTags::Get().Montage_Attack_Weapon);
 		FRotator Rotation=(ProjectileTargetLocation-SocketLocation).Rotation();
-		Rotation.Pitch=0.0f;
 		FTransform SpawnTransform;
 		SpawnTransform.SetLocation(SocketLocation);
 		SpawnTransform.SetRotation(Rotation.Quaternion());
@@ -38,7 +37,7 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector & ProjectileTargetLocat
 			ProjectileClass,//生成对象类
 			SpawnTransform,//生成位置
 			GetOwningActorFromActorInfo(),  // 拥有者
-			Cast<APawn>(GetOwningActorFromActorInfo()),  // 引发者
+			Cast<APawn>(GetAvatarActorFromActorInfo()),  // 引发者
 			ESpawnActorCollisionHandlingMethod::AlwaysSpawn);//碰撞处理方式
 		check(Projectile);
 
