@@ -89,8 +89,19 @@ void AAuraProjectile::Destroyed()
 void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                       UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (GetInstigator()==nullptr)
+	{
+		GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Black,"ins no");
+		return;
+	}
+	if (!OtherActor || !OtherActor->IsValidLowLevel())
+	{
+		GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Black,"oth no");
+		return;
+	}
 	if (GetInstigator()==OtherActor)return;
 	if (!UAuraAbilitySystemLibrary::IsNotFriend(GetInstigator(),OtherActor))return;
+
 	//命中时播放特效和声音
 	UGameplayStatics::PlaySoundAtLocation(this,ImpactSound,GetActorLocation());
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this,ImpactEffect,GetActorLocation());
