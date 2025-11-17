@@ -81,15 +81,15 @@ void AMyCharacterBase::AddCharacterAbilities() const
 
 FVector AMyCharacterBase::GetCombatSocketLocation_Implementation(const FGameplayTag &MontageTag)
 {
-	if (MontageTag==FAuraGameplayTags::Get().Montage_Attack_Weapon)
+	if (MontageTag.MatchesTagExact(FAuraGameplayTags::Get().CombatSocket_Weapon))
 	{
 		return Weapon->GetSocketLocation(WeaponTioSocketName);
 	}
-	if (MontageTag==FAuraGameplayTags::Get().Montage_Attack_LeftHand)
+	if (MontageTag.MatchesTagExact(FAuraGameplayTags::Get().CombatSocket_LeftHand))
 	{
 		return GetMesh()->GetSocketLocation(LeftHandSocketName);
 	}
-	if (MontageTag==FAuraGameplayTags::Get().Montage_Attack_RightHand)
+	if (MontageTag.MatchesTagExact(FAuraGameplayTags::Get().CombatSocket_RightHand))
 	{
 		return GetMesh()->GetSocketLocation(RightHandSocketName);
 	}

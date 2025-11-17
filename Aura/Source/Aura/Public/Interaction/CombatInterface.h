@@ -21,9 +21,14 @@ struct FTaggedMontage
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FGameplayTag MontageTag;
 
+	//部位对应的标签
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FGameplayTag SocketTag;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	USoundBase* ImpactSound;
-
+	
+	//技能发动位置
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FName CombatTipSocketName;
 };
