@@ -117,5 +117,7 @@ protected:
 	UNiagaraSystem* BloodEffect;
 
 	virtual UNiagaraSystem* GetBloodEffect_Implementation() override;
+
+	virtual FTaggedMontage GetTaggedMontageByTag_Implementation(const FGameplayTag& Tag);
 	
 };

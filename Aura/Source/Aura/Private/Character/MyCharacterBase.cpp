@@ -148,6 +148,18 @@ UNiagaraSystem* AMyCharacterBase::GetBloodEffect_Implementation()
 	return BloodEffect;
 }
 
+FTaggedMontage AMyCharacterBase::GetTaggedMontageByTag_Implementation(const FGameplayTag& Tag)
+{
+	for (FTaggedMontage TaggedMontage:AttackMontages)
+	{
+		if (TaggedMontage.MontageTag.MatchesTagExact(Tag))
+		{
+			return TaggedMontage;
+		}
+	}
+	return FTaggedMontage();
+}
+
 //死亡物理化处理方式
 void AMyCharacterBase::MulticastHandleDeath_Implementation()
 {
