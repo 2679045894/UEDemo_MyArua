@@ -143,6 +143,11 @@ AActor* AMyCharacterBase::GetAvatar_Implementation()
 	return this;
 }
 
+UNiagaraSystem* AMyCharacterBase::GetBloodEffect_Implementation()
+{
+	return BloodEffect;
+}
+
 //死亡物理化处理方式
 void AMyCharacterBase::MulticastHandleDeath_Implementation()
 {

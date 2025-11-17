@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
+#include "NiagaraSystem.h"
 #include "UObject/Interface.h"
 #include "CombatInterface.generated.h"
 
@@ -19,6 +20,12 @@ struct FTaggedMontage
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FGameplayTag MontageTag;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	USoundBase* ImpactSound;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FName CombatTipSocketName;
 };
 UINTERFACE(MinimalAPI, Blueprintable, BlueprintType)
 class UCombatInterface : public UInterface
@@ -54,6 +61,8 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent,BlueprintCallable)
 	TArray<FTaggedMontage> GetAttackMontages();
-
 	
+
+	UFUNCTION(BlueprintNativeEvent,BlueprintCallable)
+	UNiagaraSystem* GetBloodEffect();
 };

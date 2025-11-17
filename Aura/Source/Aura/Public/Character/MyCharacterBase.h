@@ -113,4 +113,9 @@ protected:
 
 	virtual AActor* GetAvatar_Implementation() override;
 
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Combat")
+	UNiagaraSystem* BloodEffect;
+
+	virtual UNiagaraSystem* GetBloodEffect_Implementation() override;
+	
 };
