@@ -164,6 +164,16 @@ FTaggedMontage AMyCharacterBase::GetTaggedMontageByTag_Implementation(const FGam
 	return FTaggedMontage();
 }
 
+int32 AMyCharacterBase::GetMinionCount_Implementation()
+{
+	return MinionsCount;
+}
+
+void AMyCharacterBase::IncrementMinionCount_Implementation(const int32 Amount)
+{
+	MinionsCount+=Amount;
+}
+
 //死亡物理化处理方式
 void AMyCharacterBase::MulticastHandleDeath_Implementation()
 {

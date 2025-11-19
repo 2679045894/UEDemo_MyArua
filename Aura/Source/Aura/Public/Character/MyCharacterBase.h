@@ -121,5 +121,12 @@ protected:
 	virtual UNiagaraSystem* GetBloodEffect_Implementation() override;
 
 	virtual FTaggedMontage GetTaggedMontageByTag_Implementation(const FGameplayTag& Tag);
+
+	UPROPERTY(BlueprintReadOnly, Category="Combat")
+	int32 MinionsCount = 0; //仆从数量
+
+	virtual int32 GetMinionCount_Implementation() override;
+
+	virtual void IncrementMinionCount_Implementation(const int32 Amount) override;
 	
 };
