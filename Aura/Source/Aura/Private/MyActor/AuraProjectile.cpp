@@ -81,7 +81,7 @@ void AAuraProjectile::Destroyed()
 		{
 			UE_LOG(LogTemp, Error, TEXT("找不到"));
 		}*/
-		
+		bHit=true;
 	}
 	Super::Destroyed();
 }
