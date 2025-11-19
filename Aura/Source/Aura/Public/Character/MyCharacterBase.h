@@ -87,6 +87,8 @@ protected:
 	FName LeftHandSocketName;
 	UPROPERTY(EditDefaultsOnly,Category="Combat")
 	FName RightHandSocketName;
+	UPROPERTY(EditDefaultsOnly,Category="Combat")
+	FName TailSocketName;
 
 	virtual void Die() override;
 
