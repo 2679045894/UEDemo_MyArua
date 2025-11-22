@@ -105,7 +105,6 @@ int32 AEnemyCharacter::GetPlayerLevel()
 void AEnemyCharacter::HitReactTagChanged(const FGameplayTag GameplayTag, int32 NewCount)
 {
 	//NewCount是自动更新的，应用Effect的时候+1
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,TEXT("123"));
 	bHitReacting=NewCount>0;
 	GetCharacterMovement()->MaxWalkSpeed=bHitReacting?0.f:BaseWalkSpeed;
 	if (AuraAIController&&AuraAIController->GetBlackboardComponent())

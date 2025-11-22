@@ -91,12 +91,10 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 {
 	if (GetInstigator()==nullptr)
 	{
-		GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Black,"ins no");
 		return;
 	}
 	if (!OtherActor || !OtherActor->IsValidLowLevel())
 	{
-		GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Black,"oth no");
 		return;
 	}
 	if (GetInstigator()==OtherActor)return;
