@@ -68,6 +68,8 @@ public:
 	FGameplayTag Montage_Attack_4;
 
 	FGameplayTag Abilities_Fire_FireBolt;
+
+	FGameplayTag Cooldown_Fire_FireBolt;
 	
 private:
 	//静态单例实例，整个程序生命周期内存在
