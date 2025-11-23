@@ -11,7 +11,8 @@
 
 AAuraCharacter::AAuraCharacter()
 {
-	//UAruaAttributeSet* 
+	//UAruaAttributeSet*
+	CharacterClass=ECharacterClass::Elementalist;
 }
 
 void AAuraCharacter::BeginPlay()

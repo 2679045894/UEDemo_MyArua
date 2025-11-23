@@ -36,6 +36,8 @@ public:
 	FGameplayTag Attributes_Resistance_Arcane;
 	FGameplayTag Attributes_Resistance_Physical;
 
+	FGameplayTag Attributes_Meta_IncomingXP;
+
 	FGameplayTag InputTag_LMB;
 	FGameplayTag InputTag_RMB;
 	FGameplayTag InputTag_1;
@@ -70,6 +72,7 @@ public:
 	FGameplayTag Abilities_Fire_FireBolt;
 
 	FGameplayTag Cooldown_Fire_FireBolt;
+
 	
 private:
 	//静态单例实例，整个程序生命周期内存在

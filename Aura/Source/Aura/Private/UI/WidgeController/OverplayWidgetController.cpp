@@ -5,6 +5,7 @@
 
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAttributeSet.h"
+#include "Player/MyPlayerState.h"
 
 
 void UOverplayWidgetController::BroadcastInitialValues()
@@ -76,6 +77,8 @@ void UOverplayWidgetController::BindCallbacksToDependencies()
 			}
 		}
 	);
+	AMyPlayerState* AuraPlayerState=Cast<AMyPlayerState>(PlayerState);
+	AuraPlayerState->OnXPChangedDelegate.AddUObject(this,&UOverplayWidgetController::OnXPChanged);
 }
 
 void UOverplayWidgetController::OnInitializeStartupAbilities(
@@ -91,6 +94,23 @@ void UOverplayWidgetController::OnInitializeStartupAbilities(
 		AbilityInfoDelegate.Broadcast(Info);
 	});
 	AuraAbilitySystemComponent->ForEachAbility(BroadcastDelegate);
+}
+
+void UOverplayWidgetController::OnXPChanged(int32 NewXP)const
+{
+	const AMyPlayerState* AuraPlayerState=Cast<AMyPlayerState>(PlayerState);
+	ULevelUpInfo* LevelUpInfo=AuraPlayerState->LevelUpInfo;
+	check(LevelUpInfo);
+	int32 Level=LevelUpInfo->FindLevelForXP(NewXP);
+	int32 MaxLevel=LevelUpInfo->LevelUpInformation.Num();
+
+	if (Level<=MaxLevel&&Level>0)
+	{
+		const int32 LevelUpRequirement=LevelUpInfo->LevelUpInformation[Level].LevelUpRequirement;
+		const int32 PreviousLevelUpRequirement=LevelUpInfo->LevelUpInformation[Level-1].LevelUpRequirement;
+		const float XPPercent=static_cast<float>(NewXP-PreviousLevelUpRequirement)/(LevelUpRequirement-PreviousLevelUpRequirement);
+		OnXPPercentChangedDelegate.Broadcast(XPPercent);
+	}
 }
 
 

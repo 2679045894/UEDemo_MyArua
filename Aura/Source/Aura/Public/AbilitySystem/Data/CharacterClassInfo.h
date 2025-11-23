@@ -23,6 +23,9 @@ struct FCharacterClassDefault
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,Category="Class Default")
 	TSubclassOf<UGameplayEffect> PrimaryAttributeClass;// 每个职业不同
 
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Class Default")
+	FScalableFloat XPReward=FScalableFloat();
+
 	//敌人一开始就有的能力
 	UPROPERTY(EditDefaultsOnly,Category="Class Default")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilitiesClass;

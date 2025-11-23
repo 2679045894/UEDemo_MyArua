@@ -139,6 +139,10 @@ public:
 	FGameplayAttributeData PhysicalResistance;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet,PhysicalResistance);
 
+	UPROPERTY(BlueprintReadOnly,Category="Meta Attributes")
+	FGameplayAttributeData IncomingXP;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet,IncomingXP);
+
 	//接收属性变化之前的值，变量(Health)更新时调用这个函数
 	//重要属性
 	UFUNCTION()

@@ -174,6 +174,11 @@ void AMyCharacterBase::IncrementMinionCount_Implementation(const int32 Amount)
 	MinionsCount+=Amount;
 }
 
+ECharacterClass AMyCharacterBase::GetCharacterClass_Implementation()
+{
+	return CharacterClass;
+}
+
 //死亡物理化处理方式
 void AMyCharacterBase::MulticastHandleDeath_Implementation()
 {

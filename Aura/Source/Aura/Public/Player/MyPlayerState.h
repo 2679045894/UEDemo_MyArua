@@ -6,8 +6,11 @@
 #include "AbilitySystemInterface.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "AbilitySystem/Data/LevelUpInfo.h"
 #include "GameFramework/PlayerState.h"
 #include "MyPlayerState.generated.h"
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerStateChanged,int32);
 
 /**
  * 
@@ -34,12 +37,30 @@ public:
 
 	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_Level,Category="Level")
 	int32 Level=1;
+	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_XP,Category="Level")
+	int32 XP=1;
 
 	void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UFUNCTION()
 	void OnRep_Level(int32 OldLevel) const;
+	UFUNCTION()
+	void OnRep_XP(int32 OldXP)const;
 	
-	//forceinling 关键优化：强制编译器在调用点直接展开函数体代码，避免函数调用开销
+	//ForceInline 关键优化：强制编译器在调用点直接展开函数体代码，避免函数调用开销
 	FORCEINLINE int32 GetPlayerLevel() const{return Level;}
+	void AddToLevel(int32 InLevel);//增加等级
+	void SetLevel(int32 InLevel);//设置当前等级
+	
+	FORCEINLINE int32 GetXP()const{return XP;}
+	void AddToXP(int32 InXP);
+	void SetXP(int32 InXP);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TObjectPtr<ULevelUpInfo> LevelUpInfo;
+
+	FOnPlayerStateChanged OnXPChangedDelegate;
+	FOnPlayerStateChanged OnLevelChangedDelegate;
+	
+	
 };

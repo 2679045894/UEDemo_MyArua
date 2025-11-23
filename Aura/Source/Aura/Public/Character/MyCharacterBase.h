@@ -128,5 +128,10 @@ protected:
 	virtual int32 GetMinionCount_Implementation() override;
 
 	virtual void IncrementMinionCount_Implementation(const int32 Amount) override;
+
+	UPROPERTY(EditDefaultsOnly,Category="Combat")
+	ECharacterClass CharacterClass=ECharacterClass::Warrior;
+
+	virtual ECharacterClass GetCharacterClass_Implementation() override;
 	
 };

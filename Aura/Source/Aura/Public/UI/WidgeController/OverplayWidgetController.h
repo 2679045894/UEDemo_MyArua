@@ -59,6 +59,9 @@ public:
 	UPROPERTY(BlueprintAssignable,Category="GAS|Message")
 	FMessageWidgetRowSignature MessageWidgetRowDelegate;
 
+	UPROPERTY(BlueprintAssignable,Category="GAS|XP")
+	FOnAttributeChangedSignature OnXPPercentChangedDelegate;
+
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	TObjectPtr<UDataTable> MessageWidgetDataTable;
 	
@@ -70,6 +73,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable,Category="GAS|Message")
 	FAbilityInfoSignature AbilityInfoDelegate;
+
+	UFUNCTION()
+	void OnXPChanged(int32 NewXP)const;
 
 	
 protected:

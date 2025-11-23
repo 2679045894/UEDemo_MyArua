@@ -26,12 +26,44 @@ UAuraAbilitySystemComponent* AMyPlayerState::GetAbilitySystemComponent() const
 void AMyPlayerState::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	//定义在多人游戏中，需要在网络中复制的属性，当属性发生变化，修改将被发送到其它客户端和服务器
 	DOREPLIFETIME(AMyPlayerState, Level);
+	DOREPLIFETIME(AMyPlayerState, XP);
 }
 
 void AMyPlayerState::OnRep_Level(int32 OldLevel) const
 {
-	
+	//上面修改委托只会在服务器触发，在此处设置是在服务器更新到客户端本地后触发
+	OnLevelChangedDelegate.Broadcast(Level);
+}
+
+void AMyPlayerState::OnRep_XP(int32 OldXP) const
+{
+	OnLevelChangedDelegate.Broadcast(XP);
+}
+
+void AMyPlayerState::AddToLevel(int32 InLevel)
+{
+	Level += InLevel;
+	OnLevelChangedDelegate.Broadcast(Level);
+}
+
+void AMyPlayerState::SetLevel(int32 InLevel)
+{
+	Level = InLevel;
+	OnLevelChangedDelegate.Broadcast(Level);
+}
+
+void AMyPlayerState::AddToXP(int32 InXP)
+{
+	XP += InXP;
+	OnLevelChangedDelegate.Broadcast(XP);
+}
+
+void AMyPlayerState::SetXP(int32 InXP)
+{
+	XP = InXP;
+	OnLevelChangedDelegate.Broadcast(XP);
 }
 
 

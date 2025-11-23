@@ -43,9 +43,7 @@ public:
 	FOnAttributeChangedSignature OnMaxHealthChange;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UWidgetComponent> HealthBar;
-
-	UPROPERTY(EditAnywhere, Category="CharacterInfo")
-	ECharacterClass CharacterClass=ECharacterClass::Elementalist;
+	
 
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly, Category="CharacterInfo")
 	float BaseWalkSpeed=250.f;

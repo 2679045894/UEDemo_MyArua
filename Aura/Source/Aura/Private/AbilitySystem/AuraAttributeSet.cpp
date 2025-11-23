@@ -242,6 +242,11 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 			ShowFloatingText(Props,LocalIncomingDamage,bBlockHit,bCriticalHit);
 		}
 	}
+	if (Data.EvaluatedData.Attribute==GetIncomingXPAttribute())
+	{
+		const float LocalIncomingXP=GetIncomingXP();
+		SetIncomingXP(0.f);
+	}
 }
 
 

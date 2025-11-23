@@ -50,4 +50,7 @@ public:
 	
 	UFUNCTION(BlueprintPure,BlueprintCallable)
 	static bool IsNotFriend(AActor* FirstActor,AActor* SecondActor);
+
+	UFUNCTION(BlueprintCallable)
+	static int32 GetXPRewardForClassAndLevel(const UObject* WorldContextObject,ECharacterClass CharacterClass,int32 CharacterLevel);
 };
