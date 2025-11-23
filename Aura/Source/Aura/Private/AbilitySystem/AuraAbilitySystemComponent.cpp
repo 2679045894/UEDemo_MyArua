@@ -6,6 +6,7 @@
 
 #include "AuraGameplayTags.h"
 #include "AbilitySystem/Abilitys/AuraGameplayAbility.h"
+#include "Aura/AuraLogChannels.h"
 
 
 void UAuraAbilitySystemComponent::AbilityActorInfoSet()
@@ -39,6 +40,8 @@ void UAuraAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf
 			//3.赋予技能
 			GiveAbility(AbilitySpec);
 		}
+		bStartupAbilitiesGiven=true;
+		AbilityGivenDelegate.Broadcast(this);
 	}
 }
 
@@ -74,5 +77,55 @@ void UAuraAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag &In
 			//通知技能系统该技能对应的输入已被释放
 			AbilitySpecInputReleased(AbilitySpec);
 		}
+	}
+}
+
+void UAuraAbilitySystemComponent::ForEachAbility(const FForEachAbility& Delegate)
+{
+	FScopedAbilityListLock ActiveScopeLock(*this);
+	for (const FGameplayAbilitySpec&AbilitySpec:GetActivatableAbilities())
+	{
+		if (!Delegate.ExecuteIfBound(AbilitySpec))
+		{
+			UE_LOG(LogAura,Error,TEXT("在函数[%hs]运行委托失败"),__FUNCTION__);
+		}
+	}
+}
+
+FGameplayTag UAuraAbilitySystemComponent::GetAbilityTagFormSpec(const FGameplayAbilitySpec& AbilitySpec)
+{
+	if (AbilitySpec.Ability)
+	{
+		for (FGameplayTag Tag:AbilitySpec.Ability.Get()->AbilityTags)
+		{
+			if (Tag.MatchesTag(FGameplayTag::RequestGameplayTag(FName("Abilities"))))
+			{
+				return Tag;
+			}
+		}
+	}
+	return FGameplayTag();
+}
+
+FGameplayTag UAuraAbilitySystemComponent::GetInputTagFormSpec(const FGameplayAbilitySpec& AbilitySpec)
+{
+	for (FGameplayTag Tag:AbilitySpec.DynamicAbilityTags)
+	{
+		if (Tag.MatchesTag(FGameplayTag::RequestGameplayTag(FName("InputTag"))))
+		{
+			return Tag;
+		}
+	}
+	return FGameplayTag();
+}
+
+void UAuraAbilitySystemComponent::OnRep_ActivateAbilities()
+{
+	Super::OnRep_ActivateAbilities();
+	if (!bStartupAbilitiesGiven)
+	{
+		bStartupAbilitiesGiven = true;
+		//通知所有监听者"技能初始化应用已完成"。
+		AbilityGivenDelegate.Broadcast(this);
 	}
 }

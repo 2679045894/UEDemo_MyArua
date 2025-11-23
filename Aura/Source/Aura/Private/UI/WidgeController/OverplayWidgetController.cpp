@@ -47,6 +47,19 @@ void UOverplayWidgetController::BindCallbacksToDependencies()
 				OnMaxManaChanged.Broadcast(Data.NewValue);
 			});
 	}
+	if (UAuraAbilitySystemComponent* ASC=Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent))
+	{
+		if (ASC->bStartupAbilitiesGiven)
+		{
+			//如果执行到此处时，技能的初始化工作已经完成，则直接调用初始化回调
+			OnInitializeStartupAbilities(ASC);
+		}
+		else
+		{
+			//如果执行到此处，技能初始化还未完成，将通过绑定委托，监听广播的形式触发初始化完成回调
+			ASC->AbilityGivenDelegate.AddUObject(this,&UOverplayWidgetController::OnInitializeStartupAbilities);
+		}
+	}
 	//获取委托，通过lambda表达式添加绑定函数
 	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->EffectAssetTags.AddLambda(
 		[this/*!!!!*/](FGameplayTagContainer& TagContainer)
@@ -63,6 +76,21 @@ void UOverplayWidgetController::BindCallbacksToDependencies()
 			}
 		}
 	);
+}
+
+void UOverplayWidgetController::OnInitializeStartupAbilities(
+	UAuraAbilitySystemComponent* AuraAbilitySystemComponent) const
+{
+	if (!AuraAbilitySystemComponent->bStartupAbilitiesGiven)return;
+
+	FForEachAbility BroadcastDelegate;
+	BroadcastDelegate.BindLambda([this,AuraAbilitySystemComponent](const FGameplayAbilitySpec&AbilitySpec)
+	{
+		FAuraAbilityInfo Info=AbilityInfo->FindAbilityInfoForTag(UAuraAbilitySystemComponent::GetAbilityTagFormSpec(AbilitySpec));
+		Info.InputTag=UAuraAbilitySystemComponent::GetInputTagFormSpec(AbilitySpec);
+		AbilityInfoDelegate.Broadcast(Info);
+	});
+	AuraAbilitySystemComponent->ForEachAbility(BroadcastDelegate);
 }
 
 

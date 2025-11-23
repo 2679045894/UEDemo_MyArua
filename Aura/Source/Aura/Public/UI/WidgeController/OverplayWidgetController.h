@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "AbilitySystem/Data/AbilityInfo.h"
 #include "UI/WidgeController/AuraWidgetController.h"
 #include "UI/Widge/AuraUserWidget.h"
 #include "OverplayWidgetController.generated.h"
@@ -24,6 +26,8 @@ struct FUIWidgetRow:public FTableRowBase
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float, NewValue);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowSignature,FUIWidgetRow,Row);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAbilityInfoSignature,const FAuraAbilityInfo&,Info);
 
 /**
  * 
@@ -57,6 +61,15 @@ public:
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	TObjectPtr<UDataTable> MessageWidgetDataTable;
+	
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	TObjectPtr<UAbilityInfo> AbilityInfo;
+
+	UFUNCTION()
+	void OnInitializeStartupAbilities(UAuraAbilitySystemComponent* AuraAbilitySystemComponent)const;
+
+	UPROPERTY(BlueprintAssignable,Category="GAS|Message")
+	FAbilityInfoSignature AbilityInfoDelegate;
 
 	
 protected:

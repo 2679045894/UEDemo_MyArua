@@ -66,6 +66,8 @@ public:
 	FGameplayTag Montage_Attack_2;
 	FGameplayTag Montage_Attack_3;
 	FGameplayTag Montage_Attack_4;
+
+	FGameplayTag Abilities_Fire_FireBolt;
 	
 private:
 	//静态单例实例，整个程序生命周期内存在
