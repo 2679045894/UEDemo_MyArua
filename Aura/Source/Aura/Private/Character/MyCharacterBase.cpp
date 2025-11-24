@@ -77,7 +77,9 @@ void AMyCharacterBase::AddCharacterAbilities() const
 	UAuraAbilitySystemComponent* AuraASC=GetAbilitySystemComponent();
 	if (!HasAuthority())return;
 	AuraASC->AddCharacterAbilities(StartupAbilities);
+	AuraASC->AddCharacterPassiveAbilities(StartupPassiveAbilities);
 }
+
 
 FVector AMyCharacterBase::GetCombatSocketLocation_Implementation(const FGameplayTag &MontageTag)
 {

@@ -228,6 +228,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 				{
 					CombatInterface->Die();
 				}
+				SendXPEvent(Props);
 			}
 			else
 			{
@@ -244,6 +245,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 	}
 	if (Data.EvaluatedData.Attribute==GetIncomingXPAttribute())
 	{
+		GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Yellow,"111111111111111111111111111111111");
 		const float LocalIncomingXP=GetIncomingXP();
 		SetIncomingXP(0.f);
 	}
@@ -343,5 +345,23 @@ void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float D
 		{
 			PC->ShowDamageNumber(Damage,Props.TargetCharacter,bBlockedHit,bCriticalHit);
 		}
+	}
+}
+//发送经验事件
+void UAuraAttributeSet::SendXPEvent(const FEffectProperties& Props)
+{
+	if (ICombatInterface* CombatInterface=Cast<ICombatInterface>(Props.TargetCharacter))
+	{
+		ECharacterClass TargetClass=ICombatInterface::Execute_GetCharacterClass(Props.TargetCharacter);
+		int32 TargetLevel=CombatInterface->GetPlayerLevel();
+		int32 XPReward=UAuraAbilitySystemLibrary::GetXPRewardForClassAndLevel(Props.TargetCharacter,TargetClass,TargetLevel);
+
+		const FAuraGameplayTags& GameplayTags=FAuraGameplayTags::Get();
+		FGameplayEventData PayLoad;
+		PayLoad.EventTag=GameplayTags.Attributes_Meta_IncomingXP;
+		PayLoad.EventMagnitude=XPReward;
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Props.SourceCharacter,GameplayTags.Attributes_Meta_IncomingXP,PayLoad);
+
+		GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Cyan,"send");
 	}
 }

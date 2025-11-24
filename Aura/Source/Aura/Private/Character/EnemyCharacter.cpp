@@ -122,6 +122,7 @@ void AEnemyCharacter::Die()
 {
 	SetLifeSpan(LifeSpan);
 	Super::Die();
+	
 }
 
 void AEnemyCharacter::PossessedBy(AController* NewController)

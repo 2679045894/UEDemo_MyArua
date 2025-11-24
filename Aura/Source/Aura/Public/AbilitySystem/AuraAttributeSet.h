@@ -206,5 +206,7 @@ public:
 
 	UFUNCTION()
 	void ShowFloatingText(const FEffectProperties& Props,float Damage,bool bBlockHit,bool bCriticalHit) const;
+	//发送经验事件
+	void SendXPEvent(const FEffectProperties& Props);
 	
 };
