@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Character/MyCharacterBase.h"
+#include "Interaction/PlayerInterface.h"
 #include "AuraCharacter.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class AURA_API AAuraCharacter : public AMyCharacterBase
+class AURA_API AAuraCharacter : public AMyCharacterBase,public IPlayerInterface
 {
 	GENERATED_BODY()
 public:
@@ -22,8 +23,17 @@ public:
 	virtual void PossessedBy(AController* NewController) override;
 	//OnRep_PlayerState（针对客户端）它在客户端的 PlayerState 被复制更新时自动调用
 	virtual void OnRep_PlayerState() override;
+
+	
 private:
 	virtual void InitialAbilityActorInfo()override;
-	
-	virtual int32 GetPlayerLevel() override;
+	virtual int32 GetXP_Implementation() override;
+	virtual int32 FindLevelForXP_Implementation(int32 InXP) const override;
+	virtual int32 GetAttributePointReward_Implementation(int32 InLevel) const override;
+	virtual int32 GetSpellPointReward_Implementation(int32 InLevel) const override;
+	virtual void AddToXP_Implementation(int32 InXP) override;
+	virtual void AddToPlayerLevel_Implementation(int32 InPlayerLevel) override;
+	virtual void AddToAttributePoints_Implementation(int32 InAttributePoints) override;
+	virtual void AddToSpellPoints_Implementation(int32 InSpellPoints) override;
+	virtual void LevelUp_Implementation() override;
 };

@@ -5,6 +5,7 @@
 
 #include "AuraGameplayTags.h"
 #include "Components/CapsuleComponent.h"
+#include "Player/MyPlayerState.h"
 
 // Sets default values
 AMyCharacterBase::AMyCharacterBase()
@@ -66,10 +67,11 @@ void AMyCharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEf
 	}
 }
 
-int32 AMyCharacterBase::GetPlayerLevel()
+int32 AMyCharacterBase::GetPlayerLevel_Implementation()
 {
-	//空逻辑，让子类实现
-	return ICombatInterface::GetPlayerLevel();
+	AMyPlayerState* AuraPlayerState=Cast<AMyPlayerState>(GetPlayerState());
+	check(AuraPlayerState);
+	return AuraPlayerState->GetPlayerLevel();
 }
 
 void AMyCharacterBase::AddCharacterAbilities() const

@@ -63,7 +63,7 @@ protected:
 
 
 	//实现战斗接口的获取等级方法
-	virtual int32 GetPlayerLevel() override;
+	virtual int32 GetPlayerLevel_Implementation() override;
 
 	//用来存放角色在游戏开始时就自动拥有的技能
 	UPROPERTY(EditAnywhere,Category="Abilities")

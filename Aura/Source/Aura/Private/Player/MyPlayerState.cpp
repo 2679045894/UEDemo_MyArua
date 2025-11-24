@@ -39,7 +39,7 @@ void AMyPlayerState::OnRep_Level(int32 OldLevel) const
 
 void AMyPlayerState::OnRep_XP(int32 OldXP) const
 {
-	OnLevelChangedDelegate.Broadcast(XP);
+	OnXPChangedDelegate.Broadcast(XP);
 }
 
 void AMyPlayerState::AddToLevel(int32 InLevel)
@@ -57,13 +57,13 @@ void AMyPlayerState::SetLevel(int32 InLevel)
 void AMyPlayerState::AddToXP(int32 InXP)
 {
 	XP += InXP;
-	OnLevelChangedDelegate.Broadcast(XP);
+	OnXPChangedDelegate.Broadcast(XP);
 }
 
 void AMyPlayerState::SetXP(int32 InXP)
 {
 	XP = InXP;
-	OnLevelChangedDelegate.Broadcast(XP);
+	OnXPChangedDelegate.Broadcast(XP);
 }
 
 

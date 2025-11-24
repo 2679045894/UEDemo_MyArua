@@ -18,6 +18,7 @@ void UOverplayWidgetController::BroadcastInitialValues()
 		OnManaChanged.Broadcast(AruaAttributeSet->GetMana());
 		OnMaxManaChanged.Broadcast(AruaAttributeSet->GetMaxMana());
 	}
+	OnXPPercentChangedDelegate.Broadcast(0);
 }
 // 绑定属性变化委托，建立属性变化时的回调机制。自动调用
 //告诉 GAS："当这些属性发生变化时，请自动调用我指定的函数"。
@@ -79,6 +80,10 @@ void UOverplayWidgetController::BindCallbacksToDependencies()
 	);
 	AMyPlayerState* AuraPlayerState=Cast<AMyPlayerState>(PlayerState);
 	AuraPlayerState->OnXPChangedDelegate.AddUObject(this,&UOverplayWidgetController::OnXPChanged);
+	AuraPlayerState->OnLevelChangedDelegate.AddLambda([this](int32 NewLevel)
+	{
+		OnPlayerStateChangedDelegate.Broadcast(NewLevel);
+	});
 }
 
 void UOverplayWidgetController::OnInitializeStartupAbilities(

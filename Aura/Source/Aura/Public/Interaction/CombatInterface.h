@@ -45,8 +45,6 @@ class AURA_API ICombatInterface
 	GENERATED_BODY()
 
 public:
-	virtual int32 GetPlayerLevel();
-
 	//通过结构体获取对应的骨骼插槽位置
 	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
 	FVector GetCombatSocketLocation(const FGameplayTag &MontageTag);
@@ -83,4 +81,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent,BlueprintCallable)
 	ECharacterClass GetCharacterClass();
+
+	UFUNCTION(BlueprintNativeEvent)
+	int32 GetPlayerLevel();
 };

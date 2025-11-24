@@ -12,7 +12,7 @@
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "GameFramework/Character.h"
 #include "Interaction/CombatInterface.h"
-#include "Kismet/GameplayStatics.h"
+#include "Interaction/PlayerInterface.h"
 #include "Player/MyPlayerController.h"
 
 UAuraAttributeSet::UAuraAttributeSet()
@@ -245,9 +245,34 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 	}
 	if (Data.EvaluatedData.Attribute==GetIncomingXPAttribute())
 	{
-		GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Yellow,"111111111111111111111111111111111");
 		const float LocalIncomingXP=GetIncomingXP();
 		SetIncomingXP(0.f);
+		if (Props.SourceCharacter->Implements<UPlayerInterface>())
+		{
+			int32 CurrentLevel=ICombatInterface::Execute_GetPlayerLevel(Props.SourceCharacter);
+			int32 CurrentXP=IPlayerInterface::Execute_GetXP(Props.SourceCharacter);
+
+			//获得经验后的新等级
+			int32 NewLevel=IPlayerInterface::Execute_FindLevelForXP(Props.SourceCharacter,CurrentXP+LocalIncomingXP);
+			//获得经验后提升的等级数
+			int32 NewLevelUp=NewLevel-CurrentLevel;
+			if (NewLevelUp>0)
+			{
+				int32 AttributePointsReward=IPlayerInterface::Execute_GetAttributePointReward(Props.SourceCharacter,NewLevel);
+				int32 SpellPointsReward=IPlayerInterface::Execute_GetSpellPointReward(Props.SourceCharacter,NewLevel);
+
+				IPlayerInterface::Execute_AddToAttributePoints(Props.SourceCharacter,AttributePointsReward);
+				IPlayerInterface::Execute_AddToSpellPoints(Props.SourceCharacter,SpellPointsReward);
+				IPlayerInterface::Execute_AddToPlayerLevel(Props.SourceCharacter,NewLevelUp);
+
+				IPlayerInterface::Execute_LevelUp(Props.SourceCharacter);
+
+				SetHealth(GetMaxHealth());
+				SetMana(GetMaxMana());
+			}
+			//将经验应用给自身，通过事件传递，在玩家角色被动技能GA_ListenForEvents里接收
+			IPlayerInterface::Execute_AddToXP(Props.SourceCharacter,LocalIncomingXP);
+		}
 	}
 }
 

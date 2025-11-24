@@ -34,7 +34,7 @@ public:
 	//封装，属性是私有的，外部只能通过这两个函数分别访问AbilitySystemComponent和AttributeSet变量
 	virtual UAuraAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAuraAttributeSet* GetAttributeSet() const{ return AttributeSet; }
-
+	
 	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_Level,Category="Level")
 	int32 Level=1;
 	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_XP,Category="Level")
@@ -48,7 +48,7 @@ public:
 	void OnRep_XP(int32 OldXP)const;
 	
 	//ForceInline 关键优化：强制编译器在调用点直接展开函数体代码，避免函数调用开销
-	FORCEINLINE int32 GetPlayerLevel() const{return Level;}
+	 int32 GetPlayerLevel() const{return Level;}
 	void AddToLevel(int32 InLevel);//增加等级
 	void SetLevel(int32 InLevel);//设置当前等级
 	

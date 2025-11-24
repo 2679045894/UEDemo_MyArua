@@ -97,10 +97,6 @@ void AEnemyCharacter::InitializeDefaultAttributes() const
 	UAuraAbilitySystemLibrary::InitializeDefaultAttributes(this,CharacterClass,Level,AbilitySystemComponent);
 }
 
-int32 AEnemyCharacter::GetPlayerLevel()
-{
-	return Level;
-}
 
 void AEnemyCharacter::HitReactTagChanged(const FGameplayTag GameplayTag, int32 NewCount)
 {
