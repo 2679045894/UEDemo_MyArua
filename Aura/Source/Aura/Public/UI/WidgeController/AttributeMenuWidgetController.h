@@ -24,6 +24,12 @@ public:
 	UPROPERTY(BlueprintAssignable,Category="GAS|Attributes")
 	FAttributeInfoSignature AttributeInfoDelegate;
 
+	UPROPERTY(BlueprintAssignable,Category="GAS|Attributes")
+	FOnPlayerStateChangedSignature OnAttributePointChangedDelegate;
+
+	UPROPERTY(BlueprintAssignable,Category="GAS|Attirbutes")
+	FOnPlayerStateChangedSignature OnSpellPointChangedDelegate;
+
 	//外部添加AuraAttributeInfo(DataAsset)
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UAttributeInfo> AuraAttributeInfo;

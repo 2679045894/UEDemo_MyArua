@@ -29,6 +29,8 @@ void AMyPlayerState::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>&
 	//定义在多人游戏中，需要在网络中复制的属性，当属性发生变化，修改将被发送到其它客户端和服务器
 	DOREPLIFETIME(AMyPlayerState, Level);
 	DOREPLIFETIME(AMyPlayerState, XP);
+	DOREPLIFETIME(AMyPlayerState, AttributePoints);
+	DOREPLIFETIME(AMyPlayerState, SpellPoints);
 }
 
 void AMyPlayerState::OnRep_Level(int32 OldLevel) const
@@ -40,6 +42,16 @@ void AMyPlayerState::OnRep_Level(int32 OldLevel) const
 void AMyPlayerState::OnRep_XP(int32 OldXP) const
 {
 	OnXPChangedDelegate.Broadcast(XP);
+}
+
+void AMyPlayerState::OnRep_AttributePoints(int32 OldAttributePoints) const
+{
+	OnAttributePointsChangedDelegate.Broadcast(AttributePoints);
+}
+
+void AMyPlayerState::OnRep_SpellPoints(int32 OldSpellPoints) const
+{
+	OnSpellPointsChangedDelegate.Broadcast(SpellPoints);
 }
 
 void AMyPlayerState::AddToLevel(int32 InLevel)

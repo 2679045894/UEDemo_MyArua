@@ -39,6 +39,10 @@ public:
 	int32 Level=1;
 	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_XP,Category="Level")
 	int32 XP=1;
+	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_AttributePoints,Category="Level")
+	int32 AttributePoints=0;
+	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_SpellPoints,Category="Level")
+	int32 SpellPoints=0;
 
 	void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
@@ -46,6 +50,10 @@ public:
 	void OnRep_Level(int32 OldLevel) const;
 	UFUNCTION()
 	void OnRep_XP(int32 OldXP)const;
+	UFUNCTION()
+	void OnRep_AttributePoints(int32 OldAttributePoints)const;
+	UFUNCTION()
+	void OnRep_SpellPoints(int32 OldSpellPoints)const;
 	
 	//ForceInline 关键优化：强制编译器在调用点直接展开函数体代码，避免函数调用开销
 	 int32 GetPlayerLevel() const{return Level;}
@@ -61,6 +69,12 @@ public:
 
 	FOnPlayerStateChanged OnXPChangedDelegate;
 	FOnPlayerStateChanged OnLevelChangedDelegate;
+
+	FOnPlayerStateChanged OnAttributePointsChangedDelegate;
+	FOnPlayerStateChanged OnSpellPointsChangedDelegate;
+
+	FORCEINLINE int32 GetAttributePoints()const{ return AttributePoints; }
+	FORCEINLINE int32 GetSpellPoints()const{ return SpellPoints; }
 	
 	
 };

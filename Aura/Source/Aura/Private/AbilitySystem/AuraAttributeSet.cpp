@@ -258,13 +258,16 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 			int32 NewLevelUp=NewLevel-CurrentLevel;
 			if (NewLevelUp>0)
 			{
-				int32 AttributePointsReward=IPlayerInterface::Execute_GetAttributePointReward(Props.SourceCharacter,NewLevel);
-				int32 SpellPointsReward=IPlayerInterface::Execute_GetSpellPointReward(Props.SourceCharacter,NewLevel);
+				for (int32 i=CurrentLevel;i<NewLevelUp;i++)
+				{
+					int32 AttributePointsReward=IPlayerInterface::Execute_GetAttributePointReward(Props.SourceCharacter,NewLevel);
+					int32 SpellPointsReward=IPlayerInterface::Execute_GetSpellPointReward(Props.SourceCharacter,NewLevel);
 
-				IPlayerInterface::Execute_AddToAttributePoints(Props.SourceCharacter,AttributePointsReward);
-				IPlayerInterface::Execute_AddToSpellPoints(Props.SourceCharacter,SpellPointsReward);
+					IPlayerInterface::Execute_AddToAttributePoints(Props.SourceCharacter,AttributePointsReward);
+					IPlayerInterface::Execute_AddToSpellPoints(Props.SourceCharacter,SpellPointsReward);
+					
+				}
 				IPlayerInterface::Execute_AddToPlayerLevel(Props.SourceCharacter,NewLevelUp);
-
 				IPlayerInterface::Execute_LevelUp(Props.SourceCharacter);
 
 				SetHealth(GetMaxHealth());
