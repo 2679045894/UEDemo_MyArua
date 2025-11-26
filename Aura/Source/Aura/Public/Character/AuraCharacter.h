@@ -3,8 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Camera/CameraComponent.h"
 #include "Character/MyCharacterBase.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Interaction/PlayerInterface.h"
+#include  "NiagaraComponent.h"
 #include "AuraCharacter.generated.h"
 
 /**
@@ -24,6 +27,9 @@ public:
 	//OnRep_PlayerState（针对客户端）它在客户端的 PlayerState 被复制更新时自动调用
 	virtual void OnRep_PlayerState() override;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<UNiagaraComponent> LevelUpNiagaraComponent;
+
 	
 private:
 	virtual void InitialAbilityActorInfo()override;
@@ -37,4 +43,13 @@ private:
 	virtual void AddToSpellPoints_Implementation(int32 InSpellPoints) override;
 	virtual void LevelUp_Implementation() override;
 	virtual int32 GetPlayerLevel_Implementation() override;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UCameraComponent> TopDownCameraComponent;
+	
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<USpringArmComponent> CameraBoom;
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastLevelUpParticles()const;
 };

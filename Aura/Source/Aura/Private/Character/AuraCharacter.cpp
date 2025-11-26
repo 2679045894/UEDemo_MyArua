@@ -7,12 +7,27 @@
 #include "Player/MyPlayerController.h"
 #include "Player/MyPlayerState.h"
 #include "AbilitySystem//AuraAbilitySystemComponent.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
+#include  "NiagaraComponent.h"
 #include "UI/HUD/AuraHUD.h"
 
 AAuraCharacter::AAuraCharacter()
 {
 	//UAruaAttributeSet*
 	CharacterClass=ECharacterClass::Elementalist;
+
+	CameraBoom=CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
+	CameraBoom->SetupAttachment(GetRootComponent());
+	CameraBoom->SetUsingAbsoluteRotation(true);
+	CameraBoom->bDoCollisionTest=false;
+
+	TopDownCameraComponent=CreateDefaultSubobject<UCameraComponent>(TEXT("TopDownCameraComponent"));
+	TopDownCameraComponent->SetupAttachment(CameraBoom);
+	TopDownCameraComponent->bUsePawnControlRotation = false;
+	
+	LevelUpNiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>("LevelUpNiagaraComponent");
+	LevelUpNiagaraComponent->SetupAttachment(GetRootComponent());
+	LevelUpNiagaraComponent->bAutoActivate=false;
 }
 
 void AAuraCharacter::BeginPlay()
@@ -139,7 +154,7 @@ void AAuraCharacter::AddToSpellPoints_Implementation(int32 InSpellPoints)
 
 void AAuraCharacter::LevelUp_Implementation()
 {
-	IPlayerInterface::LevelUp_Implementation();
+	MulticastLevelUpParticles();
 }
 
 int32 AAuraCharacter::GetPlayerLevel_Implementation()
@@ -147,6 +162,18 @@ int32 AAuraCharacter::GetPlayerLevel_Implementation()
 	AMyPlayerState* AuraPlayerState=Cast<AMyPlayerState>(GetPlayerState());
 	check(AuraPlayerState);
 	return AuraPlayerState->GetPlayerLevel();
+}
+
+void AAuraCharacter::MulticastLevelUpParticles_Implementation() const
+{
+	if (IsValid(LevelUpNiagaraComponent))
+	{
+		const FVector CameraLocation=TopDownCameraComponent->GetComponentLocation();
+		const FVector NiagaraSystemLocation=LevelUpNiagaraComponent->GetComponentLocation();
+		const FRotator ToCameraRotation=(CameraLocation-NiagaraSystemLocation).Rotation();
+		LevelUpNiagaraComponent->SetWorldRotation(ToCameraRotation);
+		LevelUpNiagaraComponent->Activate(true);
+	}
 }
 
 
