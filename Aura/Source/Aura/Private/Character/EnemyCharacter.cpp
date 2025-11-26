@@ -143,3 +143,8 @@ AActor* AEnemyCharacter::GetCombatTarget_Implementation()
 {
 	return TargetActor;
 }
+
+int32 AEnemyCharacter::GetPlayerLevel_Implementation()
+{
+	return Level;
+}

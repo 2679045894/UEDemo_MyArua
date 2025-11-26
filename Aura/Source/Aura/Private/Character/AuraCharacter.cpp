@@ -142,6 +142,13 @@ void AAuraCharacter::LevelUp_Implementation()
 	IPlayerInterface::LevelUp_Implementation();
 }
 
+int32 AAuraCharacter::GetPlayerLevel_Implementation()
+{
+	AMyPlayerState* AuraPlayerState=Cast<AMyPlayerState>(GetPlayerState());
+	check(AuraPlayerState);
+	return AuraPlayerState->GetPlayerLevel();
+}
+
 
 
 

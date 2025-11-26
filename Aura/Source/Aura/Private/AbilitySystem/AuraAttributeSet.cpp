@@ -378,7 +378,7 @@ void UAuraAttributeSet::SendXPEvent(const FEffectProperties& Props)
 	if (ICombatInterface* CombatInterface=Cast<ICombatInterface>(Props.TargetCharacter))
 	{
 		ECharacterClass TargetClass=ICombatInterface::Execute_GetCharacterClass(Props.TargetCharacter);
-		int32 TargetLevel=CombatInterface->GetPlayerLevel();
+		int32 TargetLevel=ICombatInterface::Execute_GetPlayerLevel(Props.TargetCharacter);
 		int32 XPReward=UAuraAbilitySystemLibrary::GetXPRewardForClassAndLevel(Props.TargetCharacter,TargetClass,TargetLevel);
 
 		const FAuraGameplayTags& GameplayTags=FAuraGameplayTags::Get();

@@ -69,10 +69,9 @@ void AMyCharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEf
 
 int32 AMyCharacterBase::GetPlayerLevel_Implementation()
 {
-	AMyPlayerState* AuraPlayerState=Cast<AMyPlayerState>(GetPlayerState());
-	check(AuraPlayerState);
-	return AuraPlayerState->GetPlayerLevel();
+	return ICombatInterface::GetPlayerLevel_Implementation();
 }
+
 
 void AMyCharacterBase::AddCharacterAbilities() const
 {

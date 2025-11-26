@@ -76,5 +76,7 @@ public:
 	virtual void SetCombatTarget_Implementation(AActor* InCombatTarget) override;
 
 	virtual AActor* GetCombatTarget_Implementation() override;
+	
+	virtual int32 GetPlayerLevel_Implementation() override;
 
 };
