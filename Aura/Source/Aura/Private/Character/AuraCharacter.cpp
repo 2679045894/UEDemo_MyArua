@@ -64,6 +64,8 @@ void AAuraCharacter::PossessedBy(AController* NewController)
 	Super::PossessedBy(NewController);
 	InitialAbilityActorInfo();
 	AddCharacterAbilities();
+
+	
 }
 
 
@@ -144,12 +146,16 @@ void AAuraCharacter::AddToPlayerLevel_Implementation(int32 InPlayerLevel)
 
 void AAuraCharacter::AddToAttributePoints_Implementation(int32 InAttributePoints)
 {
-
+	AMyPlayerState* AuraPlayerState=GetPlayerState<AMyPlayerState>();
+	check(AuraPlayerState);
+	AuraPlayerState->AddToAttributePoints(InAttributePoints);
 }
 
 void AAuraCharacter::AddToSpellPoints_Implementation(int32 InSpellPoints)
 {
-
+	AMyPlayerState* AuraPlayerState=GetPlayerState<AMyPlayerState>();
+	check(AuraPlayerState);
+	AuraPlayerState->AddToSpellPoints(InSpellPoints);
 }
 
 void AAuraCharacter::LevelUp_Implementation()
@@ -162,6 +168,13 @@ int32 AAuraCharacter::GetPlayerLevel_Implementation()
 	AMyPlayerState* AuraPlayerState=Cast<AMyPlayerState>(GetPlayerState());
 	check(AuraPlayerState);
 	return AuraPlayerState->GetPlayerLevel();
+}
+
+int32 AAuraCharacter::GetAttributePoints_Implementation() const
+{
+	AMyPlayerState* AuraPlayerState=Cast<AMyPlayerState>(GetPlayerState());
+	check(AuraPlayerState);
+	return AuraPlayerState->GetAttributePoints();
 }
 
 void AAuraCharacter::MulticastLevelUpParticles_Implementation() const

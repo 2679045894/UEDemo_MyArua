@@ -52,4 +52,6 @@ private:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastLevelUpParticles()const;
+
+	virtual  int32 GetAttributePoints_Implementation() const override;
 };

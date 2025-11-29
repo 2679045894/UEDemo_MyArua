@@ -10,9 +10,20 @@
 
 void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 {
-	
 	UAuraAttributeSet* AS = CastChecked<UAuraAttributeSet>(AttributeSet);
+	
 	check(AuraAttributeInfo);
+	/*for (auto& Pair : AS->TagsToAttributes)
+	{
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Pair.Value()).AddLambda(
+		[this, Pair,AS](const FOnAttributeChangeData& Data)
+		{
+			float s=AS->GetStrength();
+			GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Red,FString::Printf(TEXT("%f"), s));
+			BroadcastAttributeInfo(Pair.Key, Pair.Value());
+		}
+	);
+	}*/
 	for (auto& Pair : AS->TagsToAttributes)
 	{
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Pair.Value()).AddLambda(
@@ -58,6 +69,14 @@ void UAttributeMenuWidgetController::BroadcastAttributeInfo(const FGameplayTag& 
 	FAuraAttributeInfo Info = AuraAttributeInfo->FindAttributeInfoForTag(AttributeTag);
 	Info.AttributeValue = Attribute.GetNumericValue(AttributeSet);
 	AttributeInfoDelegate.Broadcast(Info);
+}
+
+void UAttributeMenuWidgetController::UpgradeAttribute(const FGameplayTag& AttributeTag)
+{
+	if (UAuraAbilitySystemComponent* AuraASC=Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent))
+	{
+		AuraASC->UpgradeAttribute(AttributeTag);
+	}
 }
 
 

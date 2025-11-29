@@ -35,5 +35,8 @@ public:
 	TObjectPtr<UAttributeInfo> AuraAttributeInfo;
 	
 	void BroadcastAttributeInfo(const FGameplayTag& AttributeTag, const FGameplayAttribute& Attribute) const;
+
+	UFUNCTION(BlueprintCallable,Category="GAS|Attributes")
+	void UpgradeAttribute(const FGameplayTag& AttributeTag);
 	
 };

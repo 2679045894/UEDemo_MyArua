@@ -51,6 +51,7 @@ void AMyCharacterBase::InitializeDefaultAttributes() const
 	ApplyEffectToSelf(DefaultPrimaryAttribute,1.f);
 	ApplyEffectToSelf(DefaultSecondaryAttributes,1.f);
 	ApplyEffectToSelf(DefaultVitalAttributes,1.f);
+	ApplyEffectToSelf(Test,1.f);
 }
 
 void AMyCharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const
@@ -60,9 +61,12 @@ void AMyCharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEf
 		FGameplayEffectContextHandle EffectContextHandle=TargetASC->MakeEffectContext();
 		EffectContextHandle.AddSourceObject(this);
 		FGameplayEffectSpecHandle EffectSpec=TargetASC->MakeOutgoingSpec(GameplayEffectClass,Level,EffectContextHandle);
+		UAuraAttributeSet* AuraAS=Cast<UAuraAttributeSet>(AttributeSet);
+		GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Yellow,FString::Printf(TEXT(" ini pre str %f"),AuraAS->GetStrength()));
 		if (EffectSpec.IsValid())
 		{
 			TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpec.Data.Get());
+			GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Yellow,FString::Printf(TEXT(" aft pre str %f"),AuraAS->GetStrength()));
 		}
 	}
 }

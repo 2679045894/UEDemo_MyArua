@@ -194,6 +194,12 @@ void UAuraAttributeSet::InitAttributeSet()
 void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
 {
 	Super::PreAttributeChange(Attribute, NewValue);
+	
+	if (Attribute == GetStrengthAttribute())
+	{
+		// ✔ 修改 NewValue 才是正确方式
+		NewValue = FMath::Clamp(NewValue, -100, 9999.f);
+	}
 
 }
 
@@ -202,6 +208,20 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 	Super::PostGameplayEffectExecute(Data);
 	FEffectProperties Props;
 	SetEffectProperties(Data,Props);
+	
+	if (Data.EvaluatedData.Attribute==GetStrengthAttribute())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Orange, 
+	FString::Printf(TEXT("BaseValue: %f CurrentValue: %f"), 
+		Strength.GetBaseValue(), Strength.GetCurrentValue()));
+	}
+
+	if (Data.EvaluatedData.Attribute==GetArmorAttribute())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, 
+	FString::Printf(TEXT("BaseValue: %f CurrentValue: %f"), 
+		Armor.GetBaseValue(), Armor.GetCurrentValue()));
+	}
 
 
 	if (Data.EvaluatedData.Attribute==GetHealthAttribute())

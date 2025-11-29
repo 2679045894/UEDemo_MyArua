@@ -40,7 +40,7 @@ public:
 	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_XP,Category="Level")
 	int32 XP=1;
 	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_AttributePoints,Category="Level")
-	int32 AttributePoints=0;
+	int32 AttributePoints=3;
 	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_SpellPoints,Category="Level")
 	int32 SpellPoints=0;
 
@@ -56,13 +56,16 @@ public:
 	void OnRep_SpellPoints(int32 OldSpellPoints)const;
 	
 	//ForceInline 关键优化：强制编译器在调用点直接展开函数体代码，避免函数调用开销
-	 int32 GetPlayerLevel() const{return Level;}
+	FORCEINLINE int32 GetPlayerLevel() const{return Level;}
 	void AddToLevel(int32 InLevel);//增加等级
 	void SetLevel(int32 InLevel);//设置当前等级
 	
 	FORCEINLINE int32 GetXP()const{return XP;}
 	void AddToXP(int32 InXP);
 	void SetXP(int32 InXP);
+
+	void AddToAttributePoints(int32 InAttributePoints);
+	void AddToSpellPoints(int32 InSpellPoints);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<ULevelUpInfo> LevelUpInfo;

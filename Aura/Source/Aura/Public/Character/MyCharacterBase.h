@@ -137,4 +137,7 @@ protected:
 
 	virtual ECharacterClass GetCharacterClass_Implementation() override;
 	
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="InitialAttribute")
+	TSubclassOf<UGameplayEffect> Test;
+	
 };

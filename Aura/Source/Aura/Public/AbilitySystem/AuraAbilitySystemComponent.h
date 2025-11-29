@@ -43,4 +43,10 @@ public:
 
 	//客户端更新UI
 	virtual void OnRep_ActivateAbilities() override;
+
+	//升级属性
+	void UpgradeAttribute(const FGameplayTag& AttributeTag);
+	//服务器升级属性
+	UFUNCTION(Server,Reliable)
+	void ServerUpgradeAttribute(const FGameplayTag& AttributeTag);
 };
