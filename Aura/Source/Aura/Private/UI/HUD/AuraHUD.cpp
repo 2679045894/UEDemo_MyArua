@@ -4,7 +4,7 @@
 #include "UI/HUD/AuraHUD.h"
 
 #include "AbilitySystem/AuraAttributeSet.h"
-
+#include "UI/WidgeController/SpellMenuWidgetController.h"
 
 
 //单例模式：确保只有一个OverplayWidgetController实例
@@ -31,6 +31,17 @@ UAttributeMenuWidgetController* AAuraHUD::GetAttributeMenuWidgetController(const
 		AttributeMenuWidgetController->BindCallbacksToDependencies();
 	}
 	return AttributeMenuWidgetController;
+}
+
+USpellMenuWidgetController* AAuraHUD::GetSpellMenuWidgetController(const FWidgetControllerParams& WCParams)
+{
+	if (SpellMenuWidgetController==nullptr)
+	{
+		SpellMenuWidgetController=NewObject<USpellMenuWidgetController>(this,SpellMenuWidgetControllerClass);
+		SpellMenuWidgetController->SetWidgetController(WCParams);
+		SpellMenuWidgetController->BindCallbacksToDependencies();
+	}
+	return SpellMenuWidgetController;
 }
 
 

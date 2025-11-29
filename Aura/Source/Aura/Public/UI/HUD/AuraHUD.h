@@ -29,6 +29,9 @@ public:
 
 	//获取当前的AttirbuteMenu，如果没有就创建一个（NewObject）
 	UAttributeMenuWidgetController* GetAttributeMenuWidgetController(const FWidgetControllerParams &WCParams);
+
+	UFUNCTION(BlueprintCallable)
+	USpellMenuWidgetController* GetSpellMenuWidgetController(const FWidgetControllerParams &WCParams);
 	
 
 private:
@@ -46,4 +49,10 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UAttributeMenuWidgetController> AttributeMenuWidgetController;
+
+	UPROPERTY()
+	TObjectPtr<USpellMenuWidgetController> SpellMenuWidgetController;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<USpellMenuWidgetController> SpellMenuWidgetControllerClass;
 };

@@ -42,6 +42,22 @@ UAttributeMenuWidgetController* UAuraAbilitySystemLibrary::GetAttributeMenuContr
 	return nullptr;
 }
 
+USpellMenuWidgetController* UAuraAbilitySystemLibrary::GetSpellMenuController(const UObject* WorldContextObject)
+{
+	if (APlayerController* PlayerController=UGameplayStatics::GetPlayerController(WorldContextObject,0))
+	{
+		if (AAuraHUD* AuraHUD=Cast<AAuraHUD>(PlayerController->GetHUD()))
+		{
+			AMyPlayerState* PS=PlayerController->GetPlayerState<AMyPlayerState>();
+			UAbilitySystemComponent* ASC=PS->GetAbilitySystemComponent();
+			UAuraAttributeSet* AS=PS->GetAttributeSet();
+			FWidgetControllerParams WCParams(PlayerController,PS,ASC,AS);
+			return AuraHUD->GetSpellMenuWidgetController(WCParams);
+		}
+	}
+	return nullptr;
+}
+
 void UAuraAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldContextObject, ECharacterClass CharacterClass, float Level, UAbilitySystemComponent* ASC)
 {
 	AMyGameModeBase* AuraGameMode = Cast<AMyGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
