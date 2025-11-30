@@ -44,6 +44,8 @@ public:
 	FGameplayTag InputTag_2;
 	FGameplayTag InputTag_3;
 	FGameplayTag InputTag_4;
+	FGameplayTag InputTag_Passive_1;
+	FGameplayTag InputTag_Passive_2;
 
 	FGameplayTag Damage;
 	FGameplayTag Damage_Fire;
@@ -73,6 +75,15 @@ public:
 
 	FGameplayTag Cooldown_Fire_FireBolt;
 
+	FGameplayTag Abilities_HitReact;
+	FGameplayTag Abilities_Status_Locked;
+	FGameplayTag Abilities_Status_Eligible;//可解锁
+	FGameplayTag Abilities_Status_Unlocked;//已解锁
+	FGameplayTag Abilities_Status_Equipped;
+
+	FGameplayTag Abilities_Type_Offensive;
+	FGameplayTag Abilities_Type_Passive;
+	FGameplayTag Abilities_Type_None;
 	
 private:
 	//静态单例实例，整个程序生命周期内存在
