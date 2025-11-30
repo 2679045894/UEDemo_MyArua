@@ -41,6 +41,9 @@ public:
 	static UCharacterClassInfo* GetCharacterClassInfo(const UObject* WorldContext);
 
 	UFUNCTION()
+	static UAbilityInfo* GetActiveAbilityInfo(const UObject* WorldContext);
+
+	UFUNCTION()
 	static bool IsBlockedHit(const FGameplayEffectContextHandle& ContextHandle);
 
 	UFUNCTION()

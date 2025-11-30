@@ -6,7 +6,9 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AuraGameplayTags.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AbilitySystem/Abilitys/AuraGameplayAbility.h"
+#include "AbilitySystem/Data/AbilityInfo.h"
 #include "Aura/AuraLogChannels.h"
 #include "Interaction/PlayerInterface.h"
 
@@ -98,6 +100,7 @@ void UAuraAbilitySystemComponent::ForEachAbility(const FForEachAbility& Delegate
 	FScopedAbilityListLock ActiveScopeLock(*this);
 	for (const FGameplayAbilitySpec&AbilitySpec:GetActivatableAbilities())
 	{
+		//在判断的同时传参(AbilitySpec)
 		if (!Delegate.ExecuteIfBound(AbilitySpec))
 		{
 			UE_LOG(LogAura,Error,TEXT("在函数[%hs]运行委托失败"),__FUNCTION__);
@@ -105,7 +108,7 @@ void UAuraAbilitySystemComponent::ForEachAbility(const FForEachAbility& Delegate
 	}
 }
 
-FGameplayTag UAuraAbilitySystemComponent::GetAbilityTagFormSpec(const FGameplayAbilitySpec& AbilitySpec)
+FGameplayTag UAuraAbilitySystemComponent::GetAbilityTagFromSpec(const FGameplayAbilitySpec& AbilitySpec)
 {
 	if (AbilitySpec.Ability)
 	{
@@ -144,6 +147,24 @@ FGameplayTag UAuraAbilitySystemComponent::GetStatusTagFromSpec(const FGameplayAb
 	return FGameplayTag();
 }
 
+FGameplayAbilitySpec* UAuraAbilitySystemComponent::GetSpecFromAbilityTag(const FGameplayTag& AbilityTag)
+{
+	//域锁
+	FScopedAbilityListLock ActiveScopeLoc(*this);
+	//遍历已经应用的技能
+	for (FGameplayAbilitySpec& AbilitySpec:GetActivatableAbilities())
+	{
+		for (FGameplayTag Tag:AbilitySpec.Ability.Get()->AbilityTags)
+		{
+			if (Tag.MatchesTag(AbilityTag))
+			{
+				return &AbilitySpec;
+			}
+		}
+	}
+	return nullptr;
+}
+
 void UAuraAbilitySystemComponent::OnRep_ActivateAbilities()
 {
 	Super::OnRep_ActivateAbilities();
@@ -162,6 +183,24 @@ void UAuraAbilitySystemComponent::UpgradeAttribute(const FGameplayTag& Attribute
 		if (IPlayerInterface::Execute_GetAttributePoints(GetAvatarActor())>0)
 		{
 			ServerUpgradeAttribute(AttributeTag);
+		}
+	}
+}
+
+void UAuraAbilitySystemComponent::UpdateAbilityStatuses(int32 Level)
+{
+	UAbilityInfo* AbilityInfo=UAuraAbilitySystemLibrary::GetActiveAbilityInfo(this);
+	for (FAuraAbilityInfo& Info:AbilityInfo->AbilityInformation)
+	{
+		if (!Info.AbilityTag.IsValid())continue;
+		if (Level<Info.LevelRequirement)continue;
+		if (GetSpecFromAbilityTag(Info.AbilityTag)==nullptr)
+		{
+			FGameplayAbilitySpec AbilitySpec=FGameplayAbilitySpec(Info.Ability,1);
+			AbilitySpec.DynamicAbilityTags.AddTag(FAuraGameplayTags::Get().Abilities_Status_Equipped);
+			GiveAbility(AbilitySpec);
+			//设置当前技能立即复制到每个客户端
+			MarkAbilitySpecDirty(AbilitySpec);
 		}
 	}
 }

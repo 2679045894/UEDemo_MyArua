@@ -39,9 +39,10 @@ public:
 
 	void ForEachAbility(const FForEachAbility&Delegate);
 
-	static FGameplayTag GetAbilityTagFormSpec(const FGameplayAbilitySpec& AbilitySpec);
+	static FGameplayTag GetAbilityTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
 	static FGameplayTag GetInputTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
 	static FGameplayTag GetStatusTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
+	FGameplayAbilitySpec* GetSpecFromAbilityTag(const FGameplayTag& AbilityTag);
 
 	//客户端更新UI
 	virtual void OnRep_ActivateAbilities() override;
@@ -51,4 +52,7 @@ public:
 	//服务器升级属性
 	UFUNCTION(Server,Reliable)
 	void ServerUpgradeAttribute(const FGameplayTag& AttributeTag);
+
+	UFUNCTION()
+	void UpdateAbilityStatuses(int32 Level);
 };

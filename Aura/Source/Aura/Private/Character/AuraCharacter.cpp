@@ -142,6 +142,11 @@ void AAuraCharacter::AddToPlayerLevel_Implementation(int32 InPlayerLevel)
 	AMyPlayerState* AuraPlayerState=GetPlayerState<AMyPlayerState>();
 	check(AuraPlayerState);
 	AuraPlayerState->AddToLevel(InPlayerLevel);
+
+	if (GetAbilitySystemComponent())
+	{
+		GetAbilitySystemComponent()->UpdateAbilityStatuses(Execute_GetPlayerLevel(this));
+	}
 }
 
 void AAuraCharacter::AddToAttributePoints_Implementation(int32 InAttributePoints)

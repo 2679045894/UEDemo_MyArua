@@ -7,6 +7,7 @@
 #include "MyGameModeBase.generated.h"
 
 class UCharacterClassInfo;
+class UAbilityInfo;
 UCLASS()
 class AURA_API AMyGameModeBase : public AGameModeBase
 {
@@ -14,4 +15,7 @@ class AURA_API AMyGameModeBase : public AGameModeBase
 public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	UCharacterClassInfo* CharacterClassInfo;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TObjectPtr<UAbilityInfo> AbilityInfo;
 };
