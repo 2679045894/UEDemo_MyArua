@@ -7,6 +7,7 @@
 #include "Engine/OverlapResult.h"
 #include "Interaction/CombatInterface.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "UI/HUD/AuraHUD.h"
 #include "UI/WidgeController/AttributeMenuWidgetController.h"
 #include "AuraAbilitySystemLibrary.generated.h"
 
@@ -17,14 +18,17 @@ UCLASS()
 class AURA_API UAuraAbilitySystemLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
-	
+
 	UFUNCTION(BlueprintPure)
+	static bool MakeWidgetControllerParams(const UObject* WorldObject,FWidgetControllerParams &OutWCParams,AAuraHUD*& OutAuraHUD);
+	//// 自动绑定调用者作为 WorldContextObject
+	UFUNCTION(BlueprintPure,meta = (DefaultToSelf = "WorldContextObject"))
 	static UOverplayWidgetController* GetOverlayWidgetController(const UObject* WorldContextObject);
 
-	UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintPure,meta = (DefaultToSelf = "WorldContextObject"))
 	static UAttributeMenuWidgetController* GetAttributeMenuController(const UObject* WorldContextObject);
 
-	UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintPure,meta = (DefaultToSelf = "WorldContextObject"))
 	static USpellMenuWidgetController* GetSpellMenuController(const UObject* WorldContextObject);
 public:
 	UFUNCTION(BlueprintCallable)
