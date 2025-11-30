@@ -39,6 +39,7 @@ void UAuraAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf
 		{
 			//2.绑定输入标签(向技能的动态标签集合中添加一个标签)（通过某个按键标签(StartupInputTag)触发技能）
 			AbilitySpec.DynamicAbilityTags.AddTag(AuraAbility->StartupInputTag);
+			AbilitySpec.DynamicAbilityTags.AddTag(FAuraGameplayTags::Get().Abilities_Status_Equipped);
 			//3.赋予技能
 			GiveAbility(AbilitySpec);
 		}
@@ -119,11 +120,23 @@ FGameplayTag UAuraAbilitySystemComponent::GetAbilityTagFormSpec(const FGameplayA
 	return FGameplayTag();
 }
 
-FGameplayTag UAuraAbilitySystemComponent::GetInputTagFormSpec(const FGameplayAbilitySpec& AbilitySpec)
+FGameplayTag UAuraAbilitySystemComponent::GetInputTagFromSpec(const FGameplayAbilitySpec& AbilitySpec)
 {
 	for (FGameplayTag Tag:AbilitySpec.DynamicAbilityTags)
 	{
 		if (Tag.MatchesTag(FGameplayTag::RequestGameplayTag(FName("InputTag"))))
+		{
+			return Tag;
+		}
+	}
+	return FGameplayTag();
+}
+
+FGameplayTag UAuraAbilitySystemComponent::GetStatusTagFromSpec(const FGameplayAbilitySpec& AbilitySpec)
+{
+	for (FGameplayTag Tag:AbilitySpec.DynamicAbilityTags)
+	{
+		if (Tag.MatchesTag(FGameplayTag::RequestGameplayTag(FName("Abilities.Status"))))
 		{
 			return Tag;
 		}

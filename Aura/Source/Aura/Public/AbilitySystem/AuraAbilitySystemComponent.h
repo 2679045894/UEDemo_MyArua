@@ -40,7 +40,8 @@ public:
 	void ForEachAbility(const FForEachAbility&Delegate);
 
 	static FGameplayTag GetAbilityTagFormSpec(const FGameplayAbilitySpec& AbilitySpec);
-	static FGameplayTag GetInputTagFormSpec(const FGameplayAbilitySpec& AbilitySpec);
+	static FGameplayTag GetInputTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
+	static FGameplayTag GetStatusTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
 
 	//客户端更新UI
 	virtual void OnRep_ActivateAbilities() override;
