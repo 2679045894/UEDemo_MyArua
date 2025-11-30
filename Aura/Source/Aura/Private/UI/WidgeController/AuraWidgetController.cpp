@@ -3,6 +3,8 @@
 
 #include "UI/WidgeController/AuraWidgetController.h"
 
+#include "AbilitySystem/Data/AbilityInfo.h"
+
 
 void UAuraWidgetController::SetWidgetController(const FWidgetControllerParams& WCParams)
 {
@@ -20,4 +22,53 @@ void UAuraWidgetController::BindCallbacksToDependencies()
 {
 }
 
+AMyPlayerController* UAuraWidgetController::GetAuraPlayerController()
+{
+	if (AuraPlayerController==nullptr)
+	{
+		AuraPlayerController=Cast<AMyPlayerController>(PlayerController);
+	}
+	return AuraPlayerController;
+}
+
+AMyPlayerState* UAuraWidgetController::GetAuraPlayerState()
+{
+	if (AuraPlayerState==nullptr)
+	{
+		AuraPlayerState=Cast<AMyPlayerState>(PlayerState);
+	}
+	return AuraPlayerState;
+}
+
+UAuraAbilitySystemComponent* UAuraWidgetController::GetAuraAbilitySystemComponent()
+{
+	if (AuraAbilitySystemComponent==nullptr)
+	{
+		AuraAbilitySystemComponent=Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent);
+	}
+	return AuraAbilitySystemComponent;
+}
+
+UAuraAttributeSet* UAuraWidgetController::GetAuraAttributeSet()
+{
+	if (AuraAttributeSet==nullptr)
+	{
+		AuraAttributeSet=Cast<UAuraAttributeSet>(AttributeSet);
+	}
+	return AuraAttributeSet;
+}
+
+void UAuraWidgetController::BroadcastAbilityInfo()
+{
+	if (!GetAuraAbilitySystemComponent()->bStartupAbilitiesGiven) return;
+
+	FForEachAbility BroadcastDelegate;
+	BroadcastDelegate.BindLambda([this](const FGameplayAbilitySpec& AbilitySpec)
+	{
+		FAuraAbilityInfo Info = AbilityInfo->FindAbilityInfoForTag(AuraAbilitySystemComponent->GetAbilityTagFormSpec(AbilitySpec));
+		Info.InputTag = AuraAbilitySystemComponent->GetInputTagFormSpec(AbilitySpec);
+		AbilityInfoDelegate.Broadcast(Info);
+	});
+	GetAuraAbilitySystemComponent()->ForEachAbility(BroadcastDelegate);
+}
 

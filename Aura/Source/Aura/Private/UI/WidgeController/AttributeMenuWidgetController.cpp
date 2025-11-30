@@ -10,21 +10,7 @@
 
 void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 {
-	UAuraAttributeSet* AS = CastChecked<UAuraAttributeSet>(AttributeSet);
-	
-	check(AuraAttributeInfo);
-	/*for (auto& Pair : AS->TagsToAttributes)
-	{
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Pair.Value()).AddLambda(
-		[this, Pair,AS](const FOnAttributeChangeData& Data)
-		{
-			float s=AS->GetStrength();
-			GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Red,FString::Printf(TEXT("%f"), s));
-			BroadcastAttributeInfo(Pair.Key, Pair.Value());
-		}
-	);
-	}*/
-	for (auto& Pair : AS->TagsToAttributes)
+	for (auto& Pair :GetAuraAttributeSet()->TagsToAttributes)
 	{
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Pair.Value()).AddLambda(
 		[this, Pair](const FOnAttributeChangeData& Data)
@@ -33,10 +19,7 @@ void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 		}
 	);
 	}
-
-	AMyPlayerState* AuraPlayerState=Cast<AMyPlayerState>(PlayerState);
-	check(AuraPlayerState);
-	AuraPlayerState->OnAttributePointsChangedDelegate.AddLambda([this](int32 Points)
+	GetAuraPlayerState()->OnAttributePointsChangedDelegate.AddLambda([this](int32 Points)
 	{
 		OnAttributePointChangedDelegate.Broadcast(Points);
 	});
@@ -45,9 +28,6 @@ void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 
 void UAttributeMenuWidgetController::BroadcastInitialValues()
 {
-	//获取AuraAttirbuteSet(里面包含数值)
-	UAuraAttributeSet* AuraAttributeSet=Cast<UAuraAttributeSet>(AttributeSet);
-	check(AuraAttributeInfo);
 	/*//调用AuraAttributeInfo中的通过标签获取对应结构体方法，将标签转换成对应的结构体
 	FAuraAttributeInfo Info=AuraAttributeInfo->FindAttributeInfoForTag(FAuraGameplayTags::Get().Attributes_Primary_Strength);
 	//将AuraAttirbuteSet中的对应属性赋值给结构体中的值
@@ -59,9 +39,7 @@ void UAttributeMenuWidgetController::BroadcastInitialValues()
 	{
 		BroadcastAttributeInfo(Pair.Key,Pair.Value());
 	}
-	AMyPlayerState* AuraPlayerState=Cast<AMyPlayerState>(PlayerState);
-	check(AuraPlayerState);
-	OnAttributePointChangedDelegate.Broadcast(AuraPlayerState->GetAttributePoints());
+	OnAttributePointChangedDelegate.Broadcast(GetAuraPlayerState()->GetAttributePoints());
 }
 
 void UAttributeMenuWidgetController::BroadcastAttributeInfo(const FGameplayTag& AttributeTag, const FGameplayAttribute& Attribute) const

@@ -7,7 +7,7 @@
 #include "UI/WidgeController/AuraWidgetController.h"
 #include "AttributeMenuWidgetController.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAttributeInfoSignature,const FAuraAttributeInfo&,Info);
+
 /**
  * 
  */
@@ -24,15 +24,15 @@ public:
 	UPROPERTY(BlueprintAssignable,Category="GAS|Attributes")
 	FAttributeInfoSignature AttributeInfoDelegate;
 
+	//外部添加AuraAttributeInfo(DataAsset)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UAttributeInfo> AuraAttributeInfo;
+	
 	UPROPERTY(BlueprintAssignable,Category="GAS|Attributes")
 	FOnPlayerStateChangedSignature OnAttributePointChangedDelegate;
 
 	UPROPERTY(BlueprintAssignable,Category="GAS|Attirbutes")
 	FOnPlayerStateChangedSignature OnSpellPointChangedDelegate;
-
-	//外部添加AuraAttributeInfo(DataAsset)
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TObjectPtr<UAttributeInfo> AuraAttributeInfo;
 	
 	void BroadcastAttributeInfo(const FGameplayTag& AttributeTag, const FGameplayAttribute& Attribute) const;
 

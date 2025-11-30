@@ -60,21 +60,12 @@ public:
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	TObjectPtr<UDataTable> MessageWidgetDataTable;
-	
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	TObjectPtr<UAbilityInfo> AbilityInfo;
-
-	UFUNCTION()
-	void OnInitializeStartupAbilities(UAuraAbilitySystemComponent* AuraAbilitySystemComponent)const;
-
-	UPROPERTY(BlueprintAssignable,Category="GAS|Message")
-	FAbilityInfoSignature AbilityInfoDelegate;
 
 	UPROPERTY(BlueprintAssignable,Category="GAS|XP")
 	FOnPlayerStateChangedSignature OnPlayerStateChangedDelegate;
 
 	UFUNCTION()
-	void OnXPChanged(int32 NewXP)const;
+	void OnXPChanged(int32 NewXP);
 
 	
 protected:

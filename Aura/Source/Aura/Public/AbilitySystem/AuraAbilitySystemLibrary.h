@@ -17,6 +17,7 @@ UCLASS()
 class AURA_API UAuraAbilitySystemLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
+	
 	UFUNCTION(BlueprintPure)
 	static UOverplayWidgetController* GetOverlayWidgetController(const UObject* WorldContextObject);
 

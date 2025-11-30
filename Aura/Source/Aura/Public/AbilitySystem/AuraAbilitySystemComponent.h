@@ -8,8 +8,9 @@
 
 //广播标签
 DECLARE_MULTICAST_DELEGATE_OneParam(FEffectAssetTags,FGameplayTagContainer&)
-DECLARE_MULTICAST_DELEGATE_OneParam(FAbilityGiven,UAuraAbilitySystemComponent*)
+DECLARE_MULTICAST_DELEGATE(FAbilitiesGiven);
 DECLARE_DELEGATE_OneParam(FForEachAbility,const FGameplayAbilitySpec&);
+DECLARE_MULTICAST_DELEGATE(FAbilityGivenDelegate);
 /**
  * 
  */
@@ -33,7 +34,7 @@ public:
 	void AbilityInputTagReleased(const FGameplayTag& InputTag);
 
 	//通知所有监听者"技能初始化应用已完成"。
-	FAbilityGiven AbilityGivenDelegate;
+	FAbilitiesGiven AbilitiesGivenDelegate;
 	bool bStartupAbilitiesGiven=false;
 
 	void ForEachAbility(const FForEachAbility&Delegate);
