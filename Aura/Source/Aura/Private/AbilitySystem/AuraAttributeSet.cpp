@@ -209,21 +209,6 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 	FEffectProperties Props;
 	SetEffectProperties(Data,Props);
 	
-	if (Data.EvaluatedData.Attribute==GetStrengthAttribute())
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Orange, 
-	FString::Printf(TEXT("BaseValue: %f CurrentValue: %f"), 
-		Strength.GetBaseValue(), Strength.GetCurrentValue()));
-	}
-
-	if (Data.EvaluatedData.Attribute==GetArmorAttribute())
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, 
-	FString::Printf(TEXT("BaseValue: %f CurrentValue: %f"), 
-		Armor.GetBaseValue(), Armor.GetCurrentValue()));
-	}
-
-
 	if (Data.EvaluatedData.Attribute==GetHealthAttribute())
 	{
 		SetHealth(FMath::Clamp(GetHealth(),0,GetMaxHealth()));

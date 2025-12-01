@@ -112,11 +112,17 @@ FGameplayTag UAuraAbilitySystemComponent::GetAbilityTagFromSpec(const FGameplayA
 {
 	if (AbilitySpec.Ability)
 	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("整数值: %d"), AbilitySpec.Ability.Get()->AbilityTags.Num()));
 		for (FGameplayTag Tag:AbilitySpec.Ability.Get()->AbilityTags)
 		{
 			if (Tag.MatchesTag(FGameplayTag::RequestGameplayTag(FName("Abilities"))))
 			{
+				GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Green,FString::Printf(TEXT("Tag: %s is  match"),*Tag.ToString()));
 				return Tag;
+			}
+			else
+			{
+				GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Red,FString::Printf(TEXT("Tag: %s is not match"),*Tag.ToString()));
 			}
 		}
 	}
@@ -189,7 +195,7 @@ void UAuraAbilitySystemComponent::UpgradeAttribute(const FGameplayTag& Attribute
 
 void UAuraAbilitySystemComponent::UpdateAbilityStatuses(int32 Level)
 {
-	UAbilityInfo* AbilityInfo=UAuraAbilitySystemLibrary::GetActiveAbilityInfo(this);
+	UAbilityInfo* AbilityInfo=UAuraAbilitySystemLibrary::GetActiveAbilityInfo(GetAvatarActor());
 	for (FAuraAbilityInfo& Info:AbilityInfo->AbilityInformation)
 	{
 		if (!Info.AbilityTag.IsValid())continue;
@@ -197,12 +203,20 @@ void UAuraAbilitySystemComponent::UpdateAbilityStatuses(int32 Level)
 		if (GetSpecFromAbilityTag(Info.AbilityTag)==nullptr)
 		{
 			FGameplayAbilitySpec AbilitySpec=FGameplayAbilitySpec(Info.Ability,1);
-			AbilitySpec.DynamicAbilityTags.AddTag(FAuraGameplayTags::Get().Abilities_Status_Equipped);
+			AbilitySpec.DynamicAbilityTags.AddTag(FAuraGameplayTags::Get().Abilities_Status_Eligible);
 			GiveAbility(AbilitySpec);
 			//设置当前技能立即复制到每个客户端
 			MarkAbilitySpecDirty(AbilitySpec);
+			ClientUpdateAbilityStatus(Info.AbilityTag,FAuraGameplayTags::Get().Abilities_Status_Eligible);
 		}
 	}
+}
+
+//ASC是在服务器运行，我们再增加一个客户端执行的函数，用于广播到每个客户端
+void UAuraAbilitySystemComponent::ClientUpdateAbilityStatus_Implementation(const FGameplayTag& AbilityTag,
+	const FGameplayTag& StatusTag)
+{
+	AbilityStatusChangedDelegate.Broadcast(AbilityTag,StatusTag);
 }
 
 void UAuraAbilitySystemComponent::ServerUpgradeAttribute_Implementation(const FGameplayTag& AttributeTag)

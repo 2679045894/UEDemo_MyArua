@@ -145,7 +145,7 @@ void AAuraCharacter::AddToPlayerLevel_Implementation(int32 InPlayerLevel)
 
 	if (GetAbilitySystemComponent())
 	{
-		GetAbilitySystemComponent()->UpdateAbilityStatuses(Execute_GetPlayerLevel(this));
+		GetAbilitySystemComponent()->UpdateAbilityStatuses(AuraPlayerState->GetPlayerLevel());
 	}
 }
 

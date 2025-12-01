@@ -11,6 +11,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FEffectAssetTags,FGameplayTagContainer&)
 DECLARE_MULTICAST_DELEGATE(FAbilitiesGiven);
 DECLARE_DELEGATE_OneParam(FForEachAbility,const FGameplayAbilitySpec&);
 DECLARE_MULTICAST_DELEGATE(FAbilityGivenDelegate);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FAbilityStatusChanged,const FGameplayTag&,const FGameplayTag&)
 /**
  * 
  */
@@ -35,6 +36,7 @@ public:
 
 	//通知所有监听者"技能初始化应用已完成"。
 	FAbilitiesGiven AbilitiesGivenDelegate;
+	FAbilityStatusChanged AbilityStatusChangedDelegate;
 	bool bStartupAbilitiesGiven=false;
 
 	void ForEachAbility(const FForEachAbility&Delegate);
@@ -55,4 +57,8 @@ public:
 
 	UFUNCTION()
 	void UpdateAbilityStatuses(int32 Level);
+
+	//ASC是在服务器运行，我们再增加一个客户端执行的函数，用于广播到每个客户端
+	UFUNCTION(Client,Reliable)
+	void ClientUpdateAbilityStatus(const FGameplayTag& AbilityTag,const FGameplayTag& StatusTag);
 };

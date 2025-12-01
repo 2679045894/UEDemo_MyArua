@@ -62,11 +62,9 @@ void AMyCharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEf
 		EffectContextHandle.AddSourceObject(this);
 		FGameplayEffectSpecHandle EffectSpec=TargetASC->MakeOutgoingSpec(GameplayEffectClass,Level,EffectContextHandle);
 		UAuraAttributeSet* AuraAS=Cast<UAuraAttributeSet>(AttributeSet);
-		GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Yellow,FString::Printf(TEXT(" ini pre str %f"),AuraAS->GetStrength()));
 		if (EffectSpec.IsValid())
 		{
 			TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpec.Data.Get());
-			GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Yellow,FString::Printf(TEXT(" aft pre str %f"),AuraAS->GetStrength()));
 		}
 	}
 }

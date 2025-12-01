@@ -42,7 +42,7 @@ public:
 	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_AttributePoints,Category="Level")
 	int32 AttributePoints=3;
 	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_SpellPoints,Category="Level")
-	int32 SpellPoints=0;
+	int32 SpellPoints=3;
 
 	void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 

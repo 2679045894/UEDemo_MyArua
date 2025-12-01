@@ -67,6 +67,9 @@ public:
 	UPROPERTY(BlueprintAssignable,Category="GAS|Attributes")
 	FAbilityInfoSignature AbilityInfoDelegate;
 
+	UPROPERTY(BlueprintAssignable,Category="GAS|Attributes")
+	FOnPlayerStateChangedSignature SpellPointChanged;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget Data")
 	TObjectPtr<UAbilityInfo> AbilityInfo;
 
