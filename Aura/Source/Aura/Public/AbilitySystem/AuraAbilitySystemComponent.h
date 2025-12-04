@@ -67,4 +67,6 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void ServerDemotionSpellPoint(const FGameplayTag& AbilityTag);
+
+	bool GetDescriptionByAbilityTag(const FGameplayTag& AbilityTag,FString& OutDescription,FString& OutNextLevelDescription);
 };

@@ -97,13 +97,17 @@ void USpellMenuWidgetController::ShouldEnableButtons(const FGameplayTag& Ability
 
 }
 
-void USpellMenuWidgetController::BroadcastSpellGlobeSelected() const
+void USpellMenuWidgetController::BroadcastSpellGlobeSelected()
 {
 	bool bShouldEnableSpellPoints=false;
 	bool bShouldEnableEquip=false;
 	bool bShouldDemotionPoints=false;
 	ShouldEnableButtons(SelectedAbility.Status,CurrentSpellPoints>0,bShouldEnableSpellPoints,bShouldEnableEquip,bShouldDemotionPoints);
 	OnSpellGlobeSelectedDelegate.Broadcast(bShouldEnableSpellPoints,bShouldEnableEquip,bShouldDemotionPoints,SelectedAbility.Level);
+	FString SpellDescription=FString();
+	FString SpellNextDescription=FString();
+	GetAuraAbilitySystemComponent()->GetDescriptionByAbilityTag(SelectedAbility.Ability,SpellDescription,SpellNextDescription);
+	SpellDescriptionSignature.Broadcast(SpellDescription,SpellNextDescription);
 }
 
 void USpellMenuWidgetController::SpendPointButtonPressed(const FGameplayTag& AbilityTag)

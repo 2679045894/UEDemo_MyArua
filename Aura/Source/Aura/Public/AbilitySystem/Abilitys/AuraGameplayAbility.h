@@ -20,4 +20,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly,Category="Damage")
 	FScalableFloat Damage;
+
+	virtual FString GetDescription(int32 Level);
+	virtual FString GetNextLevelDescription(int32 Level);
+	//锁定技能描述
+	static FString GetLockedDescription(int32 Level);
 };

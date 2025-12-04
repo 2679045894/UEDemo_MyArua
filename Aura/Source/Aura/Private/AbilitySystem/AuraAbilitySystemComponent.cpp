@@ -112,17 +112,11 @@ FGameplayTag UAuraAbilitySystemComponent::GetAbilityTagFromSpec(const FGameplayA
 {
 	if (AbilitySpec.Ability)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("整数值: %d"), AbilitySpec.Ability.Get()->AbilityTags.Num()));
 		for (FGameplayTag Tag:AbilitySpec.Ability.Get()->AbilityTags)
 		{
 			if (Tag.MatchesTag(FGameplayTag::RequestGameplayTag(FName("Abilities"))))
 			{
-				GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Green,FString::Printf(TEXT("Tag: %s is  match"),*Tag.ToString()));
 				return Tag;
-			}
-			else
-			{
-				GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Red,FString::Printf(TEXT("Tag: %s is not match"),*Tag.ToString()));
 			}
 		}
 	}
@@ -210,6 +204,25 @@ void UAuraAbilitySystemComponent::UpdateAbilityStatuses(int32 Level)
 			ClientUpdateAbilityStatus(Info.AbilityTag,FAuraGameplayTags::Get().Abilities_Status_Eligible);
 		}
 	}
+}
+
+bool UAuraAbilitySystemComponent::GetDescriptionByAbilityTag(const FGameplayTag& AbilityTag, FString& OutDescription,
+	FString& OutNextLevelDescription)
+{
+	if (FGameplayAbilitySpec* AbilitySpec=GetSpecFromAbilityTag(AbilityTag))
+	{
+		if (UAuraGameplayAbility* Ability=Cast<UAuraGameplayAbility>(AbilitySpec->Ability))
+		{
+			OutDescription=Ability->GetDescription(AbilitySpec->Level);
+			OutNextLevelDescription=Ability->GetNextLevelDescription(AbilitySpec->Level+1);
+			return true;
+		}
+	}
+	UAbilityInfo* AbilityInfo=UAuraAbilitySystemLibrary::GetActiveAbilityInfo(GetAvatarActor());
+	OutDescription=UAuraGameplayAbility::GetLockedDescription(AbilityInfo->FindAbilityInfoForTag(AbilityTag).LevelRequirement);
+	OutNextLevelDescription=FString();
+	return false;
+	
 }
 
 void UAuraAbilitySystemComponent::ServerSpendSpellPoint_Implementation(const FGameplayTag& AbilityTag)

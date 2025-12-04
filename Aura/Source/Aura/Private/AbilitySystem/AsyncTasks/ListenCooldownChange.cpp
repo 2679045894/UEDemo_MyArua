@@ -64,7 +64,6 @@ void UListenCooldownChange::OnActiveEffectAdded(UAbilitySystemComponent* TargetA
 			CooldownTag.GetSingleTagContainer());
 		//返回查询到的所有包含此冷却GE的剩余时间的GE
 		TArray<float> TimesRemaining=ASC->GetActiveEffectsTimeRemaining(GameplayEffectQuery);
-		GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Blue,FString::Printf(TEXT("%d"),TimesRemaining.Num()));
 		if (TimesRemaining.Num()>0)
 		{
 			//获取最高的冷却时间

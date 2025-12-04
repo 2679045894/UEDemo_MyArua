@@ -9,6 +9,8 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FSpellGlobeSlectedSignature,bool,bSpendPointsEnable,bool,bEquipEnabled,bool,bDemotionPointsEnabled,int32,Level);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSpellDescriptionSinagtrue,FString,SpellDescription,FString,SpellNextDescription);
+
 struct FSelectedAbility
 {
 	FGameplayTag Ability=FGameplayTag();
@@ -29,6 +31,9 @@ public:
 	FSpellGlobeSlectedSignature OnSpellGlobeSelectedDelegate;
 	FSelectedAbility SelectedAbility={FAuraGameplayTags::Get().Abilities_None,FAuraGameplayTags::Get().Abilities_Status_Locked};
 
+	UPROPERTY(BlueprintAssignable)
+	FSpellDescriptionSinagtrue SpellDescriptionSignature;
+	
 	//保存当前技能可分配点数
 	int32 CurrentSpellPoints=0;
 
@@ -38,7 +43,7 @@ public:
 	UFUNCTION()
 	static void ShouldEnableButtons(const FGameplayTag& AbilityStatus,bool HasSpellPoints,bool& bShouldEnableSpellPoints,bool& bShouldEnableEquip,bool& bShouldDemotionPoints);
 
-	void BroadcastSpellGlobeSelected()const;
+	void BroadcastSpellGlobeSelected();
 
 	UFUNCTION(BlueprintCallable)
 	void SpendPointButtonPressed(const FGameplayTag &AbilityTag);
