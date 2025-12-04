@@ -11,7 +11,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FEffectAssetTags,FGameplayTagContainer&)
 DECLARE_MULTICAST_DELEGATE(FAbilitiesGiven);
 DECLARE_DELEGATE_OneParam(FForEachAbility,const FGameplayAbilitySpec&);
 DECLARE_MULTICAST_DELEGATE(FAbilityGivenDelegate);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FAbilityStatusChanged,const FGameplayTag&,const FGameplayTag&)
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FAbilityStatusChanged,const FGameplayTag&,const FGameplayTag&,int32/*Level*/)
 /**
  * 
  */
@@ -61,4 +61,10 @@ public:
 	//ASC是在服务器运行，我们再增加一个客户端执行的函数，用于广播到每个客户端
 	UFUNCTION(Client,Reliable)
 	void ClientUpdateAbilityStatus(const FGameplayTag& AbilityTag,const FGameplayTag& StatusTag);
+
+	UFUNCTION(Server, Reliable)
+	void ServerSpendSpellPoint(const FGameplayTag& AbilityTag);
+
+	UFUNCTION(Server, Reliable)
+	void ServerDemotionSpellPoint(const FGameplayTag& AbilityTag);
 };

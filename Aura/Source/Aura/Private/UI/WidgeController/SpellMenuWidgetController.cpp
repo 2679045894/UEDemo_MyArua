@@ -3,17 +3,27 @@
 
 #include "UI/WidgeController/SpellMenuWidgetController.h"
 
+#include "AuraGameplayTags.h"
+
 void USpellMenuWidgetController::BroadcastInitialValues()
 {
+	CurrentSpellPoints=GetAuraPlayerState()->GetSpellPoints();
 	SpellPointChanged.Broadcast(GetAuraPlayerState()->GetSpellPoints());
 	BroadcastAbilityInfo();
 }
 
 void USpellMenuWidgetController::BindCallbacksToDependencies()
 {
+	//广播技能数据更新，用于更新技能按钮的显示状态
 	GetAuraAbilitySystemComponent()->AbilityStatusChangedDelegate.AddLambda(
-		[this](const FGameplayTag& AbilityTag,const FGameplayTag& StatusTag)
+		[this](const FGameplayTag& AbilityTag,const FGameplayTag& StatusTag,int32 NewLevel)
 	{
+		if (SelectedAbility.Ability.MatchesTagExact(AbilityTag))
+		{
+			SelectedAbility.Status=StatusTag;
+			SelectedAbility.Level=NewLevel;
+			BroadcastSpellGlobeSelected();
+		}
 		if (AbilityInfo)
 		{
 			FAuraAbilityInfo Info=AbilityInfo->FindAbilityInfoForTag(AbilityTag);
@@ -21,9 +31,93 @@ void USpellMenuWidgetController::BindCallbacksToDependencies()
 			AbilityInfoDelegate.Broadcast(Info);
 		}
 	});
-
+	//绑定技能点变动回调
 	GetAuraPlayerState()->OnSpellPointsChangedDelegate.AddLambda([this](const int32 SpellPoints)
 	{
-		SpellPointChanged.Broadcast(SpellPoints);
+		SpellPointChanged.Broadcast(GetAuraPlayerState()->SpellPoints);
+		CurrentSpellPoints=GetAuraPlayerState()->SpellPoints;
+		BroadcastSpellGlobeSelected();
 	});
+}
+
+FGameplayTag USpellMenuWidgetController::SpellGlobeSelected(const FGameplayTag& AbilityTag)
+{
+	FGameplayTag AbilityStatus;
+	const bool bTagValid=AbilityTag.IsValid();
+	const bool bTagNone=AbilityTag.MatchesTagExact(FAuraGameplayTags::Get().Abilities_Type_None);
+	const FGameplayAbilitySpec* AbilitySpec=GetAuraAbilitySystemComponent()->GetSpecFromAbilityTag(AbilityTag);
+	const bool bSpecValid=AbilitySpec!=nullptr;
+
+	if (!bTagValid||bTagNone||!bSpecValid)
+	{
+		AbilityStatus=FAuraGameplayTags::Get().Abilities_Status_Locked;
+	}
+	else
+	{
+		AbilityStatus=GetAuraAbilitySystemComponent()->GetStatusTagFromSpec(*AbilitySpec);
+		SelectedAbility.Level=AbilitySpec->Level;
+	}
+
+	//更新结构体
+	SelectedAbility.Ability=AbilityTag;
+	SelectedAbility.Status=AbilityStatus;
+	BroadcastSpellGlobeSelected();
+	return AbilityStatus;
+}
+
+void USpellMenuWidgetController::ShouldEnableButtons(const FGameplayTag& AbilityStatus, bool HasSpellPoints,
+	bool& bShouldEnableSpellPoints, bool& bShouldEnableEquip, bool& bShouldDemotionPoints)
+{
+	const FAuraGameplayTags AuraGameplayTags=FAuraGameplayTags::Get();
+	if (AbilityStatus.MatchesTagExact(AuraGameplayTags.Abilities_Status_Equipped))
+	{
+		bShouldEnableSpellPoints=HasSpellPoints;
+		bShouldDemotionPoints=true;
+		bShouldEnableEquip=true;
+	}
+	else if (AbilityStatus.MatchesTagExact(AuraGameplayTags.Abilities_Status_Eligible))
+	{
+		bShouldEnableSpellPoints=HasSpellPoints;
+		bShouldDemotionPoints=false;
+		bShouldEnableEquip=false;
+	}
+	else if (AbilityStatus.MatchesTagExact(AuraGameplayTags.Abilities_Status_Unlocked))
+	{
+		bShouldEnableSpellPoints=HasSpellPoints;
+		bShouldDemotionPoints=true;
+		bShouldEnableEquip=true;
+	}
+	else if (AbilityStatus.MatchesTagExact(AuraGameplayTags.Abilities_Status_Locked))
+	{
+		bShouldEnableSpellPoints=false;
+		bShouldDemotionPoints=false;
+		bShouldEnableEquip=false;
+	}
+	
+
+}
+
+void USpellMenuWidgetController::BroadcastSpellGlobeSelected() const
+{
+	bool bShouldEnableSpellPoints=false;
+	bool bShouldEnableEquip=false;
+	bool bShouldDemotionPoints=false;
+	ShouldEnableButtons(SelectedAbility.Status,CurrentSpellPoints>0,bShouldEnableSpellPoints,bShouldEnableEquip,bShouldDemotionPoints);
+	OnSpellGlobeSelectedDelegate.Broadcast(bShouldEnableSpellPoints,bShouldEnableEquip,bShouldDemotionPoints,SelectedAbility.Level);
+}
+
+void USpellMenuWidgetController::SpendPointButtonPressed(const FGameplayTag& AbilityTag)
+{
+	if (GetAuraAbilitySystemComponent())
+	{
+		GetAuraAbilitySystemComponent()->ServerSpendSpellPoint(AbilityTag);
+	}
+}
+
+void USpellMenuWidgetController::DemotionPointButtonPressed(const FGameplayTag& AbilityTag)
+{
+	if (GetAuraAbilitySystemComponent())
+	{
+		GetAuraAbilitySystemComponent()->ServerDemotionSpellPoint(AbilityTag);
+	}
 }

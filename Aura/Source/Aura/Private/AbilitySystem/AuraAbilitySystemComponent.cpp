@@ -212,11 +212,97 @@ void UAuraAbilitySystemComponent::UpdateAbilityStatuses(int32 Level)
 	}
 }
 
-//ASC是在服务器运行，我们再增加一个客户端执行的函数，用于广播到每个客户端
+void UAuraAbilitySystemComponent::ServerSpendSpellPoint_Implementation(const FGameplayTag& AbilityTag)
+{
+	if (FGameplayAbilitySpec* AbilitySpec=GetSpecFromAbilityTag(AbilityTag))
+	{
+		if (IPlayerInterface* PlayerInterface=Cast<IPlayerInterface>(GetAvatarActor()))
+		{
+			PlayerInterface->Execute_AddToSpellPoints(GetAvatarActor(),-1);
+		}
+		FAuraGameplayTags AuraGameplayTags=FAuraGameplayTags::Get();
+		FGameplayTag StatusTag=GetStatusTagFromSpec(*AbilitySpec);
+
+		if (StatusTag.MatchesTagExact(AuraGameplayTags.Abilities_Status_Eligible))
+		{
+			AbilitySpec->DynamicAbilityTags.AddTag(AuraGameplayTags.Abilities_Status_Unlocked);
+			AbilitySpec->DynamicAbilityTags.RemoveTag(AuraGameplayTags.Abilities_Status_Eligible);
+			AbilitySpec->Level+=1;
+		}
+		else if (StatusTag.MatchesTagExact(AuraGameplayTags.Abilities_Status_Equipped)||StatusTag.MatchesTagExact(AuraGameplayTags.Abilities_Status_Unlocked))
+		{
+			AbilitySpec->Level+=1;
+		}
+
+		ClientUpdateAbilityStatus(AbilityTag,StatusTag);
+		//将当前技能复制到每个客户端
+		MarkAbilitySpecDirty(*AbilitySpec);
+	}
+}
+
+void UAuraAbilitySystemComponent::ServerDemotionSpellPoint_Implementation(const FGameplayTag& AbilityTag)
+{
+	if (FGameplayAbilitySpec* AbilitySpec=GetSpecFromAbilityTag(AbilityTag))
+	{
+		if (IPlayerInterface* PlayerInterface=Cast<IPlayerInterface>(GetAvatarActor()))
+		{
+			PlayerInterface->Execute_AddToSpellPoints(GetAvatarActor(),1);
+		}
+		FAuraGameplayTags AuraGameplayTags=FAuraGameplayTags::Get();
+		FGameplayTag StatusTag=GetStatusTagFromSpec(*AbilitySpec);
+		if (StatusTag.MatchesTagExact(AuraGameplayTags.Abilities_Status_Unlocked)||StatusTag.MatchesTagExact(AuraGameplayTags.Abilities_Status_Equipped))
+		{
+			AbilitySpec->Level-=1;
+			if (AbilitySpec->Level<1)
+			{
+				AbilitySpec->DynamicAbilityTags.RemoveTag(AuraGameplayTags.Abilities_Status_Unlocked);
+				AbilitySpec->DynamicAbilityTags.RemoveTag(AuraGameplayTags.Abilities_Status_Equipped);
+				AbilitySpec->DynamicAbilityTags.AddTag(AuraGameplayTags.Abilities_Status_Eligible);
+				StatusTag=AuraGameplayTags.Abilities_Status_Eligible;
+			}
+		}
+		ClientUpdateAbilityStatus(AbilityTag,StatusTag);
+		MarkAbilitySpecDirty(*AbilitySpec);
+	}
+}
+
+
+/*//ASC是在服务器运行，我们再增加一个客户端执行的函数，用于广播到每个客户端
 void UAuraAbilitySystemComponent::ClientUpdateAbilityStatus_Implementation(const FGameplayTag& AbilityTag,
 	const FGameplayTag& StatusTag)
 {
-	AbilityStatusChangedDelegate.Broadcast(AbilityTag,StatusTag);
+	FGameplayAbilitySpec* AbilitySpec= GetSpecFromAbilityTag(AbilityTag);
+	AbilityStatusChangedDelegate.Broadcast(AbilityTag,StatusTag,AbilitySpec->Level);
+}*/
+void UAuraAbilitySystemComponent::ClientUpdateAbilityStatus_Implementation(const FGameplayTag& AbilityTag,
+	const FGameplayTag& StatusTag)
+{
+	// 尝试多次获取，防止时序问题
+	FGameplayAbilitySpec* AbilitySpec = GetSpecFromAbilityTag(AbilityTag);
+    
+	if (!AbilitySpec)
+	{
+		// 如果立即获取失败，尝试延迟获取
+		FTimerHandle TimerHandle;
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this, AbilityTag, StatusTag]()
+		{
+			FGameplayAbilitySpec* RetrySpec = GetSpecFromAbilityTag(AbilityTag);
+			if (RetrySpec)
+			{
+				AbilityStatusChangedDelegate.Broadcast(AbilityTag, StatusTag, RetrySpec->Level);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Failed to find AbilitySpec for tag: %s"), 
+					*AbilityTag.ToString());
+				// 使用默认等级广播
+				AbilityStatusChangedDelegate.Broadcast(AbilityTag, StatusTag, 1);
+			}
+		}, 0.1f, false); // 延迟0.1秒重试
+		return;
+	}
+    
+	AbilityStatusChangedDelegate.Broadcast(AbilityTag, StatusTag, AbilitySpec->Level);
 }
 
 void UAuraAbilitySystemComponent::ServerUpgradeAttribute_Implementation(const FGameplayTag& AttributeTag)
