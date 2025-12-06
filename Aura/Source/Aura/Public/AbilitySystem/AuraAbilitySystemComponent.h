@@ -12,6 +12,7 @@ DECLARE_MULTICAST_DELEGATE(FAbilitiesGiven);
 DECLARE_DELEGATE_OneParam(FForEachAbility,const FGameplayAbilitySpec&);
 DECLARE_MULTICAST_DELEGATE(FAbilityGivenDelegate);
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FAbilityStatusChanged,const FGameplayTag&,const FGameplayTag&,int32/*Level*/)
+DECLARE_MULTICAST_DELEGATE_FourParams(FAbilityEquipped,const FGameplayTag&,const FGameplayTag&,const FGameplayTag&,const FGameplayTag&)
 /**
  * 
  */
@@ -38,6 +39,8 @@ public:
 	FAbilitiesGiven AbilitiesGivenDelegate;
 	FAbilityStatusChanged AbilityStatusChangedDelegate;
 	bool bStartupAbilitiesGiven=false;
+	
+	FAbilityEquipped AbilityEquippedDelegate;
 
 	void ForEachAbility(const FForEachAbility&Delegate);
 
@@ -69,4 +72,18 @@ public:
 	void ServerDemotionSpellPoint(const FGameplayTag& AbilityTag);
 
 	bool GetDescriptionByAbilityTag(const FGameplayTag& AbilityTag,FString& OutDescription,FString& OutNextLevelDescription);
+
+	//判断当前技能实例是否处于目标技能装备插槽
+	static bool AbilityHasSlot(FGameplayAbilitySpec* Spec,const FGameplayTag& Slot);
+
+	//清除技能的装配的插槽（清除GA的输入标签）
+	void ClearSlot(FGameplayAbilitySpec* Spec);
+
+	void ClearAbilitiesOfSlot(const FGameplayTag& Slot);
+
+	UFUNCTION(Server, Reliable) //在服务器处理技能装配，传入技能标签和装配的技能标签
+	void ServerEquipAbility(const FGameplayTag& AbilityTag,const FGameplayTag& SlotTag);
+
+	UFUNCTION(Server, Reliable)
+	void ClientEquipAbility(const FGameplayTag& AbilityTag,const FGameplayTag& Status,const FGameplayTag& Slot,const FGameplayTag& PreviousSlot);
 };

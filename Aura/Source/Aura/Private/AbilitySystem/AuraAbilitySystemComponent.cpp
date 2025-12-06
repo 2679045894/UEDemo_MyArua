@@ -225,6 +225,72 @@ bool UAuraAbilitySystemComponent::GetDescriptionByAbilityTag(const FGameplayTag&
 	
 }
 
+//判断当前技能实例是否处于目标技能装备插槽
+bool UAuraAbilitySystemComponent::AbilityHasSlot(FGameplayAbilitySpec* Spec, const FGameplayTag& Slot)
+{
+	for (FGameplayTag Tag:Spec->DynamicAbilityTags)
+	{
+		if (Tag.MatchesTagExact(Slot))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+void UAuraAbilitySystemComponent::ClearSlot(FGameplayAbilitySpec* Spec)
+{
+	const FGameplayTag Slot=GetInputTagFromSpec(*Spec);
+	Spec->DynamicAbilityTags.RemoveTag(Slot);
+	//标记为需要同步
+	MarkAbilitySpecDirty(*Spec);
+}
+
+void UAuraAbilitySystemComponent::ClearAbilitiesOfSlot(const FGameplayTag& Slot)
+{
+	FScopedAbilityListLock ActiveScopeLock(*this);
+	for (FGameplayAbilitySpec& Spec:GetActivatableAbilities())
+	{
+		if (AbilityHasSlot(&Spec,Slot))
+		{
+			ClearSlot(&Spec);
+		}
+	}
+}
+
+void UAuraAbilitySystemComponent::ClientEquipAbility_Implementation(const FGameplayTag& AbilityTag,
+	const FGameplayTag& Status, const FGameplayTag& Slot, const FGameplayTag& PreviousSlot)
+{
+	AbilityEquippedDelegate.Broadcast(AbilityTag,Status,Slot,PreviousSlot);
+}
+
+void UAuraAbilitySystemComponent::ServerEquipAbility_Implementation(const FGameplayTag& AbilityTag,
+                                                                    const FGameplayTag& SlotTag)
+{
+	if (FGameplayAbilitySpec* AbilitySpec=GetSpecFromAbilityTag(AbilityTag))
+	{
+		//技能之前装配的插槽
+		const FGameplayTag& PreSlot=GetInputTagFromSpec(*AbilitySpec);
+		//当前技能的状态标签
+		const FGameplayTag& Status=GetStatusTagFromSpec(*AbilitySpec);
+
+		const FAuraGameplayTags AuraGameplayTags=FAuraGameplayTags::Get();
+		if (Status.MatchesTagExact(AuraGameplayTags.Abilities_Status_Unlocked)||Status.MatchesTagExact(AuraGameplayTags.Abilities_Status_Equipped))
+		{
+			ClearAbilitiesOfSlot(SlotTag);
+			ClearSlot(AbilitySpec);
+			AbilitySpec->DynamicAbilityTags.AddTag(SlotTag);
+		}
+		if (Status.MatchesTagExact(AuraGameplayTags.Abilities_Status_Unlocked))
+		{
+			AbilitySpec->DynamicAbilityTags.RemoveTag(AuraGameplayTags.Abilities_Status_Unlocked);
+			AbilitySpec->DynamicAbilityTags.AddTag(AuraGameplayTags.Abilities_Status_Equipped);
+		}
+		ClientEquipAbility(AbilityTag,Status,SlotTag,PreSlot);
+		MarkAbilitySpecDirty(*AbilitySpec);
+	}
+}
+
 void UAuraAbilitySystemComponent::ServerSpendSpellPoint_Implementation(const FGameplayTag& AbilityTag)
 {
 	if (FGameplayAbilitySpec* AbilitySpec=GetSpecFromAbilityTag(AbilityTag))

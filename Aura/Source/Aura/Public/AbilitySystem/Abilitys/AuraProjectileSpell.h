@@ -27,9 +27,6 @@ public:
 	//火球类
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AAuraProjectile> ProjectileClass;
-
-	virtual FString GetDescription(int32 Level) override;
-
-	virtual FString GetNextLevelDescription(int32 Level) override;
+	
 	
 };

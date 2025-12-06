@@ -50,4 +50,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void DemotionPointButtonPressed(const FGameplayTag &AbilityTag);
+
+	UFUNCTION(BlueprintCallable)
+	void EquipButtonPressed(const FGameplayTag& SlotTag,const FGameplayTag& AbilityType);
+
+	UFUNCTION()
+	void OnAbilityEquipped(const FGameplayTag& AbilityTag,const FGameplayTag& Status,const FGameplayTag& Slot,const FGameplayTag& PreSlot);
 };
