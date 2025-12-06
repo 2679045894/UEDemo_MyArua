@@ -44,6 +44,9 @@ public:
 	void SetWidgetController(const FWidgetControllerParams& WCParams);
 	virtual void BroadcastInitialValues();
 	virtual void BindCallbacksToDependencies();
+
+	bool bWaitingForEquipSelection = false;
+	int32 Count=0;
 	
 	UPROPERTY(BlueprintReadOnly,Category="WidgetController")
 	TObjectPtr<APlayerController> PlayerController;

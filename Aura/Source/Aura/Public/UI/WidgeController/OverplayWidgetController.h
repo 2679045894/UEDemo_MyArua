@@ -69,7 +69,6 @@ public:
 
 	UFUNCTION()
 	void OnAbilityEquipped(const FGameplayTag& AbilityTag,const FGameplayTag& Status,const FGameplayTag& Slot,const FGameplayTag& PreSlot);
-
 	
 protected:
 	//通过标签名获取行命名信息（确保行命名和标签名一致）

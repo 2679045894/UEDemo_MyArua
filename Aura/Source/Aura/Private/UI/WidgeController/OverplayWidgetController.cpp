@@ -101,18 +101,27 @@ void UOverplayWidgetController::OnXPChanged(int32 NewXP)
 void UOverplayWidgetController::OnAbilityEquipped(const FGameplayTag& AbilityTag,const FGameplayTag& Status,
 	 const FGameplayTag& Slot,const FGameplayTag& PreSlot)
 {
-	const FAuraGameplayTags GameplayTags=FAuraGameplayTags::Get();
-	/*FAuraAbilityInfo LastSlotInfo;
-	LastSlotInfo.StatusTag=GameplayTags.Abilities_Status_Unlocked;
-	LastSlotInfo.InputTag=PreSlot;
-	LastSlotInfo.AbilityTag=GameplayTags.Abilities_None;
-	AbilityInfoDelegate.Broadcast(LastSlotInfo);*/
+	if (bWaitingForEquipSelection&&Count==2)
+	{
+		FAuraGameplayTags GameplayTags=FAuraGameplayTags::Get();
+		FAuraAbilityInfo LastSlotInfo;
+		LastSlotInfo.StatusTag=GameplayTags.Abilities_Status_Unlocked;
+		LastSlotInfo.InputTag=PreSlot;
+		LastSlotInfo.AbilityTag=GameplayTags.Abilities_None;
+		AbilityInfoDelegate.Broadcast(LastSlotInfo);
+		Count=0;
+	}
 
 	FAuraAbilityInfo Info=AbilityInfo->FindAbilityInfoForTag(AbilityTag);
 	Info.InputTag=Slot;
 	Info.StatusTag=Status;
 	AbilityInfoDelegate.Broadcast(Info);
 }
+
+
+
+
+
 
 
 

@@ -44,6 +44,8 @@ void USpellMenuWidgetController::BindCallbacksToDependencies()
 
 FGameplayTag USpellMenuWidgetController::SpellGlobeSelected(const FGameplayTag& AbilityTag)
 {
+	bWaitingForEquipSelection=true;
+	Count=0;
 	FGameplayTag AbilityStatus;
 	const bool bTagValid=AbilityTag.IsValid();
 	const bool bTagNone=AbilityTag.MatchesTagExact(FAuraGameplayTags::Get().Abilities_Type_None);
@@ -130,28 +132,62 @@ void USpellMenuWidgetController::DemotionPointButtonPressed(const FGameplayTag& 
 
 void USpellMenuWidgetController::EquipButtonPressed(const FGameplayTag& SlotTag, const FGameplayTag& AbilityType)
 {
+	Count++;
+	if (Count==2)
+	{
+		Count=0;
+		bWaitingForEquipSelection=false;
+	}
 	const FGameplayTag SelectedAbilityType=AbilityInfo->FindAbilityInfoForTag(SelectedAbility.Ability).AbilityType;
 	if (!SelectedAbilityType.MatchesTagExact(AbilityType))
 	{
 		return;
 	}
 	GetAuraAbilitySystemComponent()->ServerEquipAbility(SelectedAbility.Ability,SlotTag);
-	
 }
 
-void USpellMenuWidgetController::OnAbilityEquipped(const FGameplayTag& AbilityTag, const FGameplayTag& Status,
+/*void USpellMenuWidgetController::OnAbilityEquipped(const FGameplayTag& AbilityTag, const FGameplayTag& Status,
 	const FGameplayTag& Slot, const FGameplayTag& PreSlot)
 {
 	const FAuraGameplayTags GameplayTags=FAuraGameplayTags::Get();
 
-	FAuraAbilityInfo LastSlotInfo;
-	LastSlotInfo.StatusTag=GameplayTags.Abilities_Status_Unlocked;
-	LastSlotInfo.InputTag=PreSlot;
-	LastSlotInfo.AbilityTag=GameplayTags.Abilities_None;
-	AbilityInfoDelegate.Broadcast(LastSlotInfo);
-
+	if (bWaitingForEquipSelection&&Count==2)
+	{
+		FAuraAbilityInfo LastSlotInfo;
+		LastSlotInfo.StatusTag=GameplayTags.Abilities_Status_Unlocked;
+		LastSlotInfo.InputTag=PreSlot;
+		LastSlotInfo.AbilityTag=GameplayTags.Abilities_None;
+		AbilityInfoDelegate.Broadcast(LastSlotInfo);
+		Count=0;
+	}
 	FAuraAbilityInfo Info=AbilityInfo->FindAbilityInfoForTag(AbilityTag);
 	Info.StatusTag=Status;
 	Info.InputTag=Slot;
 	AbilityInfoDelegate.Broadcast(Info);
+}*/
+void USpellMenuWidgetController::OnAbilityEquipped(const FGameplayTag& AbilityTag, const FGameplayTag& Status,
+	const FGameplayTag& Slot, const FGameplayTag& PreSlot)
+{
+	const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
+    
+	// 处理上一个插槽（如果技能是从其他插槽移动过来的）
+	if (PreSlot.IsValid() && !PreSlot.MatchesTagExact(GameplayTags.Abilities_Type_None))
+	{
+		// 查找是否还有其他技能在这个插槽上
+		// 这里可能需要从ASC查询
+		FAuraAbilityInfo LastSlotInfo;
+		LastSlotInfo.StatusTag = GameplayTags.Abilities_Status_Unlocked;
+		LastSlotInfo.InputTag = PreSlot;
+		LastSlotInfo.AbilityTag = GameplayTags.Abilities_None;
+		AbilityInfoDelegate.Broadcast(LastSlotInfo);
+	}
+    
+	// 更新当前装备的技能
+	FAuraAbilityInfo Info = AbilityInfo->FindAbilityInfoForTag(AbilityTag);
+	Info.StatusTag = Status;
+	Info.InputTag = Slot;
+	AbilityInfoDelegate.Broadcast(Info);
+    
+	// 关键修复：广播所有技能信息，确保UI正确更新
+	BroadcastAbilityInfo();
 }
