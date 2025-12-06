@@ -3,6 +3,7 @@
 
 #include "UI/WidgeController/OverplayWidgetController.h"
 
+#include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "UI/WidgeController/AuraWidgetController.h"
@@ -72,6 +73,8 @@ void UOverplayWidgetController::BindCallbacksToDependencies()
 			}
 		}
 	);
+
+	GetAuraAbilitySystemComponent()->AbilityEquippedDelegate.AddUObject(this,&UOverplayWidgetController::OnAbilityEquipped);
 	GetAuraPlayerState()->OnXPChangedDelegate.AddUObject(this,&UOverplayWidgetController::OnXPChanged);
 	GetAuraPlayerState()->OnLevelChangedDelegate.AddLambda([this](int32 NewLevel)
 	{
@@ -93,6 +96,22 @@ void UOverplayWidgetController::OnXPChanged(int32 NewXP)
 		const float XPPercent=static_cast<float>(NewXP-PreviousLevelUpRequirement)/(LevelUpRequirement-PreviousLevelUpRequirement);
 		OnXPPercentChangedDelegate.Broadcast(XPPercent);
 	}
+}
+
+void UOverplayWidgetController::OnAbilityEquipped(const FGameplayTag& AbilityTag,const FGameplayTag& Status,
+	 const FGameplayTag& Slot,const FGameplayTag& PreSlot)
+{
+	const FAuraGameplayTags GameplayTags=FAuraGameplayTags::Get();
+	/*FAuraAbilityInfo LastSlotInfo;
+	LastSlotInfo.StatusTag=GameplayTags.Abilities_Status_Unlocked;
+	LastSlotInfo.InputTag=PreSlot;
+	LastSlotInfo.AbilityTag=GameplayTags.Abilities_None;
+	AbilityInfoDelegate.Broadcast(LastSlotInfo);*/
+
+	FAuraAbilityInfo Info=AbilityInfo->FindAbilityInfoForTag(AbilityTag);
+	Info.InputTag=Slot;
+	Info.StatusTag=Status;
+	AbilityInfoDelegate.Broadcast(Info);
 }
 
 

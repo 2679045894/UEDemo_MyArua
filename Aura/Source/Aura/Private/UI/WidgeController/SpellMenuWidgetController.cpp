@@ -135,7 +135,6 @@ void USpellMenuWidgetController::EquipButtonPressed(const FGameplayTag& SlotTag,
 	{
 		return;
 	}
-	const FGameplayTag SelectedSlotTag=AbilityInfo->FindAbilityInfoForTag(SelectedAbility.Ability).InputTag;
 	GetAuraAbilitySystemComponent()->ServerEquipAbility(SelectedAbility.Ability,SlotTag);
 	
 }
