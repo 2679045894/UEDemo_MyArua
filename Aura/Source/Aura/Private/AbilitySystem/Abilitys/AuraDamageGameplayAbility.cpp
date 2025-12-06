@@ -33,4 +33,9 @@ FTaggedMontage UAuraDamageGameplayAbility::GetRandomTaggedMontageFromArray(
 	return FTaggedMontage();
 }
 
+float UAuraDamageGameplayAbility::GetDamageByDamageType(float InLevel, const FGameplayTag& DamageType)
+{
+	return DamageTypes[DamageType].GetValueAtLevel(InLevel);
+}
+
 

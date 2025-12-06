@@ -67,6 +67,26 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector & ProjectileTargetLocat
 	Projectile->FinishSpawning(SpawnTransform);
 }
 
+FString UAuraProjectileSpell::GetDescription(int32 Level)
+{
+	//const int32 ScaleDamage=DamageTypes[FAuraGameplayTags::Get().Damage_Fire].GetValueAtLevel(Level);
+	if (Level==1)
+	{
+		return FString::Printf(TEXT("未配置"));
+	}
+	else
+	{
+		return FString::Printf(TEXT("未配置"));
+	}
+	
+}
+
+FString UAuraProjectileSpell::GetNextLevelDescription(int32 Level)
+{
+	//const int32 ScaleDamage=DamageTypes[FAuraGameplayTags::Get().Damage_Fire].GetValueAtLevel(Level+1);
+	return FString::Printf(TEXT("未配置"));
+}
+
 
 
 

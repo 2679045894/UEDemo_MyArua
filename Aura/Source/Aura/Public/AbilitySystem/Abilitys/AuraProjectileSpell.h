@@ -14,6 +14,9 @@ UCLASS()
 class AURA_API UAuraProjectileSpell : public UAuraDamageGameplayAbility
 {
 	GENERATED_BODY()
+public:
+	UPROPERTY(EditDefaultsOnly,Category="Projectile")
+	int32 NumProjectiles=5;
 
 	//激活游戏能力
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
@@ -24,5 +27,9 @@ class AURA_API UAuraProjectileSpell : public UAuraDamageGameplayAbility
 	//火球类
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AAuraProjectile> ProjectileClass;
+
+	virtual FString GetDescription(int32 Level) override;
+
+	virtual FString GetNextLevelDescription(int32 Level) override;
 	
 };

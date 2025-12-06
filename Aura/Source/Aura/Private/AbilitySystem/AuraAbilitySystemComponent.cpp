@@ -257,6 +257,8 @@ void UAuraAbilitySystemComponent::ServerDemotionSpellPoint_Implementation(const 
 {
 	if (FGameplayAbilitySpec* AbilitySpec=GetSpecFromAbilityTag(AbilityTag))
 	{
+		if (AbilitySpec->Level==1)
+			return;
 		if (IPlayerInterface* PlayerInterface=Cast<IPlayerInterface>(GetAvatarActor()))
 		{
 			PlayerInterface->Execute_AddToSpellPoints(GetAvatarActor(),1);
