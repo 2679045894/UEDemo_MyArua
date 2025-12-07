@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AuraAbilityTypes.h"
 #include "AbilitySystem/Abilitys/AuraGameplayAbility.h"
 #include "Interaction/CombatInterface.h"
 #include "AuraDamageGameplayAbility.generated.h"
@@ -29,4 +30,23 @@ public:
 
 	UFUNCTION()
 	float GetDamageByDamageType(float InLevel,const FGameplayTag& DamageType);
+/////////////////////DeBuff////////////////////
+	UPROPERTY(EditDefaultsOnly, Category="Damage")
+	FGameplayTag DebuffDamageType=FGameplayTag();
+
+	UPROPERTY(EditDefaultsOnly, Category="Damage")
+	float DeBuffChance=20.f;
+
+	UPROPERTY(EditDefaultsOnly, Category="Damage")
+	float DeBuffDamage=5.f;
+
+	UPROPERTY(EditDefaultsOnly, Category="Damage")
+	float DeBuffDuration=5.f;
+
+	UPROPERTY(EditDefaultsOnly, Category="Damage")
+	float DeBuffFrequency=1.f;
+
+	FDamageEffectParams MakeDamageEffectParamsFromClassDefault(AActor* TargetActor=nullptr);
+
+	
 };

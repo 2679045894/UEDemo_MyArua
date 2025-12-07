@@ -28,8 +28,6 @@ AAuraProjectile::AAuraProjectile()
 	ProjectileMovementComponent->InitialSpeed=450.f;
 	ProjectileMovementComponent->MaxSpeed=550.f;
 	ProjectileMovementComponent->ProjectileGravityScale=0.f;
-	
-	
 }
 
 
@@ -67,21 +65,9 @@ void AAuraProjectile::BeginPlay()
 
 void AAuraProjectile::Destroyed()
 {
-	//客户端未命中
 	if (!bHit&&!HasAuthority())
 	{
-		//播放爆炸特效和声音
-		UGameplayStatics::PlaySoundAtLocation(this,ImpactSound,GetActorLocation());
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this,ImpactEffect,GetActorLocation());
-		/*if (LoopingSoundComponent)
-		{
-			LoopingSoundComponent->Stop();
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("找不到"));
-		}*/
-		bHit=true;
+		OnHit();
 	}
 	Super::Destroyed();
 }
@@ -89,34 +75,16 @@ void AAuraProjectile::Destroyed()
 void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                       UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (GetInstigator()==nullptr)
-	{
-		return;
-	}
-	if (!OtherActor || !OtherActor->IsValidLowLevel())
-	{
-		return;
-	}
-	if (GetInstigator()==OtherActor)return;
-	if (!UAuraAbilitySystemLibrary::IsNotFriend(GetInstigator(),OtherActor))return;
-
-	//命中时播放特效和声音
-	UGameplayStatics::PlaySoundAtLocation(this,ImpactSound,GetActorLocation());
-	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this,ImpactEffect,GetActorLocation());
-	/*if (LoopingSoundComponent)
-	{
-		LoopingSoundComponent->Stop();
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("找不到"));
-	}*/
-	//服务器执行销毁函数
+	AActor* SourceAvatarActor=DamageEffectParams.SourceASC->GetAvatarActor();
+	if (SourceAvatarActor==OtherActor)return;
+	if (!UAuraAbilitySystemLibrary::IsNotFriend(SourceAvatarActor,OtherActor))return;
+	if (!bHit)OnHit();
 	if (HasAuthority())
 	{
 		if (UAbilitySystemComponent* TargetASC=UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 		{
-			TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
+			DamageEffectParams.TargetASC=TargetASC;
+			UAuraAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
 		}
 		Destroy();
 	}
@@ -125,6 +93,14 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 	{
 		bHit=true;
 	}
+}
+
+void AAuraProjectile::OnHit()
+{
+	//命中时播放特效和声音
+	UGameplayStatics::PlaySoundAtLocation(this,ImpactSound,GetActorLocation());
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this,ImpactEffect,GetActorLocation());
+	bHit=true;
 }
 
 

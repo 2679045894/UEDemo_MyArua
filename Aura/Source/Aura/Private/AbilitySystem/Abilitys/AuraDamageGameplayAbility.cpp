@@ -4,7 +4,6 @@
 #include "AbilitySystem/Abilitys/AuraDamageGameplayAbility.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
-#include "MathUtil.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 
 void UAuraDamageGameplayAbility::CauseDamage(AActor* TargetActor)
@@ -36,6 +35,27 @@ FTaggedMontage UAuraDamageGameplayAbility::GetRandomTaggedMontageFromArray(
 float UAuraDamageGameplayAbility::GetDamageByDamageType(float InLevel, const FGameplayTag& DamageType)
 {
 	return DamageTypes[DamageType].GetValueAtLevel(InLevel);
+}
+
+FDamageEffectParams UAuraDamageGameplayAbility::MakeDamageEffectParamsFromClassDefault(AActor* TargetActor)
+{
+	FDamageEffectParams DamageEffectParams;
+	DamageEffectParams.WorldContextObject=GetAvatarActorFromActorInfo();
+	DamageEffectParams.DamageGameplayEffectClass=DamageEffectClass;
+	DamageEffectParams.SourceASC=GetAbilitySystemComponentFromActorInfo();
+	DamageEffectParams.TargetASC=UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+	for (auto& Pair:DamageTypes)
+	{
+		float ScaledDamage=Pair.Value.GetValueAtLevel(GetAbilityLevel());
+		DamageEffectParams.DamageTypes.Add(Pair.Key,ScaledDamage);
+	}
+	DamageEffectParams.AbilityLevel=GetAbilityLevel();
+	DamageEffectParams.DeBuffChance=DeBuffChance;
+	DamageEffectParams.DeBuffDamage=DeBuffDamage;
+	DamageEffectParams.DeBuffDuration=DeBuffDuration;
+	DamageEffectParams.DeBuffFrequency=DeBuffFrequency;
+	DamageEffectParams.DeBuffDamageType=DebuffDamageType;
+	return DamageEffectParams;
 }
 
 

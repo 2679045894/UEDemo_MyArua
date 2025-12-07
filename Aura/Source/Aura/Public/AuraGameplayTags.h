@@ -87,6 +87,17 @@ public:
 	FGameplayTag Abilities_Type_Passive;
 	FGameplayTag Abilities_Type_None;
 	
+	FGameplayTag DeBuff_Burn;
+	FGameplayTag DeBuff_Stun;
+	FGameplayTag DeBuff_Arcane;
+	FGameplayTag DeBuff_Physical;
+	TMap<FGameplayTag,FGameplayTag> DeBuffToResistance;
+
+	FGameplayTag DeBuff_Chance;
+	FGameplayTag DeBuff_Damage;
+	FGameplayTag DeBuff_Duration;
+	FGameplayTag DeBuff_Frequency;
+	
 private:
 	//静态单例实例，整个程序生命周期内存在
 	//全局唯一标签容器

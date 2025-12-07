@@ -108,4 +108,49 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	OutExecutionOutput.AddOutputModifier(EvaluatedData);
 }
 
+void UExecCalc_Damage::DetermineDebuff(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
+	const FGameplayEffectSpec& Spec, FAggregatorEvaluateParameters EvaluationParameters,
+	const TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition>& TagsToCaptureDefs) const
+{
+	FAuraGameplayTags GameplayTags=FAuraGameplayTags::Get();
+	//遍历所有负面效果伤害类型，根据伤害类型是否赋值类判断是否需要应用负面效果
+	for (auto & Pair:GameplayTags.DeBuffToResistance)
+	{
+		//获取负面效果伤害类型
+		FGameplayTag DeBuffDamageType=Pair.Key;
+		//获取到负面效果抵抗类型
+		FGameplayTag ResistanceType=Pair.Value;
+		float TypeDamage=Spec.GetSetByCallerMagnitude(DeBuffDamageType,false,-1.f);
+
+		//如果负面效果设置了伤害，即使为0，也需要应用负面效果
+		if (TypeDamage>-.5f)
+		{
+			//获取效果命中率
+			float SourceDeBuffChance=Spec.GetSetByCallerMagnitude(GameplayTags.DeBuff_Chance,false,-1.f);
+
+			//获取负面抵抗效果
+			//计算目标收到的负面效果类型的抵抗
+			float TargetDeBuffResistance=0.f;
+			//检查对应的属性快照是否设置，防止报错
+			checkf(TagsToCaptureDefs.Contains(ResistanceType),TEXT("无法获取属性快照"));
+			//通过抗性标签获取属性快照的值
+			FGameplayEffectAttributeCaptureDefinition CaptureDef=TagsToCaptureDefs[ResistanceType];
+			ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(CaptureDef,EvaluationParameters,TargetDeBuffResistance);
+			TargetDeBuffResistance=FMath::Clamp(TargetDeBuffResistance,0.f,100.f);
+
+			//计算负面效果是否应用
+			float EffectiveDeBuffChance=SourceDeBuffChance*(100-TargetDeBuffResistance)/100.f;
+			if (bool bDeBuff=FMath::RandRange(1,100)<=EffectiveDeBuffChance)
+			{
+				FGameplayEffectContextHandle ContextHandle=Spec.GetContext();
+				UAuraAbilitySystemLibrary::SetIsSuccessfulDeBuff(ContextHandle,true);
+				float DeBuffDuration=Spec.GetSetByCallerMagnitude(GameplayTags.DeBuff_Duration,false,-1.f);
+				float DeBuffFrequency=Spec.GetSetByCallerMagnitude(GameplayTags.DeBuff_Frequency,false,-1.f);
+				//设置负面效果 伤害类型 伤害 持续时间 触发频率
+				UAuraAbilitySystemLibrary::SetDeBuff(ContextHandle,DeBuffDamageType,TypeDamage,DeBuffDuration,DeBuffFrequency);
+			}
+		}
+	}
+}
+
 

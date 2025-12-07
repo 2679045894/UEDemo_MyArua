@@ -83,6 +83,20 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Abilities_Type_Offensive=UGameplayTagsManager::Get().AddNativeGameplayTag("Abilities.Type.Offensive");
 	GameplayTags.Abilities_Type_Passive=UGameplayTagsManager::Get().AddNativeGameplayTag("Abilities.Type.Passive");
 	GameplayTags.Abilities_Type_None=UGameplayTagsManager::Get().AddNativeGameplayTag("Abilities.Type.None");
+
+	GameplayTags.DeBuff_Burn=UGameplayTagsManager::Get().AddNativeGameplayTag("DeBuff.Burn");
+	GameplayTags.DeBuff_Stun=UGameplayTagsManager::Get().AddNativeGameplayTag("DeBuff.Stun");
+	GameplayTags.DeBuff_Arcane=UGameplayTagsManager::Get().AddNativeGameplayTag("DeBuff.Arcane");
+	GameplayTags.DeBuff_Physical=UGameplayTagsManager::Get().AddNativeGameplayTag("DeBuff.Physical");
+	GameplayTags.DeBuffToResistance.Add(GameplayTags.DeBuff_Burn,GameplayTags.Attributes_Resistance_Fire);
+	GameplayTags.DeBuffToResistance.Add(GameplayTags.DeBuff_Stun,GameplayTags.Attributes_Resistance_Lightning);
+	GameplayTags.DeBuffToResistance.Add(GameplayTags.DeBuff_Arcane,GameplayTags.Attributes_Resistance_Arcane);
+	GameplayTags.DeBuffToResistance.Add(GameplayTags.DeBuff_Physical,GameplayTags.Attributes_Resistance_Physical);
+
+	GameplayTags.DeBuff_Chance=UGameplayTagsManager::Get().AddNativeGameplayTag("DeBuff.Chance");
+	GameplayTags.DeBuff_Damage=UGameplayTagsManager::Get().AddNativeGameplayTag("DeBuff.Damage");
+	GameplayTags.DeBuff_Duration=UGameplayTagsManager::Get().AddNativeGameplayTag("DeBuff.Duration");
+	GameplayTags.DeBuff_Frequency=UGameplayTagsManager::Get().AddNativeGameplayTag("DeBuff.Frequency");
 	
 }
 

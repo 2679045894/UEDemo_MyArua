@@ -1,6 +1,7 @@
 ﻿#pragma once
 #pragma once
 
+#include "GameplayEffect.h"
 #include "GameplayEffectTypes.h"
 #include "AuraAbilityTypes.generated.h"
 
@@ -12,9 +13,20 @@ public:
 	//访问器方法 提供安全的布尔值访问，封装内部实现
 	bool IsCriticalHit() const {return bIsCriticalHit;}
 	bool IsBlockedHit() const {return bIsBlockedHit;}
+	bool IsSuccessfulDeBuff() const {return bIsSuccessfulDeBuff;}
+	float GetDeBuffDamage() const {return DeBuffDamage;}
+	float GetDeBuffDuration() const {return DeBuffDuration;}
+	float GetDeBuffFrequency() const {return DeBuffFrequency;}
+	TSharedPtr<FGameplayTag> GetDeBuffDamageTypeTag() const {return DeBuffDamageType;}
 	//设置器方法 允许其他系统设置这些标志
 	void SetIsCriticalHit(bool bInIsCriticalHit){bIsCriticalHit=bInIsCriticalHit;}
 	void SetIsBlockedHit(bool bInIsBlockedHit){bIsBlockedHit=bInIsBlockedHit;}
+	void SetIsSuccessfulDeBuff(bool bInIsSuccessfulDeBuff){bIsSuccessfulDeBuff=bInIsSuccessfulDeBuff;}
+	void SetDeBuffDamage(float InDeBuffDamage){DeBuffDamage=InDeBuffDamage;}
+	void SetDeBuffDuration(float InDeBuffDuration){DeBuffDuration=InDeBuffDuration;}
+	void SetDeBuffFrequency(float InDeBuffFrequency){DeBuffFrequency=InDeBuffFrequency;}
+	void SetDeBuffDamageType(TSharedPtr<FGameplayTag> InDamageType){DeBuffDamageType=InDamageType;}
+	
 
 	//返回此上下文结构体的类型信息  序列化需要  重新写一遍逻辑(父类中有相同的方法，可以直接调用)
 	virtual UScriptStruct* GetScriptStruct() const
@@ -33,7 +45,58 @@ private:
 	bool bIsBlockedHit=false;
 	UPROPERTY()
 	bool bIsCriticalHit=false;
+	UPROPERTY()
+	bool bIsSuccessfulDeBuff=false;//成功应用负面效果
+	UPROPERTY()
+	float DeBuffDamage=0.f;
+	UPROPERTY()
+	float DeBuffDuration=0.f;
+	UPROPERTY()
+	float DeBuffFrequency=0.f;
+	TSharedPtr<FGameplayTag> DeBuffDamageType;
 };
+
+USTRUCT(BlueprintType)
+struct FDamageEffectParams
+{
+	GENERATED_BODY()
+	FDamageEffectParams(){}
+
+	UPROPERTY()
+	TObjectPtr<UObject> WorldContextObject=nullptr;
+
+	UPROPERTY()
+	TSubclassOf<UGameplayEffect> DamageGameplayEffectClass=nullptr;
+
+	UPROPERTY()
+	TObjectPtr<UAbilitySystemComponent> SourceASC;
+
+	UPROPERTY()
+	TObjectPtr<UAbilitySystemComponent> TargetASC;
+
+	UPROPERTY()
+	TMap<FGameplayTag,float> DamageTypes;//技能造成的多种伤害类型
+
+	UPROPERTY()
+	float AbilityLevel;
+	
+	UPROPERTY()
+	FGameplayTag DeBuffDamageType=FGameplayTag();
+
+	UPROPERTY()
+	float DeBuffChance;
+
+	UPROPERTY()
+	float DeBuffDamage;
+
+	UPROPERTY()
+	float DeBuffDuration;
+
+	UPROPERTY()
+	float DeBuffFrequency;
+};
+
+
 //特化 为虚幻的底层类型系统提供元数据。
 template<>
 struct TStructOpsTypeTraits<FAuraGameplayContext>:public TStructOpsTypeTraitsBase2<FAuraGameplayContext>

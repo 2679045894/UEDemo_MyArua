@@ -3,7 +3,9 @@
 
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AuraAbilityTypes.h"
+#include "AuraGameplayTags.h"
 #include "Game/MyGameModeBase.h"
 #include "kismet/GameplayStatics.h"
 #include "Player/MyPlayerState.h"
@@ -152,6 +154,57 @@ bool UAuraAbilitySystemLibrary::IsCriticalHit(const FGameplayEffectContextHandle
 	return false;
 }
 
+bool UAuraAbilitySystemLibrary::IsSuccessfulDeBuff(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if(const FAuraGameplayContext* RPGEffectContext = static_cast<const FAuraGameplayContext*>(EffectContextHandle.Get()))
+	{
+		return RPGEffectContext->IsSuccessfulDeBuff();
+	}
+	return false;
+}
+
+float UAuraAbilitySystemLibrary::GetDeBuffDamage(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if(const FAuraGameplayContext* RPGEffectContext = static_cast<const FAuraGameplayContext*>(EffectContextHandle.Get()))
+	{
+		return RPGEffectContext->GetDeBuffDamage();
+	}
+	return 0.f;
+}
+
+float UAuraAbilitySystemLibrary::GetDeBuffDuration(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if(const FAuraGameplayContext* RPGEffectContext = static_cast<const FAuraGameplayContext*>(EffectContextHandle.Get()))
+	{
+		return RPGEffectContext->GetDeBuffDuration();
+	}
+	return 0.f;
+}
+
+float UAuraAbilitySystemLibrary::GetDeBuffFrequency(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if(const FAuraGameplayContext* RPGEffectContext = static_cast<const FAuraGameplayContext*>(EffectContextHandle.Get()))
+	{
+		return RPGEffectContext->GetDeBuffFrequency();
+	}
+	return 0.f;
+}
+
+FGameplayTag UAuraAbilitySystemLibrary::GetDeBuffDamageType(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if(const FAuraGameplayContext* RPGEffectContext = static_cast<const FAuraGameplayContext*>(EffectContextHandle.Get()))
+	{
+		//如果当前存在设置了伤害类型
+		if(RPGEffectContext->GetDeBuffDamageTypeTag())
+		{
+			//解引用
+			return *RPGEffectContext->GetDeBuffDamageTypeTag();
+		}
+	}
+	return FGameplayTag();
+}
+
+
 void UAuraAbilitySystemLibrary::SetIsBlockedHit(FGameplayEffectContextHandle& ContextHandle, bool bInIsBlockedHit)
 {
 	if (FAuraGameplayContext* AuraContext=static_cast<FAuraGameplayContext*>(ContextHandle.Get()))
@@ -168,9 +221,31 @@ void UAuraAbilitySystemLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& C
 	}
 }
 
+void UAuraAbilitySystemLibrary::SetIsSuccessfulDeBuff(FGameplayEffectContextHandle& ContextHandle,
+	bool bInIsSuccessfulDeBuff)
+{
+	if (FAuraGameplayContext* AuraContext=static_cast<FAuraGameplayContext*>(ContextHandle.Get()))
+	{
+		AuraContext->SetIsSuccessfulDeBuff(bInIsSuccessfulDeBuff);
+	}
+}
+
+void UAuraAbilitySystemLibrary::SetDeBuff(FGameplayEffectContextHandle& ContextHandle, FGameplayTag& InDamageType,
+	float InDamage, float InDuration, float InFrequency)
+{
+	if (FAuraGameplayContext* AuraGameplayContext=static_cast<FAuraGameplayContext*>(ContextHandle.Get()))
+	{
+		TSharedPtr<FGameplayTag> DamageTypeTag=MakeShared<FGameplayTag>(InDamageType);
+		AuraGameplayContext->SetDeBuffDamageType(DamageTypeTag);
+		AuraGameplayContext->SetDeBuffDamage(InDamage);
+		AuraGameplayContext->SetDeBuffDuration(InDuration);
+		AuraGameplayContext->SetDeBuffFrequency(InFrequency);
+	}
+}
+
 void UAuraAbilitySystemLibrary::GetLivePlayerWithinRadius(const UObject* WorldContextObject,
-	TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, float Radius,
-	const FVector& SphereOrigin)
+                                                          TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, float Radius,
+                                                          const FVector& SphereOrigin)
 {
 	//创建一个碰撞查询配置
 	FCollisionQueryParams SphereParams;
@@ -225,6 +300,26 @@ int32 UAuraAbilitySystemLibrary::GetXPRewardForClassAndLevel(const UObject* Worl
 		return static_cast<int32>(XPReward);
 	}
 	return 0;
+}
+
+FGameplayEffectContextHandle UAuraAbilitySystemLibrary::ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams)
+{
+	FAuraGameplayTags GameplayTags=FAuraGameplayTags::Get();
+	AActor* SourceAvatar=DamageEffectParams.SourceASC->GetAvatarActor();
+	FGameplayEffectContextHandle ContextHandle=DamageEffectParams.SourceASC->MakeEffectContext();
+	ContextHandle.AddSourceObject(SourceAvatar);
+	FGameplayEffectSpecHandle SpecHandle=DamageEffectParams.SourceASC->MakeOutgoingSpec(
+		DamageEffectParams.DamageGameplayEffectClass,DamageEffectParams.AbilityLevel,ContextHandle);
+	for (auto& Pair:DamageEffectParams.DamageTypes)
+	{
+		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle,Pair.Key,Pair.Value);
+	}
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle,GameplayTags.DeBuff_Chance,DamageEffectParams.DeBuffChance);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle,GameplayTags.DeBuff_Damage,DamageEffectParams.DeBuffDamage);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle,GameplayTags.DeBuff_Duration,DamageEffectParams.DeBuffDuration);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle,GameplayTags.DeBuff_Frequency,DamageEffectParams.DeBuffFrequency);
+	DamageEffectParams.TargetASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+	return ContextHandle;
 }
 
 

@@ -67,10 +67,30 @@ bool FAuraGameplayContext::NetSerialize(FArchive& Ar, class UPackageMap* Map, bo
 		{
 			RepBits|=1<<8;
 		}
+		if (bIsSuccessfulDeBuff)
+		{
+			RepBits|=1<<9;
+		}
+		if (DeBuffDamage>0.f)
+		{
+			RepBits|=1<<10;
+		}
+		if (DeBuffDuration>0.f)
+		{
+			RepBits|=1<<11;
+		}
+		if (DeBuffFrequency>0.f)
+		{
+			RepBits|=1<<12;
+		}
+		if (DeBuffDamageType.IsValid())
+		{
+			RepBits|=1<<13;
+		}
 	}
 	
-	//把刚才制作的9位清单发送给客户端（或者客户端接收这个清单）
-	Ar.SerializeBits(&RepBits,9);
+	//把刚才制作的14位清单发送给客户端（或者客户端接收这个清单）
+	Ar.SerializeBits(&RepBits,14);
 	if (RepBits&(1<<0))
 	{
 		Ar<<Instigator;
@@ -121,7 +141,34 @@ bool FAuraGameplayContext::NetSerialize(FArchive& Ar, class UPackageMap* Map, bo
 	{
 		Ar<<bIsCriticalHit;
 	}
-
+	if (RepBits&(1<<9))
+	{
+		Ar<<bIsSuccessfulDeBuff;
+	}
+	if (RepBits&(1<<10))
+	{
+		Ar<<DeBuffDamage;
+	}
+	if (RepBits&(1<<11))
+	{
+		Ar<<DeBuffDuration;
+	}
+	if (RepBits&(1<<12))
+	{
+		Ar<<DeBuffFrequency;
+	}
+	if (RepBits & (1 << 13))
+	{
+		if (Ar.IsLoading())
+		{
+			if (!DeBuffDamageType.IsValid())
+			{
+				DeBuffDamageType = TSharedPtr<FGameplayTag>(new FGameplayTag());
+			}
+		}
+		DeBuffDamageType->NetSerialize(Ar, Map, bOutSuccess);
+	}
+	
 	//最后的后处理
 	//客户端在收到所有数据后，要初始化一些内部组件引用。
 	if (Ar.IsLoading())

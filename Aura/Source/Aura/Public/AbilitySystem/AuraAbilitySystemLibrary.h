@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AuraAbilityTypes.h"
 #include "Data/CharacterClassInfo.h"
 #include "Engine/OverlapResult.h"
 #include "Interaction/CombatInterface.h"
@@ -49,11 +50,39 @@ public:
 	UFUNCTION()
 	static bool IsCriticalHit(const FGameplayEffectContextHandle& ContextHandle);
 
+	//获取当前GE是否成功应用负面效果
+	UFUNCTION(BlueprintPure, Category="RPGAbilitySystemLibrary|GameplayEffects")
+	static bool IsSuccessfulDeBuff(const FGameplayEffectContextHandle& EffectContextHandle);
+
+	//获取当前GE负面效果伤害
+	UFUNCTION(BlueprintPure, Category="RPGAbilitySystemLibrary|GameplayEffects")
+	static float GetDeBuffDamage(const FGameplayEffectContextHandle& EffectContextHandle);
+
+	//获取当前GE负面效果持续时间
+	UFUNCTION(BlueprintPure, Category="RPGAbilitySystemLibrary|GameplayEffects")
+	static float GetDeBuffDuration(const FGameplayEffectContextHandle& EffectContextHandle);
+
+	//获取当前GE负面效果触发间隔
+	UFUNCTION(BlueprintPure, Category="RPGAbilitySystemLibrary|GameplayEffects")
+	static float GetDeBuffFrequency(const FGameplayEffectContextHandle& EffectContextHandle);
+
+	//获取当前GE负面效果伤害类型
+	UFUNCTION(BlueprintPure, Category="RPGAbilitySystemLibrary|GameplayEffects")
+	static FGameplayTag GetDeBuffDamageType(const FGameplayEffectContextHandle& EffectContextHandle);
+
+
 	UFUNCTION()
 	static void SetIsBlockedHit(FGameplayEffectContextHandle& ContextHandle,bool bInIsBlockedHit);
 
 	UFUNCTION()
 	static void SetIsCriticalHit(FGameplayEffectContextHandle& ContextHandle,bool bInIsCriticalHit);
+
+	//UPARAM(ref) 使得参数按引用传递，函数内部的修改会反映到调用者
+	UFUNCTION(BlueprintPure, Category="RPGAbilitySystemLibrary|GameplayEffects")
+	static void SetIsSuccessfulDeBuff(UPARAM(ref) FGameplayEffectContextHandle& ContextHandle,bool bInIsSuccessfulDeBuff);
+
+	UFUNCTION(BlueprintPure, Category="RPGAbilitySystemLibrary|GameplayEffects")
+	static void SetDeBuff(UPARAM(ref) FGameplayEffectContextHandle& ContextHandle,FGameplayTag& InDamageType,float InDamage,float InDuration,float InFrequency);
 	
 	UFUNCTION(BlueprintCallable)
 	static void GetLivePlayerWithinRadius(const UObject* WorldContextObject,TArray<AActor*>& OutOverlappingActors,
@@ -64,4 +93,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static int32 GetXPRewardForClassAndLevel(const UObject* WorldContextObject,ECharacterClass CharacterClass,int32 CharacterLevel);
+
+	UFUNCTION(BlueprintCallable)
+	static FGameplayEffectContextHandle ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams);
 };
