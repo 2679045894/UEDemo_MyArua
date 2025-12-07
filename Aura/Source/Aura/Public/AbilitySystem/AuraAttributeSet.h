@@ -208,5 +208,12 @@ public:
 	void ShowFloatingText(const FEffectProperties& Props,float Damage,bool bBlockHit,bool bCriticalHit) const;
 	//发送经验事件
 	void SendXPEvent(const FEffectProperties& Props);
+
+	//处理传入参数为伤害属性时，处理逻辑
+	void HandleIncomingDamage(const FEffectProperties& Props);
+
+	void HandleIncomingXP(const FEffectProperties& Props);
+
+	void HandleDeBuff(const FEffectProperties& Props);
 	
 };
