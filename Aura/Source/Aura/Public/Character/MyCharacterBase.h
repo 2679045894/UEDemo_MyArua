@@ -94,11 +94,11 @@ protected:
 	UPROPERTY(EditDefaultsOnly,Category="Combat")
 	FName TailSocketName;
 
-	virtual void Die() override;
+	virtual void Die(const FVector& DeathImpulse) override;
 
 	//物理模拟死亡效果
 	UFUNCTION(NetMulticast,Reliable)
-	virtual void MulticastHandleDeath();
+	virtual void MulticastHandleDeath(const FVector& DeathImpulse);
 
 	UPROPERTY(EditAnywhere,Category="Dissolve")
 	TObjectPtr<UMaterialInstance> DissolveMaterialInstance;

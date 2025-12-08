@@ -18,6 +18,7 @@ public:
 	float GetDeBuffDuration() const {return DeBuffDuration;}
 	float GetDeBuffFrequency() const {return DeBuffFrequency;}
 	TSharedPtr<FGameplayTag> GetDeBuffDamageTypeTag() const {return DeBuffDamageType;}
+	FVector GetDeathImpulse() const{return DeathImpulse;}
 	//设置器方法 允许其他系统设置这些标志
 	void SetIsCriticalHit(bool bInIsCriticalHit){bIsCriticalHit=bInIsCriticalHit;}
 	void SetIsBlockedHit(bool bInIsBlockedHit){bIsBlockedHit=bInIsBlockedHit;}
@@ -25,7 +26,8 @@ public:
 	void SetDeBuffDamage(float InDeBuffDamage){DeBuffDamage=InDeBuffDamage;}
 	void SetDeBuffDuration(float InDeBuffDuration){DeBuffDuration=InDeBuffDuration;}
 	void SetDeBuffFrequency(float InDeBuffFrequency){DeBuffFrequency=InDeBuffFrequency;}
-	void SetDeBuffDamageType(TSharedPtr<FGameplayTag> InDamageType){DeBuffDamageType=InDamageType;}
+	void SetDeBuffDamageType(TSharedPtr<FGameplayTag>& InDamageType){DeBuffDamageType=InDamageType;}
+	void SetDeathImpulse(FVector& InDeathImpulse){DeathImpulse=InDeathImpulse;}
 	
 
 	//返回此上下文结构体的类型信息  序列化需要  重新写一遍逻辑(父类中有相同的方法，可以直接调用)
@@ -54,6 +56,8 @@ private:
 	UPROPERTY()
 	float DeBuffFrequency=0.f;
 	TSharedPtr<FGameplayTag> DeBuffDamageType;
+	UPROPERTY()
+	FVector DeathImpulse = FVector::ZeroVector;
 };
 
 USTRUCT(BlueprintType)
@@ -94,6 +98,12 @@ struct FDamageEffectParams
 
 	UPROPERTY()
 	float DeBuffFrequency;
+
+	UPROPERTY()
+	float DeathImpulseMagnitude;//死亡受到的冲击力
+
+	UPROPERTY()
+	FVector DeathImpulse=FVector::ZeroVector;//死亡时受到的冲击力朝向
 };
 
 

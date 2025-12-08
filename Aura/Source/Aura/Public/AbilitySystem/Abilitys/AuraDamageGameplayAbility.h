@@ -46,6 +46,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Damage")
 	float DeBuffFrequency=1.f;
 
+	UPROPERTY(EditDefaultsOnly, Category="Damage")
+	float DeathImpulseMagnitude=60.f;
+
 	FDamageEffectParams MakeDamageEffectParamsFromClassDefault(AActor* TargetActor=nullptr);
 
 	

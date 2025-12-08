@@ -59,7 +59,7 @@ public:
 
 	float LifeSpan=5.f;
 
-	virtual void Die() override;
+	virtual void Die(const FVector& DeathImpulse) override;
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category="AI")

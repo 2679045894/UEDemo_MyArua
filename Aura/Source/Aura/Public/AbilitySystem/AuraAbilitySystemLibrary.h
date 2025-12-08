@@ -70,6 +70,8 @@ public:
 	UFUNCTION(BlueprintPure, Category="RPGAbilitySystemLibrary|GameplayEffects")
 	static FGameplayTag GetDeBuffDamageType(const FGameplayEffectContextHandle& EffectContextHandle);
 
+	UFUNCTION(BlueprintPure, Category="RPGAbilitySystemLibrary|GameplayEffects")
+	static FVector GetDeathImpulse(FGameplayEffectContextHandle& EffectContextHandle);
 
 	UFUNCTION()
 	static void SetIsBlockedHit(FGameplayEffectContextHandle& ContextHandle,bool bInIsBlockedHit);
@@ -83,6 +85,9 @@ public:
 
 	UFUNCTION(BlueprintPure, Category="RPGAbilitySystemLibrary|GameplayEffects")
 	static void SetDeBuff(UPARAM(ref) FGameplayEffectContextHandle& ContextHandle,FGameplayTag& InDamageType,float InDamage,float InDuration,float InFrequency);
+
+	UFUNCTION(BlueprintPure, Category="RPGAbilitySystemLibrary|GameplayEffects")
+	static void SetDeathImpulse(FGameplayEffectContextHandle& ContextHandle,FVector InDeathImpulse);
 	
 	UFUNCTION(BlueprintCallable)
 	static void GetLivePlayerWithinRadius(const UObject* WorldContextObject,TArray<AActor*>& OutOverlappingActors,

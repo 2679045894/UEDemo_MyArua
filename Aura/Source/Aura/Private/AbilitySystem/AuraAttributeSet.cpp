@@ -10,6 +10,7 @@
 #include "GameplayEffectExtension.h" // 添加这个包含
 #include "GameplayEffectTypes.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
+#include "Character/MyCharacterBase.h"
 #include "GameFramework/Character.h"
 #include "Interaction/CombatInterface.h"
 #include "Interaction/PlayerInterface.h"
@@ -344,7 +345,7 @@ void UAuraAttributeSet::SendXPEvent(const FEffectProperties& Props)
 	}
 }
 
-void UAuraAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
+void UAuraAttributeSet::HandleIncomingDamage(FEffectProperties& Props)
 {
 	const float LocalIncomingDamage=GetIncomingDamage();
 	if (LocalIncomingDamage>0)
@@ -357,7 +358,7 @@ void UAuraAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
 		{
 			if (ICombatInterface* CombatInterface=Cast<ICombatInterface>(Props.TargetAvatarActor))
 			{
-				CombatInterface->Die();
+				CombatInterface->Die(UAuraAbilitySystemLibrary::GetDeathImpulse(Props.EffectContextHandle));
 			}
 			SendXPEvent(Props);
 		}
@@ -368,14 +369,14 @@ void UAuraAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
 			//在目标的AbilitySystemComponent中查找所有拥有该标签的GameplayAbility
 			//自动激活找到的第一个符合条件的Ability
 			Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+			if (UAuraAbilitySystemLibrary::IsSuccessfulDeBuff(Props.EffectContextHandle))
+			{
+				HandleDeBuff(Props);
+			}
 		}
 		const bool bBlockHit=UAuraAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);
 		const bool bCriticalHit=UAuraAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
 		ShowFloatingText(Props,LocalIncomingDamage,bBlockHit,bCriticalHit);
-		if (UAuraAbilitySystemLibrary::IsSuccessfulDeBuff(Props.EffectContextHandle))
-		{
-			HandleDeBuff(Props);
-		}
 	}
 }
 
@@ -473,7 +474,7 @@ void UAuraAttributeSet::HandleDeBuff(const FEffectProperties& Props)
 		FAuraGameplayContext* RPGContext = static_cast<FAuraGameplayContext*>(MutableSpec->GetContext().Get());
 		if (RPGContext)
 		{
-			const TSharedPtr<FGameplayTag> DeBuffDamageType = MakeShareable(new FGameplayTag(DeBuffType));
+			TSharedPtr<FGameplayTag> DeBuffDamageType = MakeShareable(new FGameplayTag(DeBuffType));
 			RPGContext->SetDeBuffDamageType(DeBuffDamageType);
 		}
 		

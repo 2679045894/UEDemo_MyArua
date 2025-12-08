@@ -87,10 +87,14 @@ bool FAuraGameplayContext::NetSerialize(FArchive& Ar, class UPackageMap* Map, bo
 		{
 			RepBits|=1<<13;
 		}
+		if (!DeathImpulse.IsZero())
+		{
+			RepBits|=1<14;
+		}
 	}
 	
 	//把刚才制作的14位清单发送给客户端（或者客户端接收这个清单）
-	Ar.SerializeBits(&RepBits,14);
+	Ar.SerializeBits(&RepBits,15);
 	if (RepBits&(1<<0))
 	{
 		Ar<<Instigator;
@@ -122,6 +126,7 @@ bool FAuraGameplayContext::NetSerialize(FArchive& Ar, class UPackageMap* Map, bo
 				HitResult=TSharedPtr<FHitResult>(new FHitResult());
 			}
 		}
+		//NetSerialize用于处理复合数据类型
 		HitResult->NetSerialize(Ar,Map,bOutSuccess);
 	}
 	if (RepBits&(1<<6))
@@ -166,7 +171,13 @@ bool FAuraGameplayContext::NetSerialize(FArchive& Ar, class UPackageMap* Map, bo
 				DeBuffDamageType = TSharedPtr<FGameplayTag>(new FGameplayTag());
 			}
 		}
+		//NetSerialize用于处理复合数据类型
 		DeBuffDamageType->NetSerialize(Ar, Map, bOutSuccess);
+	}
+	if (RepBits&(1<<14))
+	{
+		//NetSerialize用于处理复合数据类型
+		DeathImpulse.NetSerialize(Ar, Map, bOutSuccess);
 	}
 	
 	//最后的后处理

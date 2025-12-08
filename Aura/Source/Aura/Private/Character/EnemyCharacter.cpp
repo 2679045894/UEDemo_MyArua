@@ -115,10 +115,10 @@ UAnimMontage* AEnemyCharacter::GetHitReactMontage_Implementation()
 	return HitReactMontage;
 }
 
-void AEnemyCharacter::Die()
+void AEnemyCharacter::Die(const FVector& DeathImpulse)
 {
 	SetLifeSpan(LifeSpan);
-	Super::Die();
+	Super::Die(DeathImpulse);
 	
 }
 

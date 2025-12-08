@@ -210,7 +210,7 @@ public:
 	void SendXPEvent(const FEffectProperties& Props);
 
 	//处理传入参数为伤害属性时，处理逻辑
-	void HandleIncomingDamage(const FEffectProperties& Props);
+	void HandleIncomingDamage(FEffectProperties& Props);
 
 	void HandleIncomingXP(const FEffectProperties& Props);
 

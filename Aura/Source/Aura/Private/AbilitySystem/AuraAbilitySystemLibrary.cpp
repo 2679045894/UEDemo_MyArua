@@ -204,6 +204,15 @@ FGameplayTag UAuraAbilitySystemLibrary::GetDeBuffDamageType(const FGameplayEffec
 	return FGameplayTag();
 }
 
+FVector UAuraAbilitySystemLibrary::GetDeathImpulse(FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (FAuraGameplayContext* AuraContext=static_cast<FAuraGameplayContext*>(EffectContextHandle.Get()))
+	{
+		return AuraContext->GetDeathImpulse();
+	}
+	return FVector::ZeroVector;
+}
+
 
 void UAuraAbilitySystemLibrary::SetIsBlockedHit(FGameplayEffectContextHandle& ContextHandle, bool bInIsBlockedHit)
 {
@@ -240,6 +249,15 @@ void UAuraAbilitySystemLibrary::SetDeBuff(FGameplayEffectContextHandle& ContextH
 		AuraGameplayContext->SetDeBuffDamage(InDamage);
 		AuraGameplayContext->SetDeBuffDuration(InDuration);
 		AuraGameplayContext->SetDeBuffFrequency(InFrequency);
+	}
+}
+
+void UAuraAbilitySystemLibrary::SetDeathImpulse(FGameplayEffectContextHandle& ContextHandle,
+	FVector InDeathImpulse)
+{
+	if (FAuraGameplayContext* AuraContext=static_cast<FAuraGameplayContext*>(ContextHandle.Get()))
+	{
+		return AuraContext->SetDeathImpulse(InDeathImpulse);
 	}
 }
 
@@ -308,20 +326,13 @@ FGameplayEffectContextHandle UAuraAbilitySystemLibrary::ApplyDamageEffect(const 
 	AActor* SourceAvatar=DamageEffectParams.SourceASC->GetAvatarActor();
 	FGameplayEffectContextHandle ContextHandle=DamageEffectParams.SourceASC->MakeEffectContext();
 	ContextHandle.AddSourceObject(SourceAvatar);
+	SetDeathImpulse(ContextHandle,DamageEffectParams.DeathImpulse);
 	FGameplayEffectSpecHandle SpecHandle=DamageEffectParams.SourceASC->MakeOutgoingSpec(
 		DamageEffectParams.DamageGameplayEffectClass,DamageEffectParams.AbilityLevel,ContextHandle);
 	for (auto& Pair:DamageEffectParams.DamageTypes)
 	{
 		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle,Pair.Key,Pair.Value);
 	}
-	/*FAuraGameplayContext* AuraContext = static_cast<FAuraGameplayContext*>(ContextHandle.Get());
-	if (AuraContext)
-	{
-		AuraContext->(DamageEffectParams.DeBuffChance);
-		AuraContext->SetDeBuffDamage(DamageEffectParams.DeBuffDamage);
-		AuraContext->SetDeBuffDuration(DamageEffectParams.DeBuffDuration);
-		AuraContext->SetDeBuffFrequency(DamageEffectParams.DeBuffFrequency);
-	}*/
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle,GameplayTags.DeBuff_Chance,DamageEffectParams.DeBuffChance);
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle,DamageEffectParams.DeBuffDamageType,DamageEffectParams.DeBuffDamage);
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle,GameplayTags.DeBuff_Duration,DamageEffectParams.DeBuffDuration);

@@ -114,12 +114,12 @@ TArray<FTaggedMontage> AMyCharacterBase::GetAttackMontages_Implementation()
 }
 
 
-void AMyCharacterBase::Die()
+void AMyCharacterBase::Die(const FVector& DeathImpulse)
 {
 	// 将武器组件从角色身上分离，但保持武器在当前世界位置不变
 	Weapon->DetachFromComponent(FDetachmentTransformRules(EDetachmentRule::KeepWorld,true));
 	// 在网络上多播死亡处理函数，让所有客户端都执行相同的死亡效果
-	MulticastHandleDeath();
+	MulticastHandleDeath(DeathImpulse);
 	Dissolve();
 	bIsDead=true;
 	OnDeath.Broadcast(this);
@@ -199,7 +199,7 @@ FOnDeath& AMyCharacterBase::GetOnDeathDelegate()
 }
 
 //死亡物理化处理方式
-void AMyCharacterBase::MulticastHandleDeath_Implementation()
+void AMyCharacterBase::MulticastHandleDeath_Implementation(const FVector& DeathImpulse)
 {
 	// 让武器开始物理模拟（会受重力、碰撞等物理影响）
 	Weapon->SetSimulatePhysics(true);
@@ -212,6 +212,9 @@ void AMyCharacterBase::MulticastHandleDeath_Implementation()
 	GetMesh()->SetEnableGravity(true);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 	GetMesh()->SetCollisionResponseToChannel(ECC_WorldStatic,ECR_Block);
+	//NAME_None就是应用根骨骼
+	//GetMesh()->AddImpulse(DeathImpulse,NAME_None, true);
+	GetMesh()->AddImpulse(DeathImpulse);
 
 	// 禁用角色胶囊体的碰撞，避免死亡后胶囊体还阻挡其他角色
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);

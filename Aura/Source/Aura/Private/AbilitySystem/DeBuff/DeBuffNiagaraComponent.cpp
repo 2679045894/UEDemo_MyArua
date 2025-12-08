@@ -26,7 +26,9 @@ void UDeBuffNiagaraComponent::BeginPlay()
 		{
 			InASC->RegisterGameplayTagEvent(DeBuffTag,EGameplayTagEventType::NewOrRemoved).AddUObject(this,&UDeBuffNiagaraComponent::DeBuffTagChanged);
 		});
-
+	}
+	if (CombatInterface)
+	{
 		CombatInterface->GetOnDeathDelegate().AddDynamic(this,&UDeBuffNiagaraComponent::OnOwnerDeath);
 	}
 	
@@ -47,4 +49,5 @@ void UDeBuffNiagaraComponent::DeBuffTagChanged(const FGameplayTag CallBackTag, i
 
 void UDeBuffNiagaraComponent::OnOwnerDeath(AActor* DeadActor)
 {
+	Deactivate();
 }
