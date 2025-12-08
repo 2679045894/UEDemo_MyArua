@@ -10,11 +10,14 @@
 // Sets default values
 AMyCharacterBase::AMyCharacterBase()
 {
-
 	PrimaryActorTick.bCanEverTick = false;
 	Weapon=CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
 	Weapon->SetupAttachment(GetMesh(),FName("WeaponHandSocket"));
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	BurnDeBuffComponent=CreateDefaultSubobject<UDeBuffNiagaraComponent>("BurnDeBuffComponent");
+	BurnDeBuffComponent->SetupAttachment(GetRootComponent());
+	BurnDeBuffComponent->DeBuffTag=FAuraGameplayTags::Get().DeBuff_Burn;
 }
 
 // Called when the game starts or when spawned
@@ -119,6 +122,7 @@ void AMyCharacterBase::Die()
 	MulticastHandleDeath();
 	Dissolve();
 	bIsDead=true;
+	OnDeath.Broadcast(this);
 }
 
 void AMyCharacterBase::Dissolve()
@@ -182,6 +186,16 @@ void AMyCharacterBase::IncrementMinionCount_Implementation(const int32 Amount)
 ECharacterClass AMyCharacterBase::GetCharacterClass_Implementation()
 {
 	return CharacterClass;
+}
+
+FOnASCRegistered& AMyCharacterBase::GetOnASCRegistered()
+{
+	return OnASCRegistered;
+}
+
+FOnDeath& AMyCharacterBase::GetOnDeathDelegate()
+{
+	return OnDeath;
 }
 
 //死亡物理化处理方式

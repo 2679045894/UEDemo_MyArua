@@ -416,45 +416,69 @@ void UAuraAttributeSet::HandleIncomingXP(const FEffectProperties& Props)
 
 void UAuraAttributeSet::HandleDeBuff(const FEffectProperties& Props)
 {
-	FAuraGameplayTags GameplayTags=FAuraGameplayTags::Get();
-	FGameplayTag DeBuffType=UAuraAbilitySystemLibrary::GetDeBuffDamageType(Props.EffectContextHandle);
-	float DeBuffDamage=UAuraAbilitySystemLibrary::GetDeBuffDamage(Props.EffectContextHandle);
-	float DeBuffDuration=UAuraAbilitySystemLibrary::GetDeBuffDuration(Props.EffectContextHandle);
-	float DeBuffFrequency=UAuraAbilitySystemLibrary::GetDeBuffFrequency(Props.EffectContextHandle);
+	//获取负面效果相关参数
+	const FGameplayTag DeBuffType = UAuraAbilitySystemLibrary::GetDeBuffDamageType(Props.EffectContextHandle);
+	const float DeBuffDamage = UAuraAbilitySystemLibrary::GetDeBuffDamage(Props.EffectContextHandle);
+	const float DeBuffDuration = UAuraAbilitySystemLibrary::GetDeBuffDuration(Props.EffectContextHandle);
+	const float DeBuffFrequency = UAuraAbilitySystemLibrary::GetDeBuffFrequency(Props.EffectContextHandle);
 
-	//创建GE类
-	FString DeBuffName=FString::Printf(TEXT("DynamicDeBuff_%s"),*DeBuffType.ToString());
-	//GetTransientPackage(),临时包,用于存放临时对象,不需要持久化保存
-	UGameplayEffect* Effect=NewObject<UGameplayEffect>(GetTransientPackage(),FName(DeBuffName));
-	//设置动态创建的GE属性
-	Effect->DurationPolicy=EGameplayEffectDurationType::HasDuration;
-	Effect->DurationMagnitude=FScalableFloat(DeBuffDuration);
-	Effect->Period=FScalableFloat(DeBuffFrequency);
-	//在应用后不会立即触发，而是在经过Period后才会触发
-	Effect->bExecutePeriodicEffectOnApplication=false;
-	//设置每次应用后不会重置触发时间
-	Effect->PeriodicInhibitionPolicy=EGameplayEffectPeriodInhibitionRemovedPolicy::NeverReset;
-	Effect->InheritableBlockedAbilityTagsContainer.AddTag(GameplayTags.DeBuffToResistance[DeBuffType]);
-	Effect->StackingType=EGameplayEffectStackingType::AggregateBySource;
-	Effect->StackLimitCount=1;
+	//创建GE所使用的名称，并创建一个可实例化的GE
+	FString DeBuffName = FString::Printf(TEXT("DynamicDeBuff_%s"), *DeBuffType.ToString());
+	UGameplayEffect* Effect = NewObject<UGameplayEffect>(GetTransientPackage(), FName(DeBuffName));
 
-	int32 Index=Effect->Modifiers.Num();
+	//设置动态创建GE的属性
+	Effect->DurationPolicy = EGameplayEffectDurationType::HasDuration;
+	Effect->DurationMagnitude = FScalableFloat(DeBuffDuration);
+	
+	Effect->Period = FScalableFloat(DeBuffFrequency);
+	Effect->bExecutePeriodicEffectOnApplication = false;
+	Effect->PeriodicInhibitionPolicy = EGameplayEffectPeriodInhibitionRemovedPolicy::NeverReset;
+
+	//设置可叠加层数
+	Effect->StackingType = EGameplayEffectStackingType::None;
+	Effect->StackLimitCount = 1;
+	Effect->StackDurationRefreshPolicy = EGameplayEffectStackingDurationPolicy::RefreshOnSuccessfulApplication;
+	Effect->StackPeriodResetPolicy = EGameplayEffectStackingPeriodPolicy::ResetOnSuccessfulApplication;
+	Effect->StackExpirationPolicy = EGameplayEffectStackingExpirationPolicy::ClearEntireStack;
+
+	// ========== 关键修正：确保标签被添加到Actor ==========
+	
+	// 方法1：设置 InheritableOwnedTagsContainer（基础设置）
+	Effect->InheritableOwnedTagsContainer.Added.AddTag(DeBuffType);
+
+	//设置属性修改
+	const int32 Index = Effect->Modifiers.Num();
 	Effect->Modifiers.Add(FGameplayModifierInfo());
-	FGameplayModifierInfo& ModiferInfo=Effect->Modifiers[Index];
+	FGameplayModifierInfo& ModifierInfo = Effect->Modifiers[Index];
 
-	ModiferInfo.ModifierMagnitude=FScalableFloat(DeBuffDamage);
-	ModiferInfo.ModifierOp=EGameplayModOp::Additive;
-	ModiferInfo.Attribute=GetIncomingDamageAttribute();
+	ModifierInfo.ModifierMagnitude = FScalableFloat(DeBuffDamage);
+	ModifierInfo.ModifierOp = EGameplayModOp::Additive;
+	ModifierInfo.Attribute = GetIncomingDamageAttribute();
 
-	//创建GE实例，应用GE
-	FGameplayEffectContextHandle EffectContextHandle=Props.SourceASC->MakeEffectContext();
+	//创建GE实例
+	FGameplayEffectContextHandle EffectContextHandle = Props.SourceASC->MakeEffectContext();
 	EffectContextHandle.AddSourceObject(Props.SourceCharacter);
-	if (FGameplayEffectSpec* MutableSpec=new FGameplayEffectSpec(Effect,EffectContextHandle,1.f))
+	
+	// 在 Spec 级别添加标签
+	if (FGameplayEffectSpec* MutableSpec = new FGameplayEffectSpec(Effect, EffectContextHandle, 1.f))
 	{
-		FAuraGameplayContext* AuraContext=static_cast<FAuraGameplayContext*>(MutableSpec->GetContext().Get());
-		TSharedPtr<FGameplayTag> DeBuffDamageType=MakeShareable(new FGameplayTag(DeBuffType));
-		AuraContext->SetDeBuffDamageType(DeBuffDamageType);
-
+		// 关键：在 GameplayEffectSpec 的 DynamicGrantedTags 中添加标签
+		// 这是确保标签被添加到目标Actor的最可靠方法！
+		MutableSpec->DynamicGrantedTags.AddTag(DeBuffType);
+		
+		// 设置级别
+		MutableSpec->SetLevel(1.0f);
+		
+		// 设置自定义上下文
+		FAuraGameplayContext* RPGContext = static_cast<FAuraGameplayContext*>(MutableSpec->GetContext().Get());
+		if (RPGContext)
+		{
+			const TSharedPtr<FGameplayTag> DeBuffDamageType = MakeShareable(new FGameplayTag(DeBuffType));
+			RPGContext->SetDeBuffDamageType(DeBuffDamageType);
+		}
+		
+		// 应用GE
 		Props.TargetASC->ApplyGameplayEffectSpecToSelf(*MutableSpec);
 	}
 }
+

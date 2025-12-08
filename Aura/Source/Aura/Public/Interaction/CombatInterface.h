@@ -9,6 +9,9 @@
 #include "UObject/Interface.h"
 #include "CombatInterface.generated.h"
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnASCRegistered,UAbilitySystemComponent*);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDeath,AActor*,DeadActor);
+
 class UAnimMontage;
 
 USTRUCT(BlueprintType)
@@ -84,4 +87,8 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	int32 GetPlayerLevel();
+
+	virtual FOnASCRegistered& GetOnASCRegistered()=0;
+
+	virtual FOnDeath& GetOnDeathDelegate()=0;
 };

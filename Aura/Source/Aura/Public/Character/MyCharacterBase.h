@@ -7,6 +7,7 @@
 #include "AbilitySystemInterface.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"  // 添加这行！
+#include "AbilitySystem/DeBuff/DeBuffNiagaraComponent.h"
 #include "Interaction/CombatInterface.h"
 #include "MyCharacterBase.generated.h"
 
@@ -139,5 +140,14 @@ protected:
 	
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="InitialAttribute")
 	TSubclassOf<UGameplayEffect> Test;
+
+	FOnASCRegistered OnASCRegistered;
+	FOnDeath OnDeath;
+
+	virtual FOnASCRegistered& GetOnASCRegistered() override;
+	virtual FOnDeath& GetOnDeathDelegate() override;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UDeBuffNiagaraComponent> BurnDeBuffComponent;
 	
 };

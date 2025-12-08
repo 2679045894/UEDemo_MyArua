@@ -215,5 +215,5 @@ public:
 	void HandleIncomingXP(const FEffectProperties& Props);
 
 	void HandleDeBuff(const FEffectProperties& Props);
-	
+	void CheckTargetTags(UAbilitySystemComponent* TargetASC, const FGameplayTag& ExpectedTag);
 };
