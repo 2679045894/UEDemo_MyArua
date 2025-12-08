@@ -73,6 +73,9 @@ public:
 	UFUNCTION(BlueprintPure, Category="RPGAbilitySystemLibrary|GameplayEffects")
 	static FVector GetDeathImpulse(FGameplayEffectContextHandle& EffectContextHandle);
 
+	UFUNCTION(BlueprintPure,Category="RPGAbilitySystemLibrary|GameplayEffects")
+	static FVector GetKnockbackForce(FGameplayEffectContextHandle& EffectContextHandle);
+
 	UFUNCTION()
 	static void SetIsBlockedHit(FGameplayEffectContextHandle& ContextHandle,bool bInIsBlockedHit);
 
@@ -88,6 +91,9 @@ public:
 
 	UFUNCTION(BlueprintPure, Category="RPGAbilitySystemLibrary|GameplayEffects")
 	static void SetDeathImpulse(FGameplayEffectContextHandle& ContextHandle,FVector InDeathImpulse);
+
+	UFUNCTION()
+	static void SetKnockbackForce(FGameplayEffectContextHandle& ContextHandle,FVector InKnockbackForce);
 	
 	UFUNCTION(BlueprintCallable)
 	static void GetLivePlayerWithinRadius(const UObject* WorldContextObject,TArray<AActor*>& OutOverlappingActors,

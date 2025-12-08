@@ -56,6 +56,20 @@ FDamageEffectParams UAuraDamageGameplayAbility::MakeDamageEffectParamsFromClassD
 	DamageEffectParams.DeBuffFrequency=DeBuffFrequency;
 	DamageEffectParams.DeBuffDamageType=DebuffDamageType;
 	DamageEffectParams.DeathImpulseMagnitude=DeathImpulseMagnitude;
+	DamageEffectParams.KnockbackChance=KnockForceChance;
+	DamageEffectParams.KnockbackForceMagnitude=KnockForceMagnitude;
+	if (IsValid(TargetActor))
+	{
+		FRotator Rotation=(TargetActor->GetActorLocation()-GetAvatarActorFromActorInfo()->GetActorLocation()).Rotation();
+		Rotation.Pitch=45.f;
+		FVector ToTarget=Rotation.Vector();
+		DamageEffectParams.DeathImpulse=ToTarget*DeathImpulseMagnitude;
+		if (FMath::RandRange(1,100)<DamageEffectParams.KnockbackChance)
+		{
+			DamageEffectParams.KnockbackForce=ToTarget*KnockForceMagnitude;
+		}
+		UAuraAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
+	}
 	return DamageEffectParams;
 }
 

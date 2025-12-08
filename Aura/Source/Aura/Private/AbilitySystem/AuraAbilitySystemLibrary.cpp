@@ -213,6 +213,15 @@ FVector UAuraAbilitySystemLibrary::GetDeathImpulse(FGameplayEffectContextHandle&
 	return FVector::ZeroVector;
 }
 
+FVector UAuraAbilitySystemLibrary::GetKnockbackForce(FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (FAuraGameplayContext* AuraGameplayContext=static_cast<FAuraGameplayContext*>(EffectContextHandle.Get()))
+	{
+		return AuraGameplayContext->GetKnockForce();
+	}
+	return FVector::ZeroVector;
+}
+
 
 void UAuraAbilitySystemLibrary::SetIsBlockedHit(FGameplayEffectContextHandle& ContextHandle, bool bInIsBlockedHit)
 {
@@ -257,7 +266,15 @@ void UAuraAbilitySystemLibrary::SetDeathImpulse(FGameplayEffectContextHandle& Co
 {
 	if (FAuraGameplayContext* AuraContext=static_cast<FAuraGameplayContext*>(ContextHandle.Get()))
 	{
-		return AuraContext->SetDeathImpulse(InDeathImpulse);
+		AuraContext->SetDeathImpulse(InDeathImpulse);
+	}
+}
+
+void UAuraAbilitySystemLibrary::SetKnockbackForce(FGameplayEffectContextHandle& ContextHandle, FVector InKnockbackForce)
+{
+	if (FAuraGameplayContext* AuraContext=static_cast<FAuraGameplayContext*>(ContextHandle.Get()))
+	{
+		AuraContext->SetKnockForce(InKnockbackForce);
 	}
 }
 
@@ -327,6 +344,7 @@ FGameplayEffectContextHandle UAuraAbilitySystemLibrary::ApplyDamageEffect(const 
 	FGameplayEffectContextHandle ContextHandle=DamageEffectParams.SourceASC->MakeEffectContext();
 	ContextHandle.AddSourceObject(SourceAvatar);
 	SetDeathImpulse(ContextHandle,DamageEffectParams.DeathImpulse);
+	SetKnockbackForce(ContextHandle,DamageEffectParams.KnockbackForce);
 	FGameplayEffectSpecHandle SpecHandle=DamageEffectParams.SourceASC->MakeOutgoingSpec(
 		DamageEffectParams.DamageGameplayEffectClass,DamageEffectParams.AbilityLevel,ContextHandle);
 	for (auto& Pair:DamageEffectParams.DamageTypes)

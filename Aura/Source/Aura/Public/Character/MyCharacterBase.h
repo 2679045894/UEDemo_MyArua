@@ -150,4 +150,5 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UDeBuffNiagaraComponent> BurnDeBuffComponent;
 	
+	
 };

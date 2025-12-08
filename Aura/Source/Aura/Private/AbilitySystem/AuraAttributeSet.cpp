@@ -369,9 +369,15 @@ void UAuraAttributeSet::HandleIncomingDamage(FEffectProperties& Props)
 			//在目标的AbilitySystemComponent中查找所有拥有该标签的GameplayAbility
 			//自动激活找到的第一个符合条件的Ability
 			Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+			
 			if (UAuraAbilitySystemLibrary::IsSuccessfulDeBuff(Props.EffectContextHandle))
 			{
 				HandleDeBuff(Props);
+			}
+			const FVector& KnockbackForce=UAuraAbilitySystemLibrary::GetKnockbackForce(Props.EffectContextHandle);
+			if (!KnockbackForce.IsNearlyZero(1.f))
+			{
+				Props.TargetCharacter->LaunchCharacter(KnockbackForce,true,true);
 			}
 		}
 		const bool bBlockHit=UAuraAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);

@@ -19,6 +19,7 @@ public:
 	float GetDeBuffFrequency() const {return DeBuffFrequency;}
 	TSharedPtr<FGameplayTag> GetDeBuffDamageTypeTag() const {return DeBuffDamageType;}
 	FVector GetDeathImpulse() const{return DeathImpulse;}
+	FVector GetKnockForce() const{return KnockbackForce;}
 	//设置器方法 允许其他系统设置这些标志
 	void SetIsCriticalHit(bool bInIsCriticalHit){bIsCriticalHit=bInIsCriticalHit;}
 	void SetIsBlockedHit(bool bInIsBlockedHit){bIsBlockedHit=bInIsBlockedHit;}
@@ -28,6 +29,7 @@ public:
 	void SetDeBuffFrequency(float InDeBuffFrequency){DeBuffFrequency=InDeBuffFrequency;}
 	void SetDeBuffDamageType(TSharedPtr<FGameplayTag>& InDamageType){DeBuffDamageType=InDamageType;}
 	void SetDeathImpulse(FVector& InDeathImpulse){DeathImpulse=InDeathImpulse;}
+	void SetKnockForce(FVector& InKnockForce){KnockbackForce=InKnockForce;}
 	
 
 	//返回此上下文结构体的类型信息  序列化需要  重新写一遍逻辑(父类中有相同的方法，可以直接调用)
@@ -58,52 +60,63 @@ private:
 	TSharedPtr<FGameplayTag> DeBuffDamageType;
 	UPROPERTY()
 	FVector DeathImpulse = FVector::ZeroVector;
+	UPROPERTY()
+	FVector KnockbackForce=FVector::ZeroVector;
 };
 
-USTRUCT(BlueprintType)
+USTRUCT(BlueprintType,BlueprintType)
 struct FDamageEffectParams
 {
 	GENERATED_BODY()
 	FDamageEffectParams(){}
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly) 
 	TObjectPtr<UObject> WorldContextObject=nullptr;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly) 
 	TSubclassOf<UGameplayEffect> DamageGameplayEffectClass=nullptr;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly) 
 	TObjectPtr<UAbilitySystemComponent> SourceASC;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly) 
 	TObjectPtr<UAbilitySystemComponent> TargetASC;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly) 
 	TMap<FGameplayTag,float> DamageTypes;//技能造成的多种伤害类型
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly) 
 	float AbilityLevel;
 	
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly) 
 	FGameplayTag DeBuffDamageType=FGameplayTag();
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly) 
 	float DeBuffChance;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly) 
 	float DeBuffDamage;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly) 
 	float DeBuffDuration;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly) 
 	float DeBuffFrequency;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly) 
 	float DeathImpulseMagnitude;//死亡受到的冲击力
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly) 
 	FVector DeathImpulse=FVector::ZeroVector;//死亡时受到的冲击力朝向
+
+	UPROPERTY(BlueprintReadOnly) 
+	float KnockbackChance;
+
+	UPROPERTY(BlueprintReadOnly) 
+	float KnockbackForceMagnitude;
+
+	UPROPERTY(BlueprintReadOnly) 
+	FVector KnockbackForce;
 };
 
 

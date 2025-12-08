@@ -49,6 +49,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Damage")
 	float DeathImpulseMagnitude=60.f;
 
+	UPROPERTY(EditDefaultsOnly, Category="Damage")
+	float KnockForceChance=50.f;
+
+	UPROPERTY(EditDefaultsOnly, Category="Damage")
+	float KnockForceMagnitude=1000.f;
+
+	UFUNCTION(BlueprintPure)
 	FDamageEffectParams MakeDamageEffectParamsFromClassDefault(AActor* TargetActor=nullptr);
 
 	
