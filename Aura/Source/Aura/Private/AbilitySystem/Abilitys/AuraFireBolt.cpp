@@ -4,7 +4,61 @@
 #include "AbilitySystem/Abilitys/AuraFireBolt.h"
 
 #include "AuraGameplayTags.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AbilitySystem/AuraAttributeSet.h"
+#include "Kismet/KismetSystemLibrary.h"
+
+void UAuraFireBolt::SpawnProjectiles(const FVector& ProjectileTargetLocation,FName SocketName,const FGameplayTag& SocketTag,
+                                     bool bOverridePitch, float PitchOverride,AActor* HomingTarget)
+{
+	bool bIsServe=GetAvatarActorFromActorInfo()->HasAuthority();
+	if (!bIsServe)return;
+	if (GetAvatarActorFromActorInfo()->Implements<UCombatInterface>())
+	{
+		NumProjectiles=FMath::Max(MaxNumProjectiles,GetAbilityLevel());
+		//获取释放位置
+		FVector SocketLocation=ICombatInterface::Execute_GetCombatSocketLocation(GetAvatarActorFromActorInfo(),SocketTag);
+		FRotator Rotation=(ProjectileTargetLocation-SocketLocation).Rotation();
+		//覆写发射角度
+		if (bOverridePitch)Rotation.Pitch=PitchOverride;
+		const FVector Forward=Rotation.Vector();
+		TArray<FRotator> Rotations=UAuraAbilitySystemLibrary::EvenlySpacedRotators(Forward,FVector::UpVector,ProjectileSpread,NumProjectiles);
+		for (FRotator& Rot : Rotations)
+		{
+			FTransform SpawnTransform;
+			SpawnTransform.SetLocation(SocketLocation);
+			SpawnTransform.SetRotation(Rot.Quaternion());
+			AAuraProjectile* Projectile=GetWorld()->SpawnActorDeferred<AAuraProjectile>(
+				ProjectileClass,
+				SpawnTransform,
+				GetOwningActorFromActorInfo(),
+				Cast<APawn>(GetAvatarActorFromActorInfo()),
+				ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+			Projectile->DamageEffectParams=MakeDamageEffectParamsFromClassDefault();
+				
+			UKismetSystemLibrary::DrawDebugArrow(GetAvatarActorFromActorInfo(), SocketLocation, SocketLocation + Rot.Vector() * 100.f, 5, FLinearColor::Green, 120, 5);
+
+			if (HomingTarget&&HomingTarget->Implements<UCombatInterface>())
+			{
+				//直接将该目标的根组件设为追踪目标：
+				Projectile->ProjectileMovementComponent->HomingTargetComponent=HomingTarget->GetRootComponent();
+			}
+			else
+			{
+				//创建一个临时的 USceneComponent 对象
+				Projectile->HomingTargetSceneComponent=NewObject<USceneComponent>(UClass::StaticClass());
+				//将该组件的位置设置为指定的目标位置 
+				Projectile->HomingTargetSceneComponent->SetWorldLocation(ProjectileTargetLocation);
+				//将这个临时组件设为追踪目标
+				Projectile->ProjectileMovementComponent->HomingTargetComponent=Projectile->HomingTargetSceneComponent;
+			}
+			Projectile->ProjectileMovementComponent->HomingAccelerationMagnitude=FMath::RandRange(HomingAccelerationMin,HomingAccelerationMax);
+			Projectile->ProjectileMovementComponent->bIsHomingProjectile=bLaunchHomingProjectiles;
+
+			Projectile->FinishSpawning(SpawnTransform);
+		}
+	}
+}
 
 float UAuraFireBolt::GetManaCost(float InLevel) const
 {

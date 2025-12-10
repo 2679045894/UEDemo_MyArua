@@ -43,7 +43,10 @@ public:
 	//飞行过程中的循环音效组件
 	/*UPROPERTY()
 	TObjectPtr<UAudioComponent> LoopingSoundComponent;*/
-	
+
+	//一个场景组件，用于确定当前投掷物的攻击目标
+	UPROPERTY()
+	TObjectPtr<USceneComponent> HomingTargetSceneComponent;
 
 	UPROPERTY(EditDefaultsOnly)
 	//自动销毁时间

@@ -359,6 +359,48 @@ FGameplayEffectContextHandle UAuraAbilitySystemLibrary::ApplyDamageEffect(const 
 	return ContextHandle;
 }
 
+TArray<FRotator> UAuraAbilitySystemLibrary::EvenlySpacedRotators(const FVector& Forward, const FVector& Axis,
+	float Spread, int32 NumRotators)
+{
+	TArray<FRotator> Rotators;
+	const FVector LeftOfSpread=Forward.RotateAngleAxis(-Spread/2.f,Axis);
+	if (NumRotators>1)
+	{
+		const float DeltaSpread = Spread / NumRotators;
+		for (int32 i=0; i<NumRotators; i++)
+		{
+			const FVector Direction=LeftOfSpread.RotateAngleAxis(DeltaSpread*(i+.5f),Axis);
+			Rotators.Add(Direction.Rotation());
+		}
+	}
+	else
+	{
+		Rotators.Add(Forward.Rotation());
+	}
+	return Rotators;
+}
+
+TArray<FVector> UAuraAbilitySystemLibrary::EvenlySpacedVectors(const FVector& Forward, const FVector& Axis,
+	float Spread, int32 NumVectors)
+{
+	TArray<FVector> Vectors;
+	const FVector LeftOfSpread=Forward.RotateAngleAxis(-Spread/2,Axis);
+	if (NumVectors>1)
+	{
+		const float DeltaSpread=Spread/NumVectors;
+		for (int32 i=0; i<NumVectors; i++)
+		{
+			const FVector Direction=LeftOfSpread.RotateAngleAxis(DeltaSpread*(i+.5f),Axis);
+			Vectors.Add(Direction);
+		}
+	}
+	else
+	{
+		Vectors.Add(Forward);
+	}
+	return Vectors;
+}
+
 
 
 

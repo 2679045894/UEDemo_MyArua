@@ -77,6 +77,7 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 {
 	AActor* SourceAvatarActor=DamageEffectParams.SourceASC->GetAvatarActor();
 	if (SourceAvatarActor==OtherActor)return;
+	if (OtherActor==nullptr)return;
 	if (!UAuraAbilitySystemLibrary::IsNotFriend(SourceAvatarActor,OtherActor))return;
 	if (!bHit)OnHit();
 	if (HasAuthority())
@@ -85,49 +86,11 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 		{
 			const FVector DeathImpulse=GetActorForwardVector()*DamageEffectParams.DeathImpulseMagnitude;
 			DamageEffectParams.DeathImpulse=DeathImpulse;
-			/*if (FMath::RandRange(1,100)<DamageEffectParams.KnockbackChance)
+			if (FMath::RandRange(1,100)<DamageEffectParams.KnockbackChance)
 			{
 				FVector KnockbackDirection=GetActorForwardVector().RotateAngleAxis(30.f,GetActorRightVector());
 				KnockbackDirection.Normalize();
 				DamageEffectParams.KnockbackForce=KnockbackDirection*DamageEffectParams.KnockbackForceMagnitude;
-				// 检查Z轴分量（判断向上还是向下）
-				if (KnockbackDirection.Z > 0.1f)
-				{
-					UE_LOG(LogTemp, Warning, TEXT("✅ 方向: 向上 (Z=%.3f)"), KnockbackDirection.Z);
-				}
-				else if (KnockbackDirection.Z < -0.1f)
-				{
-					UE_LOG(LogTemp, Warning, TEXT("⚠️  方向: 向下 (Z=%.3f)"), KnockbackDirection.Z);
-				}
-				else
-				{
-					UE_LOG(LogTemp, Warning, TEXT("➡️  方向: 水平 (Z=%.3f)"), KnockbackDirection.Z);
-				}
-			}*/
-			if (FMath::RandRange(1,100) < DamageEffectParams.KnockbackChance)
-			{
-				// 获取火球击中时的方向（速度方向）
-				FVector ProjectileVelocity = GetVelocity();
-				if (ProjectileVelocity.SizeSquared() > 0.1f)
-				{
-					// 1. 使用速度的反方向作为基础击退方向（与飞来方向相反）
-					FVector BackwardDirection = -ProjectileVelocity.GetSafeNormal();
-        
-					// 2. 确保击退方向主要是水平向后，但略微向上
-					// 清空大部分垂直分量，重新添加向上的分量
-					FVector HorizontalBackward = FVector(BackwardDirection.X, BackwardDirection.Y, 0.0f);
-					HorizontalBackward.Normalize();
-        
-					// 3. 混合：70%水平向后 + 30%向上
-					FVector Upward = FVector(0, 0, 1.0f);
-					FVector KnockbackDirection = (HorizontalBackward * 0.7f + Upward * 0.3f).GetSafeNormal();
-        
-					KnockbackDirection.Normalize();
-					DamageEffectParams.KnockbackForce = KnockbackDirection * DamageEffectParams.KnockbackForceMagnitude;
-        
-					UE_LOG(LogTemp, Warning, TEXT("火球速度方向: %s"), *ProjectileVelocity.GetSafeNormal().ToString());
-					UE_LOG(LogTemp, Warning, TEXT("最终击飞方向: %s (Z=%.3f)"), *KnockbackDirection.ToString(), KnockbackDirection.Z);
-				}
 			}
 			DamageEffectParams.TargetASC=TargetASC;
 			UAuraAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
