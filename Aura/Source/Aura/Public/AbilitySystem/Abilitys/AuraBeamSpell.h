@@ -31,5 +31,21 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void TraceFirstTarget(const FVector& BeamTargetLocation);
+
+	UPROPERTY(EditDefaultsOnly,Category="Beam")
+	int32 MaxNumShockTargets=5;
+	
+	UFUNCTION(BlueprintCallable)
+	void StoreAdditionalTargets(TArray<AActor*>& OutAdditionalTargets);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PrimaryTargetDied(AActor* DeadActor);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void AdditionalTargetDied(AActor* DeadActor);
+
+	UFUNCTION(BlueprintCallable)
+	void OnEndAbility(TArray<AActor*> AdditionalTargets);
+	
 	
 };

@@ -401,6 +401,37 @@ TArray<FVector> UAuraAbilitySystemLibrary::EvenlySpacedVectors(const FVector& Fo
 	return Vectors;
 }
 
+void UAuraAbilitySystemLibrary::GetClosestTargets(TArray<AActor*>& Actors, TArray<AActor*>& OutActors, int32 MaxTargets,
+	FVector& Origin)
+{
+	if (Actors.Num()<MaxTargets)
+	{
+		OutActors=Actors;
+		return;
+	}
+	TArray<AActor*> ActorsToCheck=Actors;
+	int32 TempCount=0;
+	
+	while (TempCount<MaxTargets)
+	{
+		if (ActorsToCheck.Num()==0)break;
+		double ClosestTargetDistance=TNumericLimits<double>::Max();
+		AActor* ClosestTarget=nullptr;
+		for (AActor* Actor:ActorsToCheck)
+		{
+			double Distance=(Actor->GetActorLocation()-Origin).Length();
+			if (Distance<ClosestTargetDistance)
+			{
+				ClosestTargetDistance=Distance;
+				ClosestTarget=Actor;
+			}
+		}
+		ActorsToCheck.Remove(ClosestTarget);
+		OutActors.AddUnique(ClosestTarget);
+		++TempCount;
+	}
+}
+
 
 
 

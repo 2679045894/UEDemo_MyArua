@@ -3,6 +3,7 @@
 
 #include "AbilitySystem/Abilitys/AuraBeamSpell.h"
 
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "GameFramework/Character.h"
 #include "Kismet/KismetArrayLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -53,6 +54,53 @@ void UAuraBeamSpell::TraceFirstTarget(const FVector& BeamTargetLocation)
 				MouseHitActor=HitResult.GetActor();
 			}
 		}
+		if (ICombatInterface* CombatInterface=Cast<ICombatInterface>(MouseHitActor))
+		{
+			if (!CombatInterface->GetOnDeathDelegate().IsAlreadyBound(this,&UAuraBeamSpell::PrimaryTargetDied))
+			{
+				CombatInterface->GetOnDeathDelegate().AddDynamic(this,&UAuraBeamSpell::PrimaryTargetDied);
+			}
+		}
+	}
+}
 
+void UAuraBeamSpell::StoreAdditionalTargets(TArray<AActor*>& OutAdditionalTargets)
+{
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(GetAvatarActorFromActorInfo());
+	ActorsToIgnore.Add(MouseHitActor);
+	TArray<AActor*> OverlappingActors;
+	UAuraAbilitySystemLibrary::GetLivePlayerWithinRadius(
+		GetWorld(),
+		OverlappingActors,
+		ActorsToIgnore,
+		850.f,
+		MouseHitLocation);
+	int32 NumAdditionalTargets=5;
+	UAuraAbilitySystemLibrary::GetClosestTargets(OverlappingActors,OutAdditionalTargets,NumAdditionalTargets,MouseHitLocation);
+	for (AActor* Actor:OutAdditionalTargets)
+	{
+		if (ICombatInterface* CombatInterface=Cast<ICombatInterface>(Actor))
+		{
+			if (!CombatInterface->GetOnDeathDelegate().IsAlreadyBound(this,&UAuraBeamSpell::AdditionalTargetDied))
+			{
+				CombatInterface->GetOnDeathDelegate().AddDynamic(this,&UAuraBeamSpell::AdditionalTargetDied);
+			}
+		}
+	}
+}
+
+void UAuraBeamSpell::OnEndAbility(TArray<AActor*> AdditionalTargets)
+{
+	if (ICombatInterface* CombatInterface=Cast<ICombatInterface>(MouseHitActor))
+	{
+		CombatInterface->GetOnDeathDelegate().RemoveDynamic(this,&UAuraBeamSpell::PrimaryTargetDied);
+	}
+	for (AActor* Actor:AdditionalTargets)
+	{
+		if (ICombatInterface* CombatInterface=Cast<ICombatInterface>(Actor))
+		{
+			CombatInterface->GetOnDeathDelegate().RemoveDynamic(this,&UAuraBeamSpell::AdditionalTargetDied);
+		}
 	}
 }

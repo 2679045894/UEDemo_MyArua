@@ -28,7 +28,7 @@ public:
 	UFUNCTION(BlueprintPure)
 	static FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage> &TaggedMontages);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintPure)
 	float GetDamageByDamageType(float InLevel,const FGameplayTag& DamageType);
 /////////////////////DeBuff////////////////////
 	UPROPERTY(EditDefaultsOnly, Category="Damage")
@@ -57,6 +57,4 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	FDamageEffectParams MakeDamageEffectParamsFromClassDefault(AActor* TargetActor=nullptr);
-
-	
 };

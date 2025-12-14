@@ -113,4 +113,7 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	static TArray<FVector> EvenlySpacedVectors(const FVector& Forward,const FVector& Axis,float Spread,int32 NumVectors);
+
+	UFUNCTION()
+	static void GetClosestTargets(TArray<AActor*> &Actors,TArray<AActor*>& OutActors,int32 MaxTargets,FVector& Origin);
 };
