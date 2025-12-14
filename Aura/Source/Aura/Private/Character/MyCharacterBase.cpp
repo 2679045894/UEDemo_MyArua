@@ -198,6 +198,11 @@ FOnDeath& AMyCharacterBase::GetOnDeathDelegate()
 	return OnDeath;
 }
 
+USkeletalMeshComponent* AMyCharacterBase::GetWeapon_Implementation()
+{
+	return Weapon;
+}
+
 //死亡物理化处理方式
 void AMyCharacterBase::MulticastHandleDeath_Implementation(const FVector& DeathImpulse)
 {

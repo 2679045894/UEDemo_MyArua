@@ -62,7 +62,8 @@ void AMyPlayerController::SetupInputComponent()
 
 void AMyPlayerController::Move(const FInputActionValue& InputActionValue)
 {
-	if (GetASC()&&GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_CursorTrace))return;
+	FGameplayTag Tag=FAuraGameplayTags::Get().Player_Block_CursorTrace;
+	if (GetASC()&&GetASC()->HasMatchingGameplayTag(Tag))return;
 	// 从输入值获取2D向量（通常是WASD或摇杆输入）
 	const FVector2D InputAxisVector=InputActionValue.Get<FVector2D>();
 	// 获取控制器的当前旋转

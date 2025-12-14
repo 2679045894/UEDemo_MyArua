@@ -149,6 +149,8 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UDeBuffNiagaraComponent> BurnDeBuffComponent;
+
+	virtual USkeletalMeshComponent* GetWeapon_Implementation() override;
 	
 	
 };
