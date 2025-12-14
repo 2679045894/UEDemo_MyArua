@@ -62,6 +62,7 @@ void AMyPlayerController::SetupInputComponent()
 
 void AMyPlayerController::Move(const FInputActionValue& InputActionValue)
 {
+	if (GetASC()&&GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_CursorTrace))return;
 	// 从输入值获取2D向量（通常是WASD或摇杆输入）
 	const FVector2D InputAxisVector=InputActionValue.Get<FVector2D>();
 	// 获取控制器的当前旋转
@@ -93,6 +94,13 @@ void AMyPlayerController::CursorTrace()
 	FHitResult HitResult;
 	IEnemyInterface* CurrentActor=nullptr;
 	GetHitResultUnderCursor(ECC_Visibility,false,HitResult);
+	if (GetASC()&&GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_CursorTrace))
+	{
+		if (ThisActor)ThisActor->UnHighlightActor();
+		if (CurrentActor)CurrentActor->UnHighlightActor();
+		ThisActor=nullptr;
+		CurrentActor=nullptr;
+	}
 	if (HitResult.bBlockingHit && HitResult.GetActor() && HitResult.GetActor()->Implements<UEnemyInterface>())
 	{
 		CurrentActor=Cast<IEnemyInterface>(HitResult.GetActor());
@@ -114,6 +122,7 @@ void AMyPlayerController::CursorTrace()
 
 void AMyPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
+	if (GetASC()&&GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputPressed))return;
 	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
 		//判断当前点击的对象是否是敌人，设置目标状态
@@ -121,10 +130,15 @@ void AMyPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 		//取消自动移动
 		bAutoRunning=false;
 	}
+	if (GetASC())
+	{
+		GetASC()->AbilityInputPressed(InputTag);
+	}
 }
 
 void AMyPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 {
+	if (GetASC()&&GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputReleased))return;
 	if (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
 		if (GetASC())
@@ -168,6 +182,7 @@ void AMyPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 
 void AMyPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 {
+	if (GetASC()&&GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputHold))return;
 	// 处理非左键输入（技能按键）
 	if (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{

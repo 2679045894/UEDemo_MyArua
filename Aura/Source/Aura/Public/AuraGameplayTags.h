@@ -97,6 +97,11 @@ public:
 	FGameplayTag DeBuff_Damage;
 	FGameplayTag DeBuff_Duration;
 	FGameplayTag DeBuff_Frequency;
+
+	FGameplayTag Player_Block_InputPressed;//阻挡键位按下输入
+	FGameplayTag Player_Block_InputHold;//阻挡键位悬停输入
+	FGameplayTag Player_Block_InputReleased;//阻挡键位抬起输入
+	FGameplayTag Player_Block_CursorTrace;//阻挡鼠标拾取事件
 	
 private:
 	//静态单例实例，整个程序生命周期内存在

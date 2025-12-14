@@ -97,6 +97,11 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.DeBuff_Damage=UGameplayTagsManager::Get().AddNativeGameplayTag("DeBuff.Damage");
 	GameplayTags.DeBuff_Duration=UGameplayTagsManager::Get().AddNativeGameplayTag("DeBuff.Duration");
 	GameplayTags.DeBuff_Frequency=UGameplayTagsManager::Get().AddNativeGameplayTag("DeBuff.Frequency");
+
+	GameplayTags.Player_Block_InputPressed=UGameplayTagsManager::Get().AddNativeGameplayTag("Player.Block.InputPressed");
+	GameplayTags.Player_Block_InputHold=UGameplayTagsManager::Get().AddNativeGameplayTag("Player.Block.InputHold");
+	GameplayTags.Player_Block_InputReleased=UGameplayTagsManager::Get().AddNativeGameplayTag("Player.Block.InputReleased");
+	GameplayTags.Player_Block_CursorTrace=UGameplayTagsManager::Get().AddNativeGameplayTag("Player.Block.CursorTrace");
 	
 }
 
