@@ -28,5 +28,8 @@ public:
 
 	UPROPERTY(BlueprintReadWrite,Category="Beam")
 	TObjectPtr<APlayerController> OwnerPlayerController;
+
+	UFUNCTION(BlueprintCallable)
+	void TraceFirstTarget(const FVector& BeamTargetLocation);
 	
 };
