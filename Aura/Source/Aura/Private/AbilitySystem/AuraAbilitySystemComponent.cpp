@@ -12,7 +12,6 @@
 #include "Aura/AuraLogChannels.h"
 #include "Interaction/PlayerInterface.h"
 
-
 void UAuraAbilitySystemComponent::AbilityActorInfoSet()
 {
 	//将委托和函数绑定()
@@ -205,6 +204,7 @@ void UAuraAbilitySystemComponent::UpgradeAttribute(const FGameplayTag& Attribute
 	}
 }
 
+//升级之后更新技能状态
 void UAuraAbilitySystemComponent::UpdateAbilityStatuses(int32 Level)
 {
 	UAbilityInfo* AbilityInfo=UAuraAbilitySystemLibrary::GetActiveAbilityInfo(GetAvatarActor());

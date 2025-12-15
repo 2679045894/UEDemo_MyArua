@@ -102,6 +102,10 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Player_Block_InputHold=UGameplayTagsManager::Get().AddNativeGameplayTag("Player.Block.InputHold");
 	GameplayTags.Player_Block_InputReleased=UGameplayTagsManager::Get().AddNativeGameplayTag("Player.Block.InputReleased");
 	GameplayTags.Player_Block_CursorTrace=UGameplayTagsManager::Get().AddNativeGameplayTag("Player.Block.CursorTrace");
+
+	GameplayTags.Abilities_Passive_HaloOfProtection=UGameplayTagsManager::Get().AddNativeGameplayTag("Abilities.Passive.HaloOfProtection");
+	GameplayTags.Abilities_Passive_LifeSiphon=UGameplayTagsManager::Get().AddNativeGameplayTag("Abilities.Passive.LifeSiphon");
+	GameplayTags.Abilities_Passive_ManaSiphon=UGameplayTagsManager::Get().AddNativeGameplayTag("Abilities.Passive.ManaSiphon");
 	
 }
 

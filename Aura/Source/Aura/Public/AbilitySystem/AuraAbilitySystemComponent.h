@@ -13,6 +13,7 @@ DECLARE_DELEGATE_OneParam(FForEachAbility,const FGameplayAbilitySpec&);
 DECLARE_MULTICAST_DELEGATE(FAbilityGivenDelegate);
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FAbilityStatusChanged,const FGameplayTag&,const FGameplayTag&,int32/*Level*/)
 DECLARE_MULTICAST_DELEGATE_FourParams(FAbilityEquipped,const FGameplayTag&,const FGameplayTag&,const FGameplayTag&,const FGameplayTag&)
+DECLARE_MULTICAST_DELEGATE_OneParam(FDeactivatePassiveAbility,const FGameplayTag&);
 /**
  * 
  */
@@ -86,4 +87,6 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void ClientEquipAbility(const FGameplayTag& AbilityTag,const FGameplayTag& Status,const FGameplayTag& Slot,const FGameplayTag& PreviousSlot);
+	
+	FDeactivatePassiveAbility DeactivatePassiveAbilityDelegate;
 };

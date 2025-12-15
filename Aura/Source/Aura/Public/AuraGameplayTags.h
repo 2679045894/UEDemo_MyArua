@@ -102,6 +102,11 @@ public:
 	FGameplayTag Player_Block_InputHold;//阻挡键位悬停输入
 	FGameplayTag Player_Block_InputReleased;//阻挡键位抬起输入
 	FGameplayTag Player_Block_CursorTrace;//阻挡鼠标拾取事件
+
+	//被动技能
+	FGameplayTag Abilities_Passive_HaloOfProtection;
+	FGameplayTag Abilities_Passive_LifeSiphon;
+	FGameplayTag Abilities_Passive_ManaSiphon;
 	
 private:
 	//静态单例实例，整个程序生命周期内存在
