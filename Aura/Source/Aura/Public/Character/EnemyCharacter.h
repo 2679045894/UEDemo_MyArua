@@ -32,6 +32,8 @@ public:
 
 	virtual void InitializeDefaultAttributes() const override;
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Level")
 	int32 Level=1;
 	
@@ -42,9 +44,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UWidgetComponent> HealthBar;
 	
-
-	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly, Category="CharacterInfo")
-	float BaseWalkSpeed=250.f;
 	UPROPERTY(BlueprintReadOnly)
 	bool bHitReacting=false;
 

@@ -9,6 +9,7 @@
 #include "AbilitySystem/AuraAbilitySystemComponent.h"  // 添加这行！
 #include "AbilitySystem/DeBuff/DeBuffNiagaraComponent.h"
 #include "Interaction/CombatInterface.h"
+#include "Net/UnrealNetwork.h"
 #include "MyCharacterBase.generated.h"
 
 class  UGameplayAbility;
@@ -149,8 +150,29 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UDeBuffNiagaraComponent> BurnDeBuffComponent;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UDeBuffNiagaraComponent> StunDeBuffComponent;
 
 	virtual USkeletalMeshComponent* GetWeapon_Implementation() override;
+
+	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly, Category="CharacterInfo")
+	float BaseWalkSpeed=250.f;
+public:
+	UFUNCTION()
+	void DeBuffRegisterChanged();
+	UFUNCTION()
+	void StunTagChanged(FGameplayTag CallbackTag,int32 NewCount);
+	UPROPERTY(Replicated,ReplicatedUsing=OnRep_Stunned,BlueprintReadOnly)
+	bool bIsStunned=false;
+	UFUNCTION()
+	void OnRep_Stunned();
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 	
+	UPROPERTY(BlueprintReadOnly)
+	bool IsBeingShock=false;
+
+	virtual void SetIsBeingShock_Implementation(bool bInShock) override;
+
+	virtual bool GetIsBeingShock_Implementation() override;
 	
 };

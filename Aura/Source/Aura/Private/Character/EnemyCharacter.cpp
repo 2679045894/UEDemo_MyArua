@@ -91,11 +91,18 @@ void AEnemyCharacter::InitialAbilityActorInfo()
     Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
 	InitializeDefaultAttributes();
 	OnASCRegistered.Broadcast(AbilitySystemComponent);
+	DeBuffRegisterChanged();
 }
 
 void AEnemyCharacter::InitializeDefaultAttributes() const
 {
 	UAuraAbilitySystemLibrary::InitializeDefaultAttributes(this,CharacterClass,Level,AbilitySystemComponent);
+}
+
+void AEnemyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	
 }
 
 

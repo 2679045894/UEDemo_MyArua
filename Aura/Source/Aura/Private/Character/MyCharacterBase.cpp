@@ -5,6 +5,8 @@
 
 #include "AuraGameplayTags.h"
 #include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Net/UnrealNetwork.h"
 #include "Player/MyPlayerState.h"
 
 // Sets default values
@@ -18,6 +20,10 @@ AMyCharacterBase::AMyCharacterBase()
 	BurnDeBuffComponent=CreateDefaultSubobject<UDeBuffNiagaraComponent>("BurnDeBuffComponent");
 	BurnDeBuffComponent->SetupAttachment(GetRootComponent());
 	BurnDeBuffComponent->DeBuffTag=FAuraGameplayTags::Get().DeBuff_Burn;
+
+	StunDeBuffComponent=CreateDefaultSubobject<UDeBuffNiagaraComponent>("StunDeBuffComponent");
+	StunDeBuffComponent->SetupAttachment(GetRootComponent());
+	StunDeBuffComponent->DeBuffTag=FAuraGameplayTags::Get().DeBuff_Stun;
 }
 
 // Called when the game starts or when spawned
@@ -47,6 +53,7 @@ UAuraAbilitySystemComponent* AMyCharacterBase::GetAbilitySystemComponent() const
 
 void AMyCharacterBase::InitialAbilityActorInfo()
 {
+	
 }
 
 void AMyCharacterBase::InitializeDefaultAttributes() const
@@ -201,6 +208,38 @@ FOnDeath& AMyCharacterBase::GetOnDeathDelegate()
 USkeletalMeshComponent* AMyCharacterBase::GetWeapon_Implementation()
 {
 	return Weapon;
+}
+
+void AMyCharacterBase::DeBuffRegisterChanged()
+{
+	GetAbilitySystemComponent()->RegisterGameplayTagEvent(FAuraGameplayTags::Get().DeBuff_Stun,EGameplayTagEventType::NewOrRemoved).AddUObject(this,&AMyCharacterBase::StunTagChanged);
+}
+
+void AMyCharacterBase::StunTagChanged(FGameplayTag CallbackTag, int32 NewCount)
+{
+	bIsStunned=NewCount>0;
+	GetCharacterMovement()->MaxWalkSpeed=bIsStunned?0:BaseWalkSpeed;
+}
+
+void AMyCharacterBase::OnRep_Stunned()
+{
+	
+}
+
+void AMyCharacterBase::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AMyCharacterBase,bIsStunned);
+}
+
+void AMyCharacterBase::SetIsBeingShock_Implementation(bool bInShock)
+{
+	IsBeingShock=bInShock;
+}
+
+bool AMyCharacterBase::GetIsBeingShock_Implementation()
+{
+	return IsBeingShock;
 }
 
 //死亡物理化处理方式

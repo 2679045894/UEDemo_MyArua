@@ -106,6 +106,7 @@ void AAuraCharacter::InitialAbilityActorInfo()
 		InitializeDefaultAttributes();
 	}
 	OnASCRegistered.Broadcast(AbilitySystemComponent);
+	DeBuffRegisterChanged();
 }
 
 int32 AAuraCharacter::GetXP_Implementation()
