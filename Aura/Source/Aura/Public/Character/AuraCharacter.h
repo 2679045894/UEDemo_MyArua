@@ -8,6 +8,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Interaction/PlayerInterface.h"
 #include  "NiagaraComponent.h"
+#include "AbilitySystem/Abilitys/Passive/PassiveNiagaraComponent.h"
 #include "AuraCharacter.generated.h"
 
 /**
@@ -21,6 +22,8 @@ public:
 	AAuraCharacter();
 	
 	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaSeconds) override;
 	
 	//PossessedBy(针对服务器)：当Pawn被Controller占据（控制）时，执行服务器端的初始化设置。（因此针对玩家初始化要使用这个函数）
 	virtual void PossessedBy(AController* NewController) override;
@@ -29,6 +32,14 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UNiagaraComponent> LevelUpNiagaraComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<UPassiveNiagaraComponent> HaloOfProtectionNiagaraComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<UPassiveNiagaraComponent> LifeSiphonNiagaraComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<UPassiveNiagaraComponent> ManaSiphonNiagaraComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<USceneComponent> PassiveEffectAttachComponent;
 
 	
 private:

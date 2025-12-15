@@ -14,6 +14,7 @@ DECLARE_MULTICAST_DELEGATE(FAbilityGivenDelegate);
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FAbilityStatusChanged,const FGameplayTag&,const FGameplayTag&,int32/*Level*/)
 DECLARE_MULTICAST_DELEGATE_FourParams(FAbilityEquipped,const FGameplayTag&,const FGameplayTag&,const FGameplayTag&,const FGameplayTag&)
 DECLARE_MULTICAST_DELEGATE_OneParam(FDeactivatePassiveAbility,const FGameplayTag&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FActivePassiveEffect,const FGameplayTag&,const bool)
 /**
  * 
  */
@@ -40,6 +41,9 @@ public:
 	FAbilitiesGiven AbilitiesGivenDelegate;
 	FAbilityStatusChanged AbilityStatusChangedDelegate;
 	bool bStartupAbilitiesGiven=false;
+
+	//启动被动技能特效委托
+	FActivePassiveEffect ActivePassiveEffectDelegate;
 	
 	FAbilityEquipped AbilityEquippedDelegate;
 
@@ -87,6 +91,22 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void ClientEquipAbility(const FGameplayTag& AbilityTag,const FGameplayTag& Status,const FGameplayTag& Slot,const FGameplayTag& PreviousSlot);
-	
+
+	//取消被动效果
 	FDeactivatePassiveAbility DeactivatePassiveAbilityDelegate;
+	
+	//目标装备插槽是否为空
+	bool SlotIsEmpty(const FGameplayTag& SlotTag);
+	//获取目标插槽现在装配的技能（Spec）
+	FGameplayAbilitySpec* GetSpecWithSlot(const FGameplayTag& SlotTag);
+	
+	bool IsPassiveAbility(const FGameplayAbilitySpec& Spec) const;
+	//技能是否被设置到装配插槽
+	bool AbilityHasAnySlot(FGameplayAbilitySpec* Spec)const;
+
+	void AssignSlotToAbility(FGameplayAbilitySpec& Spec,const FGameplayTag& SlotTag);
+
+	UFUNCTION(NetMulticast,Unreliable)
+	void MulticastActivatePassiveEffect(const FGameplayTag& AbilityTag,const bool bActive);
+	
 };

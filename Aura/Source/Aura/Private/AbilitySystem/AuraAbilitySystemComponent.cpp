@@ -276,8 +276,69 @@ void UAuraAbilitySystemComponent::ClearAbilitiesOfSlot(const FGameplayTag& Slot)
 	}
 }
 
+bool UAuraAbilitySystemComponent::SlotIsEmpty(const FGameplayTag& SlotTag)
+{
+	FScopedAbilityListLock ActiveScopeLock(*this);
+	for (FGameplayAbilitySpec& Spec:GetActivatableAbilities())
+	{
+		if (Spec.DynamicAbilityTags.HasTagExact(SlotTag))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+FGameplayAbilitySpec* UAuraAbilitySystemComponent::GetSpecWithSlot(const FGameplayTag& SlotTag)
+{
+	for (FGameplayAbilitySpec& Spec:GetActivatableAbilities())
+	{
+		if (Spec.DynamicAbilityTags.HasTagExact(SlotTag))
+		{
+			return &Spec;
+		}
+	}
+	return nullptr;
+}
+
+bool UAuraAbilitySystemComponent::IsPassiveAbility(const FGameplayAbilitySpec& Spec) const
+{
+	UAbilityInfo* AbilityInfo=UAuraAbilitySystemLibrary::GetActiveAbilityInfo(GetAvatarActor());
+	FGameplayTag AbilityTag=GetAbilityTagFromSpec(Spec);
+	FAuraAbilityInfo Info=AbilityInfo->FindAbilityInfoForTag(AbilityTag);
+	if (Info.AbilityType.MatchesTag(FAuraGameplayTags::Get().Abilities_Type_Passive))
+	{
+		return true;
+	}
+	return false;
+}
+
+bool UAuraAbilitySystemComponent::AbilityHasAnySlot(FGameplayAbilitySpec* Spec) const
+{
+	if (Spec->DynamicAbilityTags.HasTagExact(FGameplayTag::RequestGameplayTag("InputTag")))
+	{
+		return true;
+	}
+	return false;
+}
+
+void UAuraAbilitySystemComponent::AssignSlotToAbility(FGameplayAbilitySpec& Spec, const FGameplayTag& SlotTag)
+{
+	FAuraGameplayTags AuraGameplayTags=FAuraGameplayTags::Get();
+	ClearSlot(&Spec);
+	Spec.DynamicAbilityTags.AddTag(SlotTag);
+	Spec.DynamicAbilityTags.RemoveTag(AuraGameplayTags.Abilities_Status_Unlocked);
+	Spec.DynamicAbilityTags.AddTag(AuraGameplayTags.Abilities_Status_Equipped);
+}
+
+void UAuraAbilitySystemComponent::MulticastActivatePassiveEffect_Implementation(const FGameplayTag& AbilityTag,
+	const bool bActive)
+{
+	ActivePassiveEffectDelegate.Broadcast(AbilityTag,bActive);
+}
+
 void UAuraAbilitySystemComponent::ClientEquipAbility_Implementation(const FGameplayTag& AbilityTag,
-	const FGameplayTag& Status, const FGameplayTag& Slot, const FGameplayTag& PreviousSlot)
+                                                                    const FGameplayTag& Status, const FGameplayTag& Slot, const FGameplayTag& PreviousSlot)
 {
 	AbilityEquippedDelegate.Broadcast(AbilityTag,Status,Slot,PreviousSlot);
 }
@@ -293,19 +354,49 @@ void UAuraAbilitySystemComponent::ServerEquipAbility_Implementation(const FGamep
 		const FGameplayTag& Status=GetStatusTagFromSpec(*AbilitySpec);
 
 		const FAuraGameplayTags AuraGameplayTags=FAuraGameplayTags::Get();
+		//判断技能状态，技能状态只有在已装配或者已解锁的状态才可以装配
 		if (Status.MatchesTagExact(AuraGameplayTags.Abilities_Status_Unlocked)||Status.MatchesTagExact(AuraGameplayTags.Abilities_Status_Equipped))
 		{
-			ClearAbilitiesOfSlot(SlotTag);
-			ClearSlot(AbilitySpec);
-			AbilitySpec->DynamicAbilityTags.AddTag(SlotTag);
+			//判断插槽是否有技能，有则需要将其清除
+			if (!SlotIsEmpty(SlotTag))
+			{
+				//获取目标插槽现在装配的技能
+				if (const FGameplayAbilitySpec* SpecWithSlot=GetSpecWithSlot(SlotTag))
+				{
+					//技能槽位装配相同的技能，直接返回，不做额外的处理
+					if (AbilityTag.MatchesTag(GetAbilityTagFromSpec(*SpecWithSlot)))
+					{
+						ClientEquipAbility(AbilityTag,Status,SlotTag,PreSlot);
+						return;
+					}
+					//如果目标插槽现在装配的技能是被动技能，需要先将技能取消执行
+					if (IsPassiveAbility(*SpecWithSlot))
+					{
+						MulticastActivatePassiveEffect(GetAbilityTagFromSpec(*SpecWithSlot),false);
+						DeactivatePassiveAbilityDelegate.Broadcast(GetAbilityTagFromSpec(*SpecWithSlot));
+					}
+					//清除目标插槽装配的技能
+					ClearAbilitiesOfSlot(SlotTag);
+				}
+			}
+			//技能没有设置到插槽(没有激活)
+			if (!AbilityHasAnySlot(AbilitySpec))
+			{
+				if (IsPassiveAbility(*AbilitySpec))
+				{
+					TryActivateAbility(AbilitySpec->Handle);
+					MulticastActivatePassiveEffect(GetAbilityTagFromSpec(*AbilitySpec),true);
+				}
+			}
+			//修改技能装配的插槽
+			AssignSlotToAbility(*AbilitySpec,SlotTag);
+			//回调更新UI
+			ClientEquipAbility(AbilityTag,Status,SlotTag,PreSlot);
+			//将其复制到客户端
+			MarkAbilitySpecDirty(*AbilitySpec);
 		}
-		if (Status.MatchesTagExact(AuraGameplayTags.Abilities_Status_Unlocked))
-		{
-			AbilitySpec->DynamicAbilityTags.RemoveTag(AuraGameplayTags.Abilities_Status_Unlocked);
-			AbilitySpec->DynamicAbilityTags.AddTag(AuraGameplayTags.Abilities_Status_Equipped);
-		}
-		ClientEquipAbility(AbilityTag,Status,SlotTag,PreSlot);
-		MarkAbilitySpecDirty(*AbilitySpec);
+
+
 	}
 }
 

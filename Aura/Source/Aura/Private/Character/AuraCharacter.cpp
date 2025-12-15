@@ -13,6 +13,8 @@
 
 AAuraCharacter::AAuraCharacter()
 {
+	//启用帧更新
+	PrimaryActorTick.bCanEverTick=true;
 	//UAruaAttributeSet*
 	CharacterClass=ECharacterClass::Elementalist;
 
@@ -28,6 +30,16 @@ AAuraCharacter::AAuraCharacter()
 	LevelUpNiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>("LevelUpNiagaraComponent");
 	LevelUpNiagaraComponent->SetupAttachment(GetRootComponent());
 	LevelUpNiagaraComponent->bAutoActivate=false;
+
+	PassiveEffectAttachComponent=CreateDefaultSubobject<USceneComponent>(TEXT("PassiveEffectAttachComponent"));
+	PassiveEffectAttachComponent->SetupAttachment(GetRootComponent());
+	HaloOfProtectionNiagaraComponent=CreateDefaultSubobject<UPassiveNiagaraComponent>(TEXT("HaloOfProtectionNiagaraComponent"));
+	HaloOfProtectionNiagaraComponent->SetupAttachment(PassiveEffectAttachComponent);
+	LifeSiphonNiagaraComponent=CreateDefaultSubobject<UPassiveNiagaraComponent>(TEXT("LifeSiphonNiagaraComponent"));
+	LifeSiphonNiagaraComponent->SetupAttachment(PassiveEffectAttachComponent);
+	ManaSiphonNiagaraComponent=CreateDefaultSubobject<UPassiveNiagaraComponent>(TEXT("ManaSiphonNiagaraComponent"));
+	ManaSiphonNiagaraComponent->SetupAttachment(PassiveEffectAttachComponent);
+	
 }
 
 void AAuraCharacter::BeginPlay()
@@ -57,6 +69,13 @@ void AAuraCharacter::BeginPlay()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
+}
+
+void AAuraCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	//防止特效跟随人物旋转，每一帧更新修改旋转为默认
+	PassiveEffectAttachComponent->SetWorldRotation(FRotator::ZeroRotator);
 }
 
 void AAuraCharacter::PossessedBy(AController* NewController)
