@@ -202,6 +202,22 @@ int32 AAuraCharacter::GetAttributePoints_Implementation() const
 	return AuraPlayerState->GetAttributePoints();
 }
 
+void AAuraCharacter::ShowMagicCircle_Implementation(UMaterialInterface* MaterialInterface)
+{
+	if (AMyPlayerController* AuraPlayerController=Cast<AMyPlayerController>(GetController()))
+	{
+		AuraPlayerController->ShowMagicCircle(MaterialInterface);
+	}
+}
+
+void AAuraCharacter::HideMagicCircle_Implementation()
+{
+	if (AMyPlayerController* AuraPlayerController=Cast<AMyPlayerController>(GetController()))
+	{
+		AuraPlayerController->HideMagicCircle();
+	}
+}
+
 void AAuraCharacter::MulticastLevelUpParticles_Implementation() const
 {
 	if (IsValid(LevelUpNiagaraComponent))

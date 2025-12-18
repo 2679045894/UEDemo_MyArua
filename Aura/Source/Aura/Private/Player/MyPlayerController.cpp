@@ -7,9 +7,11 @@
 #include "AuraGameplayTags.h"
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
+#include "Components/DecalComponent.h"
 #include "GameFramework/Character.h"
 #include "Input/AuraInputComponent.h"
 #include "Interaction/EnemyInterface.h"
+#include "MyActor/MagicCircle.h"
 
 AMyPlayerController::AMyPlayerController()
 {
@@ -88,6 +90,7 @@ void AMyPlayerController::PlayerTick(float DeltaTime)
 	Super::PlayerTick(DeltaTime);
 	CursorTrace();
 	AutoRun();
+	UpdateMagicCircleLocation();
 }
 
 void AMyPlayerController::CursorTrace()
@@ -259,6 +262,29 @@ void AMyPlayerController::AutoRun()
 		{
 			bAutoRunning=false;
 		}
+	}
+}
+
+void AMyPlayerController::ShowMagicCircle(UMaterialInterface* MaterialInterface)
+{
+
+}
+
+void AMyPlayerController::HideMagicCircle()
+{
+	if (IsValid(MagicCircle))
+	{
+		MagicCircle->Destroy();
+	}
+}
+
+void AMyPlayerController::UpdateMagicCircleLocation()
+{
+	if (IsValid(MagicCircle))
+	{
+		FHitResult HitResult;
+		GetHitResultUnderCursor(ECC_Visibility,false,HitResult);
+		MagicCircle->SetActorLocation(HitResult.ImpactPoint);
 	}
 }
 

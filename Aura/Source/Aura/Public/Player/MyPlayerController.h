@@ -13,6 +13,7 @@
 #include "UI/Widge/DamageTextComponent.h"
 #include "MyPlayerController.generated.h"
 
+class AMagicCircle;
 /**
  * 
  */
@@ -91,4 +92,19 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AMagicCircle> MagicCircleClass;
+
+	UPROPERTY()
+	TObjectPtr<AMagicCircle> MagicCircle;
+
+	UFUNCTION(BlueprintCallable)
+	void ShowMagicCircle(UMaterialInterface* MaterialInterface);
+
+	UFUNCTION(BlueprintCallable)
+	void HideMagicCircle();
+
+	UFUNCTION()
+	void UpdateMagicCircleLocation();
 };

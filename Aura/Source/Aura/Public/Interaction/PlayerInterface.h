@@ -54,4 +54,10 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	int32 GetAttributePoints()const;
+
+	UFUNCTION(BlueprintNativeEvent)
+	void ShowMagicCircle(UMaterialInterface* MaterialInterface);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void HideMagicCircle();
 };
