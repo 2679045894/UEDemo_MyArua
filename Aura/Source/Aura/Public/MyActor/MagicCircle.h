@@ -13,7 +13,9 @@ class AURA_API AMagicCircle : public AActor
 	
 public:	
 	AMagicCircle();
-	UPROPERTY(BlueprintReadWrite,EditDefaultsOnly,Category = "Components")
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Components")
+	TObjectPtr<USceneComponent> SceneComponent;
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Components")
 	TObjectPtr<UDecalComponent> MagicCircleDecal;
 
 protected:

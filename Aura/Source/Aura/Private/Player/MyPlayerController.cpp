@@ -267,7 +267,10 @@ void AMyPlayerController::AutoRun()
 
 void AMyPlayerController::ShowMagicCircle(UMaterialInterface* MaterialInterface)
 {
-
+	if (!IsValid(MagicCircle))
+	{
+		MagicCircle=GetWorld()->SpawnActor<AMagicCircle>(MagicCircleClass);
+	}
 }
 
 void AMyPlayerController::HideMagicCircle()
@@ -300,5 +303,3 @@ void AMyPlayerController::ShowDamageNumber_Implementation(float DamageAmount, AC
 		DamageTextComponent->SetDamageText(DamageAmount,bBlockedHit,bCriticalHit);
 	}
 }
-
-

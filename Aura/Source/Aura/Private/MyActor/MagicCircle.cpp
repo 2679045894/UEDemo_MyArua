@@ -8,8 +8,10 @@
 // Sets default values
 AMagicCircle::AMagicCircle()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+ 	
 	PrimaryActorTick.bCanEverTick = true;
+	SceneComponent=CreateDefaultSubobject<USceneComponent>(FName("Root"));
+	SetRootComponent(SceneComponent);
 	MagicCircleDecal=CreateDefaultSubobject<UDecalComponent>("DecalComponent");
 	MagicCircleDecal->SetupAttachment(GetRootComponent());
 }
