@@ -95,10 +95,26 @@ bool FAuraGameplayContext::NetSerialize(FArchive& Ar, class UPackageMap* Map, bo
 		{
 			RepBits|=1<<15;
 		}
+		if (bIsRadiaDamage)
+		{
+			RepBits|=1<16;
+		}
+		if (RadiaDamageOuterRadius>0.f)
+		{
+			RepBits|=1<17;
+		}
+		if (RadiaDamageOuterRadius>0.f)
+		{
+			RepBits|=1<18;
+		}
+		if (!RadiaDamageOrigin.IsZero())
+		{
+			RepBits|=1<19;
+		}
 	}
 	
 	//把刚才制作的14位清单发送给客户端（或者客户端接收这个清单）
-	Ar.SerializeBits(&RepBits,16);
+	Ar.SerializeBits(&RepBits,20);
 	if (RepBits&(1<<0))
 	{
 		Ar<<Instigator;
@@ -186,6 +202,22 @@ bool FAuraGameplayContext::NetSerialize(FArchive& Ar, class UPackageMap* Map, bo
 	if (RepBits&(1<<15))
 	{
 		KnockbackForce.NetSerialize(Ar,Map,bOutSuccess);
+	}
+	if (RepBits&(1<<16))
+	{
+		Ar<<bIsRadiaDamage;
+	}
+	if (RepBits&(1<<17))
+	{
+		Ar<<RadiaDamageInnerRadius;
+	}
+	if (RepBits&(1<<18))
+	{
+		Ar<<RadiaDamageOuterRadius;
+	}
+	if (RepBits&(1<<19))
+	{
+		RadiaDamageOrigin.NetSerialize(Ar,Map,bOutSuccess);
 	}
 	
 	//最后的后处理

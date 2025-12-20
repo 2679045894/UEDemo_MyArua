@@ -20,6 +20,10 @@ public:
 	TSharedPtr<FGameplayTag> GetDeBuffDamageTypeTag() const {return DeBuffDamageType;}
 	FVector GetDeathImpulse() const{return DeathImpulse;}
 	FVector GetKnockForce() const{return KnockbackForce;}
+	bool IsRadiaDamage()const{return  bIsRadiaDamage;}
+	float GetRadiaDamageInnerRadius()const{return RadiaDamageInnerRadius;}
+	float GetRadiaDamageOuterRadius()const{return RadiaDamageOuterRadius;}
+	FVector GetRadiaDamageOrigin()const{return RadiaDamageOrigin;}
 	//设置器方法 允许其他系统设置这些标志
 	void SetIsCriticalHit(bool bInIsCriticalHit){bIsCriticalHit=bInIsCriticalHit;}
 	void SetIsBlockedHit(bool bInIsBlockedHit){bIsBlockedHit=bInIsBlockedHit;}
@@ -30,6 +34,10 @@ public:
 	void SetDeBuffDamageType(TSharedPtr<FGameplayTag>& InDamageType){DeBuffDamageType=InDamageType;}
 	void SetDeathImpulse(FVector& InDeathImpulse){DeathImpulse=InDeathImpulse;}
 	void SetKnockForce(FVector& InKnockForce){KnockbackForce=InKnockForce;}
+	void SetIsRadiaDamage(bool bInIsRadiaDamage){bIsRadiaDamage=bInIsRadiaDamage;}
+	void SetRadiaDamageInnerRadius(float InRadiaDamageInnerRadius){RadiaDamageInnerRadius=InRadiaDamageInnerRadius;}
+	void SetRadiaDamageOuterRadius(float InRadiaDamageOuterRadius){RadiaDamageOuterRadius=InRadiaDamageOuterRadius;}
+	void SetRadiaDamageOrigin(FVector InRadiaDamageOrigin){RadiaDamageOrigin=InRadiaDamageOrigin;}
 	
 
 	//返回此上下文结构体的类型信息  序列化需要  重新写一遍逻辑(父类中有相同的方法，可以直接调用)
@@ -62,6 +70,13 @@ private:
 	FVector DeathImpulse = FVector::ZeroVector;
 	UPROPERTY()
 	FVector KnockbackForce=FVector::ZeroVector;
+	bool bIsRadiaDamage=false;
+	UPROPERTY()
+	float RadiaDamageInnerRadius=0.f;
+	UPROPERTY()
+	float RadiaDamageOuterRadius=0.f;
+	UPROPERTY()
+	FVector RadiaDamageOrigin=FVector::ZeroVector;
 };
 
 USTRUCT(BlueprintType,BlueprintType)
@@ -117,6 +132,18 @@ struct FDamageEffectParams
 
 	UPROPERTY(BlueprintReadOnly) 
 	FVector KnockbackForce;
+
+	UPROPERTY(BlueprintReadOnly)
+	bool bIsRadiaDamage;
+
+	UPROPERTY(BlueprintReadOnly)
+	float RadiaDamageInnerRadius;
+
+	UPROPERTY(BlueprintReadOnly)
+	float RadiaDamageOuterRadius;
+
+	UPROPERTY(BlueprintReadOnly)
+	FVector RadiaDamageOrigin;
 };
 
 

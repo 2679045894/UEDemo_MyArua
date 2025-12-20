@@ -55,6 +55,18 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Damage")
 	float KnockForceMagnitude=1000.f;
 
+	UPROPERTY(EditDefaultsOnly, Category="Damage")
+	bool bIsRadiaDamage=false;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category="Damage")
+	float RadiaDamageInnerRadius=0.f;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category="Damage")
+	float RadiaDamageOuterRadius=0.f;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category="Damage")
+	FVector RadiaDamageOrigin=FVector::ZeroVector;
+
 	UFUNCTION(BlueprintPure)
-	FDamageEffectParams MakeDamageEffectParamsFromClassDefault(AActor* TargetActor=nullptr);
+	FDamageEffectParams MakeDamageEffectParamsFromClassDefault(AActor* TargetActor=nullptr,FVector InRadiaDamageOrigin=FVector::ZeroVector);
 };

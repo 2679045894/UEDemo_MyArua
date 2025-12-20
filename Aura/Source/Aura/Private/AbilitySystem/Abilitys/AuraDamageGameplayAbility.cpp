@@ -37,7 +37,7 @@ float UAuraDamageGameplayAbility::GetDamageByDamageType(float InLevel, const FGa
 	return DamageTypes[DamageType].GetValueAtLevel(InLevel);
 }
 
-FDamageEffectParams UAuraDamageGameplayAbility::MakeDamageEffectParamsFromClassDefault(AActor* TargetActor)
+FDamageEffectParams UAuraDamageGameplayAbility::MakeDamageEffectParamsFromClassDefault(AActor* TargetActor,FVector InRadiaDamageOrigin)
 {
 	FDamageEffectParams DamageEffectParams;
 	DamageEffectParams.WorldContextObject=GetAvatarActorFromActorInfo();
@@ -60,16 +60,32 @@ FDamageEffectParams UAuraDamageGameplayAbility::MakeDamageEffectParamsFromClassD
 	DamageEffectParams.KnockbackForceMagnitude=KnockForceMagnitude;
 	if (IsValid(TargetActor))
 	{
-		FRotator Rotation=(TargetActor->GetActorLocation()-GetAvatarActorFromActorInfo()->GetActorLocation()).Rotation();
-		Rotation.Pitch=45.f;
+		FRotator Rotation=FRotator::ZeroRotator;
+		if (InRadiaDamageOrigin.IsZero())
+		{
+			Rotation=(TargetActor->GetActorLocation()-GetAvatarActorFromActorInfo()->GetActorLocation()).Rotation();
+			Rotation.Pitch=45.f;
+		}
+		else
+		{
+			Rotation=(TargetActor->GetActorLocation()-InRadiaDamageOrigin).Rotation();
+			Rotation.Yaw=90.f;
+		}
 		FVector ToTarget=Rotation.Vector();
 		DamageEffectParams.DeathImpulse=ToTarget*DeathImpulseMagnitude;
 		if (FMath::RandRange(1,100)<DamageEffectParams.KnockbackChance)
 		{
 			DamageEffectParams.KnockbackForce=ToTarget*KnockForceMagnitude;
 		}
-		UAuraAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
 	}
+	if (bIsRadiaDamage)
+	{
+		DamageEffectParams.bIsRadiaDamage=bIsRadiaDamage;
+		DamageEffectParams.RadiaDamageInnerRadius=RadiaDamageInnerRadius;
+		DamageEffectParams.RadiaDamageOuterRadius=RadiaDamageOuterRadius;
+		DamageEffectParams.RadiaDamageOrigin=InRadiaDamageOrigin.IsZero()?RadiaDamageOrigin:InRadiaDamageOrigin;
+	}
+	//UAuraAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
 	return DamageEffectParams;
 }
 

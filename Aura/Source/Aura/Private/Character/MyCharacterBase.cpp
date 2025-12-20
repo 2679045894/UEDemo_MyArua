@@ -242,6 +242,19 @@ bool AMyCharacterBase::GetIsBeingShock_Implementation()
 	return IsBeingShock;
 }
 
+FOnDamageSignature& AMyCharacterBase::GetOnDamageDelegate()
+{
+	return OnDamageDelegate;
+}
+
+float AMyCharacterBase::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+	class AController* EventInstigator, AActor* DamageCauser)
+{
+	const float DamageTaken=Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	OnDamageDelegate.Broadcast(DamageTaken);
+	return DamageTaken;
+}
+
 //死亡物理化处理方式
 void AMyCharacterBase::MulticastHandleDeath_Implementation(const FVector& DeathImpulse)
 {

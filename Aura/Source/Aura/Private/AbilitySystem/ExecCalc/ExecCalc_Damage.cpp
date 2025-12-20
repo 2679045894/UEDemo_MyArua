@@ -8,6 +8,7 @@
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "Interaction/CombatInterface.h"
+#include "kismet/GameplayStatics.h"
 
 UExecCalc_Damage::UExecCalc_Damage()
 {
@@ -56,6 +57,8 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	EvaluateParameters.TargetTags=Spec.CapturedTargetTags.GetAggregatedTags();
 
 	DetermineDebuff(ExecutionParams, Spec, EvaluateParameters,TagsToCaptureDefs);
+
+
 	
 	//通过标签获取目标值
 	/*float Damage=Spec.GetSetByCallerMagnitude(FAuraGameplayTags::Get().Damage);*/
@@ -99,7 +102,30 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	const float EffectiveArmorCoefficient=EffectiveArmorCurve->Eval(TargetCombatInterface->Execute_GetPlayerLevel(TargetAvatar));
 
 	FGameplayEffectContextHandle ContextHandle=Spec.GetContext();
-
+	float DamageTypeValue=0.f;
+	if (UAuraAbilitySystemLibrary::IsRadiaDamage(ContextHandle))
+	{
+		if (ICombatInterface* CombatInterface=Cast<ICombatInterface>(TargetAvatar))
+		{
+			CombatInterface->GetOnDamageDelegate().AddLambda([&](float DamageAmount)
+			{
+				DamageTypeValue=DamageAmount;
+			});
+		}
+		UGameplayStatics::ApplyRadialDamageWithFalloff(
+			TargetAvatar,
+			DamageTypeValue,
+			0,
+			UAuraAbilitySystemLibrary::GetRadiaDamageOrigin(ContextHandle),
+			UAuraAbilitySystemLibrary::GetRadiaDamageInnerRadius(ContextHandle),
+			UAuraAbilitySystemLibrary::GetRadiaDamageOuterRadius(ContextHandle),
+			0,
+			UDamageType::StaticClass(),
+			TArray<AActor*>(),
+			SourceAvatar,
+			nullptr);
+	}
+	
 	//格挡
 	const bool bBlocked=FMath::RandRange(1,100)<=TargetBlockChance;
 	UAuraAbilitySystemLibrary::SetIsBlockedHit(ContextHandle,bBlocked);

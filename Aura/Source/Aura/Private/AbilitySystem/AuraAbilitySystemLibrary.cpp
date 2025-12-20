@@ -154,6 +154,15 @@ bool UAuraAbilitySystemLibrary::IsCriticalHit(const FGameplayEffectContextHandle
 	return false;
 }
 
+bool UAuraAbilitySystemLibrary::IsRadiaDamage(const FGameplayEffectContextHandle& ContextHandle)
+{
+	if (const FAuraGameplayContext* AuraGameplayContext=static_cast<const FAuraGameplayContext*>(ContextHandle.Get()))
+	{
+		return AuraGameplayContext->IsRadiaDamage();
+	}
+	return false;
+}
+
 bool UAuraAbilitySystemLibrary::IsSuccessfulDeBuff(const FGameplayEffectContextHandle& EffectContextHandle)
 {
 	if(const FAuraGameplayContext* RPGEffectContext = static_cast<const FAuraGameplayContext*>(EffectContextHandle.Get()))
@@ -222,6 +231,33 @@ FVector UAuraAbilitySystemLibrary::GetKnockbackForce(FGameplayEffectContextHandl
 	return FVector::ZeroVector;
 }
 
+float UAuraAbilitySystemLibrary::GetRadiaDamageInnerRadius(FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (FAuraGameplayContext* AuraGameplayContext=static_cast<FAuraGameplayContext*>(EffectContextHandle.Get()))
+	{
+		return AuraGameplayContext->GetRadiaDamageInnerRadius();
+	}
+	return 0.f;
+}
+
+float UAuraAbilitySystemLibrary::GetRadiaDamageOuterRadius(FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (FAuraGameplayContext* AuraGameplayContext=static_cast<FAuraGameplayContext*>(EffectContextHandle.Get()))
+	{
+		return AuraGameplayContext->GetRadiaDamageOuterRadius();
+	}
+	return 0.f;
+}
+
+FVector UAuraAbilitySystemLibrary::GetRadiaDamageOrigin(FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (FAuraGameplayContext* AuraGameplayContext=static_cast<FAuraGameplayContext*>(EffectContextHandle.Get()))
+	{
+		return AuraGameplayContext->GetRadiaDamageOrigin();
+	}
+	return FVector::ZeroVector;
+}
+
 
 void UAuraAbilitySystemLibrary::SetIsBlockedHit(FGameplayEffectContextHandle& ContextHandle, bool bInIsBlockedHit)
 {
@@ -275,6 +311,41 @@ void UAuraAbilitySystemLibrary::SetKnockbackForce(FGameplayEffectContextHandle& 
 	if (FAuraGameplayContext* AuraContext=static_cast<FAuraGameplayContext*>(ContextHandle.Get()))
 	{
 		AuraContext->SetKnockForce(InKnockbackForce);
+	}
+}
+
+void UAuraAbilitySystemLibrary::SetIsRadiaDamage(FGameplayEffectContextHandle& ContextHandle, bool InIsRadiaDamage)
+{
+	if (FAuraGameplayContext* AuraContext=static_cast<FAuraGameplayContext*>(ContextHandle.Get()))
+	{
+		AuraContext->SetIsRadiaDamage(InIsRadiaDamage);
+	}
+}
+
+void UAuraAbilitySystemLibrary::SetRadiaDamageInnerRadius(FGameplayEffectContextHandle& ContextHandle,
+	float InRadiaDamageInnerRadius)
+{
+	if (FAuraGameplayContext* AuraContext=static_cast<FAuraGameplayContext*>(ContextHandle.Get()))
+	{
+		AuraContext->SetRadiaDamageInnerRadius(InRadiaDamageInnerRadius);
+	}
+}
+
+void UAuraAbilitySystemLibrary::SetRadiaDamageOuterRadius(FGameplayEffectContextHandle& ContextHandle,
+	float InRadiaDamageOuterRadius)
+{
+	if (FAuraGameplayContext* AuraContext=static_cast<FAuraGameplayContext*>(ContextHandle.Get()))
+	{
+		AuraContext->SetRadiaDamageInnerRadius(InRadiaDamageOuterRadius);
+	}
+}
+
+void UAuraAbilitySystemLibrary::SetRadiaDamageOrigin(FGameplayEffectContextHandle& ContextHandle,
+	FVector InRadiaDamageOrigin)
+{
+	if (FAuraGameplayContext* AuraContext=static_cast<FAuraGameplayContext*>(ContextHandle.Get()))
+	{
+		AuraContext->SetRadiaDamageOrigin(InRadiaDamageOrigin);
 	}
 }
 
@@ -341,12 +412,25 @@ FGameplayEffectContextHandle UAuraAbilitySystemLibrary::ApplyDamageEffect(const 
 {
 	FAuraGameplayTags GameplayTags=FAuraGameplayTags::Get();
 	AActor* SourceAvatar=DamageEffectParams.SourceASC->GetAvatarActor();
+	//创建GE的上下文句柄
 	FGameplayEffectContextHandle ContextHandle=DamageEffectParams.SourceASC->MakeEffectContext();
 	ContextHandle.AddSourceObject(SourceAvatar);
+	
+	//设置击退相关
 	SetDeathImpulse(ContextHandle,DamageEffectParams.DeathImpulse);
 	SetKnockbackForce(ContextHandle,DamageEffectParams.KnockbackForce);
+
+	//设置范围相关
+	SetIsRadiaDamage(ContextHandle,DamageEffectParams.bIsRadiaDamage);
+	SetRadiaDamageInnerRadius(ContextHandle,DamageEffectParams.RadiaDamageInnerRadius);
+	SetRadiaDamageOuterRadius(ContextHandle,DamageEffectParams.RadiaDamageOuterRadius);
+	SetRadiaDamageOrigin(ContextHandle,DamageEffectParams.RadiaDamageOrigin);
+	
+	//根据句柄和类创建GE实例
 	FGameplayEffectSpecHandle SpecHandle=DamageEffectParams.SourceASC->MakeOutgoingSpec(
 		DamageEffectParams.DamageGameplayEffectClass,DamageEffectParams.AbilityLevel,ContextHandle);
+	
+	//通过标签设置GE使用的配置
 	for (auto& Pair:DamageEffectParams.DamageTypes)
 	{
 		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle,Pair.Key,Pair.Value);
@@ -355,7 +439,30 @@ FGameplayEffectContextHandle UAuraAbilitySystemLibrary::ApplyDamageEffect(const 
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle,DamageEffectParams.DeBuffDamageType,DamageEffectParams.DeBuffDamage);
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle,GameplayTags.DeBuff_Duration,DamageEffectParams.DeBuffDuration);
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle,GameplayTags.DeBuff_Frequency,DamageEffectParams.DeBuffFrequency);
-	DamageEffectParams.TargetASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+	//将GE应用给目标ASC
+	//DamageEffectParams.TargetASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+	if (SpecHandle.IsValid())
+	{
+		if (FGameplayEffectSpec* Spec = SpecHandle.Data.Get())
+		{
+			if (IsValid(DamageEffectParams.TargetASC))
+			{
+				DamageEffectParams.TargetASC->ApplyGameplayEffectSpecToSelf(*Spec);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("ApplyDamageEffect: TargetASC is invalid!"));
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("ApplyDamageEffect: Spec is null!"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("ApplyDamageEffect: SpecHandle is invalid!"));
+	}
 	return ContextHandle;
 }
 

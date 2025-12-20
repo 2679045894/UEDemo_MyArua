@@ -50,6 +50,10 @@ public:
 	UFUNCTION()
 	static bool IsCriticalHit(const FGameplayEffectContextHandle& ContextHandle);
 
+	UFUNCTION()
+	static bool IsRadiaDamage(const FGameplayEffectContextHandle& ContextHandle);
+	
+
 	//获取当前GE是否成功应用负面效果
 	UFUNCTION(BlueprintPure, Category="RPGAbilitySystemLibrary|GameplayEffects")
 	static bool IsSuccessfulDeBuff(const FGameplayEffectContextHandle& EffectContextHandle);
@@ -76,6 +80,15 @@ public:
 	UFUNCTION(BlueprintPure,Category="RPGAbilitySystemLibrary|GameplayEffects")
 	static FVector GetKnockbackForce(FGameplayEffectContextHandle& EffectContextHandle);
 
+	UFUNCTION(BlueprintPure,Category="RPGAbilitySystemLibrary|GameplayEffects")
+	static float GetRadiaDamageInnerRadius(FGameplayEffectContextHandle& EffectContextHandle);
+
+	UFUNCTION(blueprintPure,Category="RPGAbilitySystemLibrary|GameplayEffects")
+	static float GetRadiaDamageOuterRadius(FGameplayEffectContextHandle& EffectContextHandle);
+
+	UFUNCTION(BlueprintCallable,Category="RPGAbilitySystemLibrary|GameplayEffects")
+	static FVector GetRadiaDamageOrigin(FGameplayEffectContextHandle& EffectContextHandle);
+
 	UFUNCTION()
 	static void SetIsBlockedHit(FGameplayEffectContextHandle& ContextHandle,bool bInIsBlockedHit);
 
@@ -94,6 +107,18 @@ public:
 
 	UFUNCTION()
 	static void SetKnockbackForce(FGameplayEffectContextHandle& ContextHandle,FVector InKnockbackForce);
+
+	UFUNCTION()
+	static void SetIsRadiaDamage(FGameplayEffectContextHandle& ContextHandle,bool InIsRadiaDamage);
+
+	UFUNCTION()
+	static void SetRadiaDamageInnerRadius(FGameplayEffectContextHandle& ContextHandle,float InRadiaDamageInnerRadius);
+
+	UFUNCTION()
+	static void SetRadiaDamageOuterRadius(FGameplayEffectContextHandle& ContextHandle,float InRadiaDamageOuterRadius);
+
+	UFUNCTION()
+	static void SetRadiaDamageOrigin(FGameplayEffectContextHandle& ContextHandle,FVector InRadiaDamageOrigin);
 	
 	UFUNCTION(BlueprintCallable)
 	static void GetLivePlayerWithinRadius(const UObject* WorldContextObject,TArray<AActor*>& OutOverlappingActors,
@@ -116,4 +141,5 @@ public:
 
 	UFUNCTION()
 	static void GetClosestTargets(TArray<AActor*> &Actors,TArray<AActor*>& OutActors,int32 MaxTargets,FVector& Origin);
+	
 };

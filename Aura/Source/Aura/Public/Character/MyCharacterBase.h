@@ -174,5 +174,11 @@ public:
 	virtual void SetIsBeingShock_Implementation(bool bInShock) override;
 
 	virtual bool GetIsBeingShock_Implementation() override;
+
+	FOnDamageSignature OnDamageDelegate; 
+
+	virtual FOnDamageSignature& GetOnDamageDelegate() override;
+
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 	
 };
