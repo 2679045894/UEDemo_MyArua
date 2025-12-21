@@ -18,12 +18,11 @@ public:
 	void SpawnProjectiles(const FVector& ProjectileTargetLocation,const FName SocketName,
 		const FGameplayTag& SocketTag,bool bOverridePitch,float PitchOverride,AActor* HomingTarget);
 protected:
-	float GetManaCost(float InLevel=1.f)const;
-	float GetCooldown(float InLevel=1.f)const;
+
 
 	virtual FString GetDescription(int32 Level) override;
 	virtual FString GetNextLevelDescription(int32 Level) override;
-	FString GetDescriptionAtLevel(int32 Level,const FString& Title);
+	virtual FString GetDescriptionAtLevel(int32 Level, const FString& Title) override;
 public:
 	//攻击角度
 	UPROPERTY(EditDefaultsOnly,Category="FireBolt")

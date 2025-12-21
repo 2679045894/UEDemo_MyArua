@@ -47,5 +47,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void OnEndAbility(TArray<AActor*> AdditionalTargets);
 	
+	virtual FString GetDescription(int32 Level) override;
+
+	virtual FString GetNextLevelDescription(int32 Level) override;
 	
+	virtual FString GetDescriptionAtLevel(int32 Level, const FString& Title) override;
 };

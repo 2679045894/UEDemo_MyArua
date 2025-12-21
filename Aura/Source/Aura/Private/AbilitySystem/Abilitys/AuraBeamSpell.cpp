@@ -3,6 +3,7 @@
 
 #include "AbilitySystem/Abilitys/AuraBeamSpell.h"
 
+#include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "GameFramework/Character.h"
 #include "Kismet/KismetArrayLibrary.h"
@@ -104,3 +105,28 @@ void UAuraBeamSpell::OnEndAbility(TArray<AActor*> AdditionalTargets)
 		}
 	}
 }
+
+FString UAuraBeamSpell::GetDescription(int32 Level)
+{
+	return GetDescriptionAtLevel(Level,AbilityName);
+}
+
+FString UAuraBeamSpell::GetNextLevelDescription(int32 Level)
+{
+	return GetDescriptionAtLevel(Level+1,TEXT("下一等级"));
+}
+
+FString UAuraBeamSpell::GetDescriptionAtLevel(int32 Level, const FString& Title)
+{
+	float Cooldown = GetCooldown(Level);
+	float ManaCost=FMath::Abs(GetManaCost(Level));
+	int32 Damage=GetDamageByDamageType(Level,FAuraGameplayTags::Get().Damage_Lightning);
+	return FString::Printf(TEXT(
+		"<Title>%s</>\n"
+		"等级:<Level>%i</>\n"
+		"技能冷却<Cooldown>%.1f</>\n"
+		"蓝量消耗<ManaCost>%.1f</>\n"
+		"<Default>引导一道高能激光束，对路径上的所有敌人每秒造成</> <Damage>%i</> <Default>点能量伤害。激光可穿透敌人，并对护盾造成额外伤害。持续引导超过4秒会使技能过载。</>"
+	),*Title,Level,Cooldown,ManaCost,Damage);
+}
+
