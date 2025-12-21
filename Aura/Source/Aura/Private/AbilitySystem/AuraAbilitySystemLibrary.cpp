@@ -466,8 +466,16 @@ FGameplayEffectContextHandle UAuraAbilitySystemLibrary::ApplyDamageEffect(const 
 	return ContextHandle;
 }
 
+/**
+ * 
+ * @param Forward 施术者的向前向量
+ * @param Axis 基准轴
+ * @param Spread 总角度
+ * @param NumRotators 均分数量
+ * @return 
+ */
 TArray<FRotator> UAuraAbilitySystemLibrary::EvenlySpacedRotators(const FVector& Forward, const FVector& Axis,
-	float Spread, int32 NumRotators)
+                                                                 float Spread, int32 NumRotators)
 {
 	TArray<FRotator> Rotators;
 	const FVector LeftOfSpread=Forward.RotateAngleAxis(-Spread/2.f,Axis);

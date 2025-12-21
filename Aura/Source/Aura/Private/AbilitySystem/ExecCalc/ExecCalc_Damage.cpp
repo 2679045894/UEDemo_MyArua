@@ -75,7 +75,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 		float Resistance=0.f;
 		//尝试捕获目标的护甲属性值，结果存储在Resistance 变量中
 		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(CaptureDef,EvaluateParameters,Resistance);
-		DamageTypeValue*=(100.f-Resistance)/100.f;
+		DamageTypeValue=((100.f-Resistance)/100.f)*DamageTypeValue;
 		Damage+=DamageTypeValue;
 	}
 	float TargetArmor=0.f;
