@@ -21,4 +21,6 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<AActor> ReturnToActor;
+	UPROPERTY(BlueprintReadWrite)
+	FDamageEffectParams ExplodeEffectParams;
 };

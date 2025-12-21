@@ -28,6 +28,7 @@ TArray<AAuraFireBall*> UAuraFireBlast::SpawnFireBall()
 
 		//在配置完成火球配置后，调用FinishSpawning将火球正式添加到场景中
 		FireBall->FinishSpawning(SpawnTransform);
+		FireBall->ExplodeEffectParams=MakeDamageEffectParamsFromClassDefault();
 	}
 	return FireBalls;
 }

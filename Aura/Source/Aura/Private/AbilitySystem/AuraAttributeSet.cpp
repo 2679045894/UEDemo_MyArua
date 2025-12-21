@@ -375,6 +375,18 @@ void UAuraAttributeSet::HandleIncomingDamage(FEffectProperties& Props)
 				HandleDeBuff(Props);
 			}
 			const FVector& KnockbackForce=UAuraAbilitySystemLibrary::GetKnockbackForce(Props.EffectContextHandle);
+			FVector End = Props.TargetCharacter->GetActorLocation() + KnockbackForce.GetSafeNormal() * 100.0f;
+			DrawDebugDirectionalArrow(
+				GetWorld(), 
+				Props.TargetCharacter->GetActorLocation(), 
+				End, 
+				100.0f, 
+				FColor::Red, 
+				false,  // 是否持久
+				5.0f,   // 持续时间（秒）
+				0,      // 深度优先级
+				3.0f    // 线宽
+			);
 			if (!KnockbackForce.IsNearlyZero(1.f))
 			{
 				Props.TargetCharacter->LaunchCharacter(KnockbackForce,true,true);

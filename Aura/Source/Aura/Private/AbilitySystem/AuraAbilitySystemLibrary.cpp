@@ -547,6 +547,49 @@ void UAuraAbilitySystemLibrary::GetClosestTargets(TArray<AActor*>& Actors, TArra
 	}
 }
 
+void UAuraAbilitySystemLibrary::SetIsRadiaDamageEffectParams(FDamageEffectParams& DamageEffectParams,
+	bool bIsRadiaDamage, float InRadiaDamageInnerRadius, float InRadiaDamageOuterRadius,const FVector& InOrigin)
+{
+	DamageEffectParams.bIsRadiaDamage=bIsRadiaDamage;
+	DamageEffectParams.RadiaDamageInnerRadius=InRadiaDamageInnerRadius;
+	DamageEffectParams.RadiaDamageOuterRadius=InRadiaDamageOuterRadius;
+	DamageEffectParams.RadiaDamageOrigin=InOrigin;
+}
+
+void UAuraAbilitySystemLibrary::SetKnockbackDirection(FDamageEffectParams& DamageEffectParams,
+	FVector KnockbackDirection, float Magnitude)
+{
+	KnockbackDirection.Normalize();
+	if (Magnitude==0)
+	{
+		DamageEffectParams.KnockbackForce=KnockbackDirection*DamageEffectParams.KnockbackForceMagnitude;
+	}
+	else
+	{
+		DamageEffectParams.KnockbackForce=KnockbackDirection*Magnitude;
+	}
+}
+
+void UAuraAbilitySystemLibrary::SetDeathImpulseDirection(FDamageEffectParams& DamageEffectParams,
+	FVector ImpulseDirection, float Magnitude)
+{
+	ImpulseDirection.Normalize();
+	if (Magnitude==0)
+	{
+		DamageEffectParams.DeathImpulse=ImpulseDirection*DamageEffectParams.DeathImpulseMagnitude;
+	}
+	else
+	{
+		DamageEffectParams.DeathImpulse=ImpulseDirection*Magnitude;
+	}
+}
+
+void UAuraAbilitySystemLibrary::SetEffectParamsTargetASC(FDamageEffectParams& DamageEffectParams,
+	UAbilitySystemComponent* InASC)
+{
+	DamageEffectParams.TargetASC=InASC;
+}
+
 
 
 

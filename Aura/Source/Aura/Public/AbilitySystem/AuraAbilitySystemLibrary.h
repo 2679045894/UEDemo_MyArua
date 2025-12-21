@@ -141,5 +141,20 @@ public:
 
 	UFUNCTION()
 	static void GetClosestTargets(TArray<AActor*> &Actors,TArray<AActor*>& OutActors,int32 MaxTargets,FVector& Origin);
-	
+
+	UFUNCTION(BlueprintCallable)
+	static void SetIsRadiaDamageEffectParams(UPARAM(ref)FDamageEffectParams& DamageEffectParams,bool bIsRadiaDamage,float InRadiaDamageInnerRadius,float InRadiaDamageOuterRadius,const FVector& InOrigin);
+
+	/**
+	 * 修改伤害冲击力的方向
+	 * @param DamageEffectParams 需要修改的伤害配置项
+	 * @param KnockbackDirection 受击时触发击退的方向
+	 */
+	UFUNCTION(BlueprintCallable)
+	static void SetKnockbackDirection(UPARAM(ref) FDamageEffectParams& DamageEffectParams,FVector KnockbackDirection,float Magnitude=0);
+	UFUNCTION(BlueprintCallable)
+	static void SetDeathImpulseDirection(UPARAM(ref) FDamageEffectParams& DamageEffectParams,FVector ImpulseDirection,float Magnitude=0);
+
+	UFUNCTION(BlueprintCallable)
+	static void SetEffectParamsTargetASC(UPARAM(ref) FDamageEffectParams& DamageEffectParams,UAbilitySystemComponent* InASC);
 };
