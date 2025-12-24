@@ -3,6 +3,9 @@
 
 #include "UI/MVVM/MVVM_LoadScreen.h"
 
+#include "Game/MyGameModeBase.h"
+#include "Kismet/GameplayStatics.h"
+
 void UMVVM_LoadScreen::SetWidgetName(const FString& InSlotName)
 {
 	if (UE_MVVM_SET_PROPERTY_VALUE(WidgetName,InSlotName))
@@ -31,6 +34,11 @@ UMVVM_LoadSlot* UMVVM_LoadScreen::GetLoadSlotViewModelByIndex(int32 Index) const
 
 void UMVVM_LoadScreen::NewSlotButtonPressed(int32 Slot, const FString& EnterName)
 {
+	AMyGameModeBase* AuraGameMode=Cast<AMyGameModeBase>(UGameplayStatics::GetGameMode(this));
+	LoadSlots[Slot]->SetPlayerName(EnterName);
+	LoadSlots[Slot]->LoadSlotStatus=Taken;
+	AuraGameMode->SaveSlotData(LoadSlots[Slot],Slot);
+	LoadSlots[Slot]->InitializeSlot();
 }
 
 void UMVVM_LoadScreen::NewGameButtonPressed(int32 Slot)
@@ -40,4 +48,27 @@ void UMVVM_LoadScreen::NewGameButtonPressed(int32 Slot)
 
 void UMVVM_LoadScreen::SelectSlotButtonPressed(int32 Slot)
 {
+}
+
+void UMVVM_LoadScreen::LoadData()
+{
+	//获取到加载存档界面的GameMode
+	AMyGameModeBase* AuraGameMode=Cast<AMyGameModeBase>(UGameplayStatics::GetGameMode(this));
+
+	//遍历映射，获取对应存档
+	for (const TTuple<int32,UMVVM_LoadSlot*> Slot:LoadSlots)
+	{
+		ULoadScreenSaveGame* SaveGame=AuraGameMode->GetSaveSlotData(Slot.Value->GetSlotName(),Slot.Key);
+
+		//获取存档数据
+		const FString PlayerName=SaveGame->PlayerName;
+		const TEnumAsByte<ESaveSlotStatus> SaveSlotStatus=SaveGame->SaveSlotStatus;
+
+		//设置存档视图模型数据
+		Slot.Value->SetPlayerName(PlayerName);
+		Slot.Value->LoadSlotStatus=SaveSlotStatus;
+
+		//调用视图模型初始化
+		Slot.Value->InitializeSlot();
+	}
 }

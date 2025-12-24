@@ -6,6 +6,7 @@
 #include "MVVMViewModelBase.h"
 #include "MVVM_LoadSlot.h"
 #include "UObject/ObjectMacros.h"
+#include "Game/MyGameModeBase.h"
 #include "MVVM_LoadScreen.generated.h"
 
 /**
@@ -38,6 +39,8 @@ public:
 	//选择存档按下事件
 	UFUNCTION(BlueprintCallable)
 	void SelectSlotButtonPressed(int32 Slot);
+
+	void LoadData();
 private:
 	/**
 	 * FieldNotify:这是 MVVM（Model-View-ViewModel）模式的关键特性

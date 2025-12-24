@@ -23,4 +23,5 @@ void ALoadScreenHUD::BeginPlay()
 
 	PlayerController->SetShowMouseCursor(true);
 	LoadScreenWidget->BlueprintInitializeWidget();
+	LoadScreenViewModel->LoadData();
 }
