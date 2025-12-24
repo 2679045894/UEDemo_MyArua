@@ -39,4 +39,7 @@ public:
 	//存档使用的数据结构
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<USaveGame> LoadScreenSaveGameClass;
+
+	UFUNCTION()
+	static void DeleteSlotData(const FString& SlotName,int32 SlotIndex);
 };

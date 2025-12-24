@@ -97,3 +97,11 @@ ULoadScreenSaveGame* AMyGameModeBase::GetSaveSlotData(const FString& SlotName, i
 	ULoadScreenSaveGame* LoadScreenSaveGame=Cast<ULoadScreenSaveGame>(SaveGameObject);
 	return LoadScreenSaveGame;
 }
+
+void AMyGameModeBase::DeleteSlotData(const FString& SlotName, int32 SlotIndex)
+{
+	if (UGameplayStatics::DoesSaveGameExist(SlotName, SlotIndex))
+	{
+		UGameplayStatics::DeleteGameInSlot(SlotName, SlotIndex);
+	}
+}

@@ -72,3 +72,11 @@ void UMVVM_LoadScreen::LoadData()
 		Slot.Value->InitializeSlot();
 	}
 }
+
+void UMVVM_LoadScreen::DeleteButtonPressed(int32 Slot)
+{
+	AMyGameModeBase* AuraGameMode=Cast<AMyGameModeBase>(UGameplayStatics::GetGameMode(this));
+	AuraGameMode->DeleteSlotData(LoadSlots[Slot]->GetSlotName(),Slot);
+	LoadSlots[Slot]->LoadSlotStatus=Vacant;
+	LoadSlots[Slot]->InitializeSlot();
+}

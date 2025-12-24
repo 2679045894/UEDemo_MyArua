@@ -41,6 +41,9 @@ public:
 	void SelectSlotButtonPressed(int32 Slot);
 
 	void LoadData();
+
+	UFUNCTION(BlueprintCallable)
+	void DeleteButtonPressed(int32 Slot);
 private:
 	/**
 	 * FieldNotify:这是 MVVM（Model-View-ViewModel）模式的关键特性
