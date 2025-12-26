@@ -50,6 +50,7 @@ void AMyGameModeBase::SaveSlotData(const UMVVM_LoadSlot* LoadSlot, int32 SlotInd
 	LoadScreenSaveGame->SlotName=LoadSlot->GetSlotName();
 	LoadScreenSaveGame->SlotIndex=SlotIndex;
 	LoadScreenSaveGame->SaveSlotStatus=Taken;
+	LoadScreenSaveGame->MapName=LoadSlot->GetMapName();
 
 	//保存存档
 	UGameplayStatics::SaveGameToSlot(LoadScreenSaveGame,LoadSlot->GetSlotName(),SlotIndex);
@@ -104,4 +105,20 @@ void AMyGameModeBase::DeleteSlotData(const FString& SlotName, int32 SlotIndex)
 	{
 		UGameplayStatics::DeleteGameInSlot(SlotName, SlotIndex);
 	}
+}
+
+void AMyGameModeBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+	Maps.Add(DefaultMapName,DefaultMap);
+}
+
+void AMyGameModeBase::TravelToMap(const UMVVM_LoadSlot* Slot)
+{
+	const FString SlotName=Slot->GetSlotName();
+	const int32 SlotIndex=Slot->SlotIndex;
+
+	//打开地图
+	UGameplayStatics::OpenLevelBySoftObjectPtr(Slot,Maps.FindChecked(Slot->GetMapName()));
 }

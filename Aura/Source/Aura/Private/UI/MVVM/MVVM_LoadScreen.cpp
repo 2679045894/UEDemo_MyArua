@@ -36,6 +36,8 @@ void UMVVM_LoadScreen::NewSlotButtonPressed(int32 Slot, const FString& EnterName
 {
 	AMyGameModeBase* AuraGameMode=Cast<AMyGameModeBase>(UGameplayStatics::GetGameMode(this));
 	LoadSlots[Slot]->SetPlayerName(EnterName);
+	//设置地图名称
+	LoadSlots[Slot]->SetMapName(AuraGameMode->DefaultMapName);
 	LoadSlots[Slot]->LoadSlotStatus=Taken;
 	AuraGameMode->SaveSlotData(LoadSlots[Slot],Slot);
 	LoadSlots[Slot]->InitializeSlot();
@@ -48,6 +50,13 @@ void UMVVM_LoadScreen::NewGameButtonPressed(int32 Slot)
 
 void UMVVM_LoadScreen::SelectSlotButtonPressed(int32 Slot)
 {
+	
+}
+
+void UMVVM_LoadScreen::EnterGameButtonPressed(const int32 Slot)
+{
+	AMyGameModeBase* AuraGameMode=Cast<AMyGameModeBase>(UGameplayStatics::GetGameMode(this));
+	AuraGameMode->TravelToMap(LoadSlots[Slot]);
 }
 
 void UMVVM_LoadScreen::LoadData()
@@ -67,7 +76,7 @@ void UMVVM_LoadScreen::LoadData()
 		//设置存档视图模型数据
 		Slot.Value->SetPlayerName(PlayerName);
 		Slot.Value->LoadSlotStatus=SaveSlotStatus;
-
+		Slot.Value->SetMapName(SaveGame->MapName);
 		//调用视图模型初始化
 		Slot.Value->InitializeSlot();
 	}

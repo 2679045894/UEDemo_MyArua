@@ -40,6 +40,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SelectSlotButtonPressed(int32 Slot);
 
+	UFUNCTION(BlueprintCallable)
+	void EnterGameButtonPressed(const int32 Slot);
+
 	void LoadData();
 
 	UFUNCTION(BlueprintCallable)

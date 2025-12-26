@@ -30,6 +30,9 @@ public:
 	UPROPERTY()
 	FString PlayerName=FString("Default Name");
 
+	UPROPERTY()
+	FString MapName=FString("Default Name");
+
 	//当前存档进入存档界面是，默认显示的用户界面
 	UPROPERTY()
 	TEnumAsByte<ESaveSlotStatus> SaveSlotStatus=Vacant;

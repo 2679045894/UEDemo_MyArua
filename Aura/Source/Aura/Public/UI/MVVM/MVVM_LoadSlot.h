@@ -28,6 +28,9 @@ public:
 	void SetPlayerName(const FString& InPlayerName);
 	FString GetPlayerName()const{return PlayerName;}
 
+	void SetMapName(const FString& InMapName);
+	FString GetMapName()const{return MapName;}
+
 	//当前视图模型的索引，对应存档的索引
 	UPROPERTY()
 	int32 SlotIndex;
@@ -40,4 +43,6 @@ private:
 	FString SlotName;
 	UPROPERTY(BlueprintReadOnly,FieldNotify,Setter,Getter,meta=(AllowPrivateAccess))
 	FString PlayerName;
+	UPROPERTY(BlueprintReadOnly,FieldNotify,Setter,Getter,meta=(AllowPrivateAccess))
+	FString MapName;
 };
