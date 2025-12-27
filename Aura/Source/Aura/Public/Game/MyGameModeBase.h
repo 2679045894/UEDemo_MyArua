@@ -59,5 +59,20 @@ public:
 
 	//打开地图
 	void TravelToMap(const UMVVM_LoadSlot* Slot);
-	
+
+	//玩家切换关卡默认生成位置的PlayerStart标签
+	UPROPERTY(EditDefaultsOnly)
+	FName DefaultPlayerStartTag;
+
+	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
+
+	//获取当前游戏进行中所使用的存档数据
+	ULoadScreenSaveGame* RetrieveInGameSaveData();
+
+	//保存游戏进度
+	void SaveInGameProgressData(ULoadScreenSaveGame* SaveObject) const;
+
+	//高亮已经激活的检查点
+private:
+	void HighlightEnabledCheckPoints(TArray<AActor*> CheckPoints);
 };

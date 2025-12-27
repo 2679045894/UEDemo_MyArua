@@ -9,6 +9,9 @@
 #include "AbilitySystem//AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include  "NiagaraComponent.h"
+#include "Game/AuraGameInstance.h"
+#include "Game/MyGameModeBase.h"
+#include "Kismet/GameplayStatics.h"
 #include "UI/HUD/AuraHUD.h"
 
 AAuraCharacter::AAuraCharacter()
@@ -215,6 +218,22 @@ void AAuraCharacter::HideMagicCircle_Implementation()
 	if (AMyPlayerController* AuraPlayerController=Cast<AMyPlayerController>(GetController()))
 	{
 		AuraPlayerController->HideMagicCircle();
+	}
+}
+
+void AAuraCharacter::SaveProgress_Implementation(FName CheckpointTag)
+{
+	if (AMyGameModeBase* AuraGameMode=Cast<AMyGameModeBase>(UGameplayStatics::GetGameMode(this)))
+	{
+		if (ULoadScreenSaveGame* SaveObject=AuraGameMode->RetrieveInGameSaveData())
+		{
+			SaveObject->PlayerStartTag=CheckpointTag;
+			UAuraGameInstance* AuraGameInstance=Cast<UAuraGameInstance>(GetGameInstance());
+			check(AuraGameInstance);
+			AuraGameInstance->PlayerStartTag=CheckpointTag;
+			SaveObject->ActivatedPlayerStatTags.AddUnique(CheckpointTag);
+			AuraGameMode->SaveInGameProgressData(SaveObject);
+		}
 	}
 }
 

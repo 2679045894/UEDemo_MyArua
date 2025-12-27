@@ -35,6 +35,10 @@ public:
 	UPROPERTY()
 	int32 SlotIndex;
 
+	//存储玩家出生点位置标签
+	UPROPERTY()
+	FName PlayerStartTag;
+
 	//当前进入加载存档界时，此存档应该显示的用户控件界面
 	UPROPERTY()
 	TEnumAsByte<ESaveSlotStatus> LoadSlotStatus;

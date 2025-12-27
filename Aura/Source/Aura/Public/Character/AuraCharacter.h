@@ -69,4 +69,6 @@ private:
 	virtual void ShowMagicCircle_Implementation(UMaterialInterface* MaterialInterface) override;
 
 	virtual void HideMagicCircle_Implementation() override;
+
+	virtual void SaveProgress_Implementation(FName CheckpointTag) override;
 };

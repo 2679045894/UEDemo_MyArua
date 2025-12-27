@@ -3,7 +3,10 @@
 
 #include "Game/MyGameModeBase.h"
 
+#include "Game/AuraGameInstance.h"
+#include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
+#include "MyActor/CheckPoint.h"
 
 void AMyGameModeBase::SaveSlotData(const UMVVM_LoadSlot* LoadSlot, int32 SlotIndex)
 {
@@ -51,6 +54,7 @@ void AMyGameModeBase::SaveSlotData(const UMVVM_LoadSlot* LoadSlot, int32 SlotInd
 	LoadScreenSaveGame->SlotIndex=SlotIndex;
 	LoadScreenSaveGame->SaveSlotStatus=Taken;
 	LoadScreenSaveGame->MapName=LoadSlot->GetMapName();
+	LoadScreenSaveGame->PlayerStartTag=LoadSlot->PlayerStartTag;
 
 	//保存存档
 	UGameplayStatics::SaveGameToSlot(LoadScreenSaveGame,LoadSlot->GetSlotName(),SlotIndex);
@@ -121,4 +125,61 @@ void AMyGameModeBase::TravelToMap(const UMVVM_LoadSlot* Slot)
 
 	//打开地图
 	UGameplayStatics::OpenLevelBySoftObjectPtr(Slot,Maps.FindChecked(Slot->GetMapName()));
+}
+
+AActor* AMyGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
+{
+	const UAuraGameInstance* AuraGameInstance=Cast<UAuraGameInstance>(GetGameInstance());
+	TArray<AActor*> Actors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(),APlayerStart::StaticClass(),Actors);
+	HighlightEnabledCheckPoints(Actors);
+	if (Actors.Num()>0)
+	{
+		AActor* SelectedActor=Actors[0];
+		for (AActor* Actor:Actors)
+		{
+			if (APlayerStart* PlayerStart=Cast<APlayerStart>(Actor))
+			{
+				if (PlayerStart->PlayerStartTag==AuraGameInstance->PlayerStartTag)
+				{
+					SelectedActor=Actor;
+					break;
+				}
+			}
+		}
+		return SelectedActor;
+	}
+	return nullptr;
+}
+
+ULoadScreenSaveGame* AMyGameModeBase::RetrieveInGameSaveData()
+{
+	UAuraGameInstance* AuraGameInstance=Cast<UAuraGameInstance>(GetGameInstance());
+	const FString SlotName=AuraGameInstance->LoadSlotName;
+	const int32 SlotIndex=AuraGameInstance->LoadSlotIndex;
+	return GetSaveSlotData(SlotName,SlotIndex);
+}
+
+void AMyGameModeBase::SaveInGameProgressData(ULoadScreenSaveGame* SaveObject) const
+{
+	UAuraGameInstance* AuraGameInstance=Cast<UAuraGameInstance>(GetGameInstance());
+	SaveObject->PlayerStartTag=AuraGameInstance->PlayerStartTag;
+	const FString SlotName=AuraGameInstance->LoadSlotName;
+	const int32 SlotIndex=AuraGameInstance->LoadSlotIndex;
+	UGameplayStatics::SaveGameToSlot(SaveObject,SlotName, SlotIndex);
+}
+
+void AMyGameModeBase::HighlightEnabledCheckPoints(TArray<AActor*> CheckPoints)
+{
+	ULoadScreenSaveGame* SaveObject=RetrieveInGameSaveData();
+	for (AActor* Actor:CheckPoints)
+	{
+		if (ACheckPoint* CheckPoint=Cast<ACheckPoint>(Actor))
+		{
+			if (SaveObject->ActivatedPlayerStatTags.Contains(CheckPoint->PlayerStartTag))
+			{
+				CheckPoint->HandleGlowEffect();
+			}
+		}
+	}
 }

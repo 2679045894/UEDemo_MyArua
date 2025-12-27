@@ -36,4 +36,13 @@ public:
 	//当前存档进入存档界面是，默认显示的用户界面
 	UPROPERTY()
 	TEnumAsByte<ESaveSlotStatus> SaveSlotStatus=Vacant;
+
+	//存档点
+	UPROPERTY()
+	FName PlayerStartTag;
+
+	//已高亮的存档点
+	UPROPERTY()
+	TArray<FName> ActivatedPlayerStatTags=TArray<FName>();
+
 };
