@@ -61,7 +61,6 @@ void AMyCharacterBase::InitializeDefaultAttributes() const
 	ApplyEffectToSelf(DefaultPrimaryAttribute,1.f);
 	ApplyEffectToSelf(DefaultSecondaryAttributes,1.f);
 	ApplyEffectToSelf(DefaultVitalAttributes,1.f);
-	ApplyEffectToSelf(Test,1.f);
 }
 
 void AMyCharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayEffect.h"
 #include "UObject/Interface.h"
 #include "PlayerInterface.generated.h"
 
@@ -63,4 +64,12 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent,BlueprintCallable)
 	void SaveProgress(FName CheckpointTag);
+
+	UFUNCTION(BlueprintNativeEvent,BlueprintCallable)
+	TSubclassOf<UGameplayEffect> GetSecondaryAttributes();
+
+	UFUNCTION(BlueprintNativeEvent,BlueprintCallable)
+	TSubclassOf<UGameplayEffect> GetVitalAttributes();
+
+
 };

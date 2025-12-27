@@ -55,6 +55,7 @@ void AMyGameModeBase::SaveSlotData(const UMVVM_LoadSlot* LoadSlot, int32 SlotInd
 	LoadScreenSaveGame->SaveSlotStatus=Taken;
 	LoadScreenSaveGame->MapName=LoadSlot->GetMapName();
 	LoadScreenSaveGame->PlayerStartTag=LoadSlot->PlayerStartTag;
+	LoadScreenSaveGame->PlayerLevel=LoadSlot->GetPlayerLevel();
 
 	//保存存档
 	UGameplayStatics::SaveGameToSlot(LoadScreenSaveGame,LoadSlot->GetSlotName(),SlotIndex);

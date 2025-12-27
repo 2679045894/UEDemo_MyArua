@@ -85,9 +85,8 @@ void AAuraCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 	InitialAbilityActorInfo();
-	AddCharacterAbilities();
-
-	
+	LoadProgress();
+	//AddCharacterAbilities();
 }
 
 
@@ -125,7 +124,7 @@ void AAuraCharacter::InitialAbilityActorInfo()
 	}
 	if (HasAuthority())
 	{
-		InitializeDefaultAttributes();
+		//InitializeDefaultAttributes();
 	}
 	OnASCRegistered.Broadcast(AbilitySystemComponent);
 	DeBuffRegisterChanged();
@@ -232,9 +231,62 @@ void AAuraCharacter::SaveProgress_Implementation(FName CheckpointTag)
 			check(AuraGameInstance);
 			AuraGameInstance->PlayerStartTag=CheckpointTag;
 			SaveObject->ActivatedPlayerStatTags.AddUnique(CheckpointTag);
+
+			AMyPlayerState* AuraPlayerState=Cast<AMyPlayerState>(GetPlayerState());
+			check(AuraPlayerState);
+			SaveObject->XP=AuraPlayerState->GetXP();
+			SaveObject->PlayerLevel=AuraPlayerState->GetPlayerLevel();
+			SaveObject->SpellPoints=AuraPlayerState->GetSpellPoints();
+			SaveObject->AttributePoints=AuraPlayerState->GetAttributePoints();
+
+			SaveObject->Strength=UAuraAttributeSet::GetStrengthAttribute().GetNumericValue(GetAttributeSet());
+			SaveObject->Intelligence=UAuraAttributeSet::GetIntelligenceAttribute().GetNumericValue(GetAttributeSet());
+			SaveObject->Resilience=UAuraAttributeSet::GetResilienceAttribute().GetNumericValue(GetAttributeSet());
+			SaveObject->Vigor=UAuraAttributeSet::GetVigorAttribute().GetNumericValue(GetAttributeSet());
+
+			SaveObject->bFirstTimeLoadIn=false;
 			AuraGameMode->SaveInGameProgressData(SaveObject);
 		}
 	}
+}
+
+void AAuraCharacter::LoadProgress() const
+{
+	if (AMyGameModeBase* AuraGameMode=Cast<AMyGameModeBase>(UGameplayStatics::GetGameMode(this)))
+	{
+		ULoadScreenSaveGame* SaveObject=AuraGameMode->RetrieveInGameSaveData();
+		check(SaveObject);
+		AMyPlayerState* AuraPlayerState=Cast<AMyPlayerState>(GetPlayerState());
+		check(AuraPlayerState);
+		AuraPlayerState->SetXP(SaveObject->XP);
+		AuraPlayerState->SetLevel(SaveObject->PlayerLevel);
+		AuraPlayerState->SetSpellPoints(SaveObject->SpellPoints);
+		AuraPlayerState->SetAttributePoints(SaveObject->AttributePoints);
+
+		if (SaveObject->bFirstTimeLoadIn)
+		{
+			InitializeDefaultAttributes();
+
+			AddCharacterAbilities();
+		}
+		else
+		{
+			UAuraAbilitySystemLibrary::InitializeDefaultAttributesFromSaveData(this,GetAbilitySystemComponent(),SaveObject);
+
+			AddCharacterAbilities();
+		}
+	}
+}
+
+
+TSubclassOf<UGameplayEffect> AAuraCharacter::GetSecondaryAttributes_Implementation()
+{
+	return DefaultSecondaryAttributes;
+}
+
+TSubclassOf<UGameplayEffect> AAuraCharacter::GetVitalAttributes_Implementation()
+{
+	return DefaultVitalAttributes;
 }
 
 void AAuraCharacter::MulticastLevelUpParticles_Implementation() const

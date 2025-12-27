@@ -157,4 +157,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static void SetEffectParamsTargetASC(UPARAM(ref) FDamageEffectParams& DamageEffectParams,UAbilitySystemComponent* InASC);
+
+	UFUNCTION(BlueprintCallable)
+	static void InitializeDefaultAttributesFromSaveData(const UObject* WorldContextObject,UAbilitySystemComponent* InASC,ULoadScreenSaveGame* InSaveObject);
 };

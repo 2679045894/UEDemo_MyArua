@@ -71,4 +71,10 @@ private:
 	virtual void HideMagicCircle_Implementation() override;
 
 	virtual void SaveProgress_Implementation(FName CheckpointTag) override;
+
+	void LoadProgress() const;
+
+	virtual TSubclassOf<UGameplayEffect> GetSecondaryAttributes_Implementation() override;
+
+	virtual TSubclassOf<UGameplayEffect> GetVitalAttributes_Implementation() override;
 };

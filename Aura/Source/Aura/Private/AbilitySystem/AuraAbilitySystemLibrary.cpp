@@ -590,6 +590,39 @@ void UAuraAbilitySystemLibrary::SetEffectParamsTargetASC(FDamageEffectParams& Da
 	DamageEffectParams.TargetASC=InASC;
 }
 
+void UAuraAbilitySystemLibrary::InitializeDefaultAttributesFromSaveData(const UObject* WorldContextObject,
+	UAbilitySystemComponent* InASC, ULoadScreenSaveGame* InSaveObject)
+{
+	UCharacterClassInfo* CharacterClassInfo=GetCharacterClassInfo(WorldContextObject);
+	FAuraGameplayTags AuraGameplayTags=FAuraGameplayTags::Get();
+	AActor* Avatar=InASC->GetAvatarActor();
+	//应用基础属性
+	FGameplayEffectContextHandle ContextHandle=InASC->MakeEffectContext();
+	ContextHandle.AddSourceObject(Avatar);
+	FGameplayEffectSpecHandle PrimaryEffectSpecHandle=InASC->MakeOutgoingSpec(CharacterClassInfo->PrimaryAttributes_SetByCaller,1,ContextHandle);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(PrimaryEffectSpecHandle,AuraGameplayTags.Attributes_Primary_Strength,InSaveObject->Strength);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(PrimaryEffectSpecHandle,AuraGameplayTags.Attributes_Primary_Intelligence,InSaveObject->Intelligence);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(PrimaryEffectSpecHandle,AuraGameplayTags.Attributes_Primary_Resilience,InSaveObject->Resilience);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(PrimaryEffectSpecHandle,AuraGameplayTags.Attributes_Primary_Vigor,InSaveObject->Vigor);
+	InASC->ApplyGameplayEffectSpecToSelf(*PrimaryEffectSpecHandle.Data.Get());
+	
+	if (Avatar->Implements<UPlayerInterface>())
+	{
+		//应用次级属性
+		FGameplayEffectContextHandle SecondaryContextHandle=InASC->MakeEffectContext();
+		SecondaryContextHandle.AddSourceObject(Avatar);
+		FGameplayEffectSpecHandle SecondaryEffectSpecHandle=InASC->MakeOutgoingSpec(IPlayerInterface::Execute_GetSecondaryAttributes(Avatar),1,SecondaryContextHandle);
+		InASC->ApplyGameplayEffectSpecToSelf(*SecondaryEffectSpecHandle.Data.Get());
+		//应用关键属性
+		FGameplayEffectContextHandle VitalContextHandle=InASC->MakeEffectContext();
+		VitalContextHandle.AddSourceObject(Avatar);
+		FGameplayEffectSpecHandle VitalEffectSpecHandle=InASC->MakeOutgoingSpec(IPlayerInterface::Execute_GetVitalAttributes(Avatar),1,VitalContextHandle);
+		InASC->ApplyGameplayEffectSpecToSelf(*VitalEffectSpecHandle.Data.Get());
+	}
+}
+
+	
+
 
 
 

@@ -20,7 +20,6 @@ class AURA_API AMyPlayerState : public APlayerState,public IAbilitySystemInterfa
 {
 	GENERATED_BODY()
 	AMyPlayerState();
-
 protected:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly);
 	TObjectPtr<UAuraAbilitySystemComponent> AbilitySystemComponent;
@@ -34,7 +33,9 @@ public:
 	//封装，属性是私有的，外部只能通过这两个函数分别访问AbilitySystemComponent和AttributeSet变量
 	virtual UAuraAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAuraAttributeSet* GetAttributeSet() const{ return AttributeSet; }
-	
+
+	void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+
 	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_Level,Category="Level")
 	int32 Level=1;
 	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_XP,Category="Level")
@@ -43,8 +44,6 @@ public:
 	int32 AttributePoints=3;
 	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_SpellPoints,Category="Level")
 	int32 SpellPoints=3;
-
-	void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UFUNCTION()
 	void OnRep_Level(int32 OldLevel) const;
@@ -66,6 +65,9 @@ public:
 
 	void AddToAttributePoints(int32 InAttributePoints);
 	void AddToSpellPoints(int32 InSpellPoints);
+
+	void SetSpellPoints(int32 InSpellPoints);
+	void SetAttributePoints(int32 InAttributePoints);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<ULevelUpInfo> LevelUpInfo;

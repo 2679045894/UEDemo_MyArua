@@ -46,6 +46,10 @@ public:
 	TSubclassOf<UGameplayEffect> SecondaryAttributeClass;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,Category="Class Default")// 所有职业都一样
 	TSubclassOf<UGameplayEffect> VitalAttributeClass;
+
+	//主要属性，玩家的基础属性，通过SetByCaller设置
+	UPROPERTY(EditDefaultsOnly,Category="Class Default")
+	TSubclassOf<UGameplayEffect> PrimaryAttributes_SetByCaller;
 	
 	FCharacterClassDefault GetCharacterClassDefaultInfo(ECharacterClass CharacterClass);
 
