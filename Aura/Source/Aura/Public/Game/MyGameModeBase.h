@@ -72,7 +72,12 @@ public:
 	//保存游戏进度
 	void SaveInGameProgressData(ULoadScreenSaveGame* SaveObject) const;
 
-	//高亮已经激活的检查点
+	//保存关卡中的状态到当前存档中
+	void SaveWorldState(const UWorld* World);
+
+	//从存档中加载当前关卡的状态
+	void LoadWorldState(const UWorld* World)const;
 private:
+	//高亮已经激活的检查点
 	void HighlightEnabledCheckPoints(TArray<AActor*> CheckPoints);
 };

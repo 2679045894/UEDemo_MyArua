@@ -3,10 +3,12 @@
 
 #include "Game/MyGameModeBase.h"
 
+#include "EngineUtils.h"
 #include "Game/AuraGameInstance.h"
 #include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
 #include "MyActor/CheckPoint.h"
+#include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 
 void AMyGameModeBase::SaveSlotData(const UMVVM_LoadSlot* LoadSlot, int32 SlotIndex)
 {
@@ -168,6 +170,94 @@ void AMyGameModeBase::SaveInGameProgressData(ULoadScreenSaveGame* SaveObject) co
 	const FString SlotName=AuraGameInstance->LoadSlotName;
 	const int32 SlotIndex=AuraGameInstance->LoadSlotIndex;
 	UGameplayStatics::SaveGameToSlot(SaveObject,SlotName, SlotIndex);
+}
+
+void AMyGameModeBase::SaveWorldState(const UWorld* World)
+{
+	FString SavedMapName=World->GetName();
+	SavedMapName.RemoveFromStart(World->StreamingLevelsPrefix);
+
+	UAuraGameInstance* Instance=Cast<UAuraGameInstance>(GetGameInstance());
+	check(Instance);
+	ULoadScreenSaveGame* SaveObject=GetSaveSlotData(Instance->LoadSlotName,Instance->LoadSlotIndex);
+	check(SaveObject);
+	if (!SaveObject->HasMap(SavedMapName))
+	{
+		FSaveMap SavedMap=FSaveMap();
+		SavedMap.MapAssetName=SavedMapName;
+		SaveObject->SavedMaps.Add(SavedMap);
+	}
+	FSaveMap SaveMap=SaveObject->GetSaveMapWithMapName(SavedMapName);
+	SaveMap.SavedActors.Empty();
+	//使用迭代器，遍历场景中的Actor，将需要保存的Actor保存到结构体内
+	for (FActorIterator It(World);It;++It)
+	{
+		AActor* Actor=*It;
+		if (!IsValid(Actor)||!Actor->Implements<USaveInterface>())continue;
+		FSaveActor SaveActor=FSaveActor();
+		SaveActor.ActorName=Actor->GetFName();
+		SaveActor.Transform=Actor->GetTransform();
+
+		//创建一个FMemoryWriter，用于将数据写入SaveActor.Bytes
+		FMemoryWriter MemoryWriter(SaveActor.Bytes);
+
+		//创建一个反序列容器，将对象的成员以名称和值的形式保存到MemoryWriter
+		FObjectAndNameAsStringProxyArchive Archive(MemoryWriter, true);
+		Archive.ArIsSaveGame=true;
+
+		//将Actor所需要保存的数据写入Archive，Archive将把数据存储到SavedActor.Bytes
+		Actor->Serialize(Archive);
+
+		SaveMap.SavedActors.AddUnique(SaveActor);
+	}
+	for (FSaveMap& MapToReplace : SaveObject->SavedMaps)
+	{
+		if (MapToReplace.MapAssetName==SavedMapName)
+		{
+			MapToReplace=SaveMap;
+		}
+	}
+	UGameplayStatics::SaveGameToSlot(SaveObject,Instance->LoadSlotName,Instance->LoadSlotIndex);
+	
+}
+
+void AMyGameModeBase::LoadWorldState(const UWorld* World) const
+{
+	FString LoadMapName=World->GetMapName();
+	LoadMapName.RemoveFromStart(World->StreamingLevelsPrefix);
+
+	UAuraGameInstance* Instance=Cast<UAuraGameInstance>(GetGameInstance());
+	check(Instance);
+	if (UGameplayStatics::DoesSaveGameExist(Instance->LoadSlotName,Instance->LoadSlotIndex))
+	{
+		ULoadScreenSaveGame* LoadObject=Cast<ULoadScreenSaveGame>(UGameplayStatics::LoadGameFromSlot(Instance->LoadSlotName,Instance->LoadSlotIndex));
+		if (LoadObject==nullptr)return;
+		if (LoadObject->HasMap(LoadMapName))
+		{
+			for (FActorIterator It(World);It;++It)
+			{
+				AActor* Actor=*It;
+				if (!IsValid(Actor)||!Actor->Implements<USaveInterface>())continue;
+				for (FSaveActor SaveActor:LoadObject->GetSaveMapWithMapName(LoadMapName).SavedActors)
+				{
+					SaveActor.ActorName=Actor->GetFName();
+					if (ISaveInterface::Execute_ShouldLoadTransform(Actor))
+					{
+						Actor->SetActorTransform(SaveActor.Transform);
+					}
+					//反序列化，创建一个Reader实例用于从二进制数据中读取内容
+					FMemoryReader MemoryReader(SaveActor.Bytes);
+					//用于序列化和反序列化对象的属性 true表现允许
+					FObjectAndNameAsStringProxyArchive Archive(MemoryReader, true);
+					//指定反序列化用于加载存档数据
+					Archive.ArIsSaveGame=true;
+					//执行反序列化，将二进制数据设置到Actor上
+					Actor->Serialize(Archive);
+					ISaveInterface::Execute_LoadActor(Actor);
+				}
+			}
+		}
+	}
 }
 
 void AMyGameModeBase::HighlightEnabledCheckPoints(TArray<AActor*> CheckPoints)

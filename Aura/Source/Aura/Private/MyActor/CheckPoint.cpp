@@ -34,6 +34,13 @@ void ACheckPoint::OnSphereComponentOverlap(UPrimitiveComponent* OverlappedCompon
 {
 	if (OtherActor->Implements<UPlayerInterface>())
 	{
+		bReached=true;
+		if (AMyGameModeBase* AuraGameMode=Cast<AMyGameModeBase>(UGameplayStatics::GetGameMode(this)))
+		{
+			//保存场景状态
+			AuraGameMode->SaveWorldState(GetWorld());
+		}
+		//修改存档当前的碰撞点
 		IPlayerInterface::Execute_SaveProgress(OtherActor,PlayerStartTag);
 		HandleGlowEffect();
 	}
@@ -46,4 +53,12 @@ void ACheckPoint::HandleGlowEffect()
 	UMaterialInstanceDynamic* DynamicMaterial=UMaterialInstanceDynamic::Create(CheckPointMesh->GetMaterial(0),this);
 	CheckPointMesh->SetMaterial(0, DynamicMaterial);
 	CheckPointReached(DynamicMaterial);
+}
+
+void ACheckPoint::LoadActor_Implementation()
+{
+	if (bReached)
+	{
+		HandleGlowEffect();
+	}
 }

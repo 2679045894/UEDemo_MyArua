@@ -5,13 +5,14 @@
 #include "CoreMinimal.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/PlayerStart.h"
+#include "Interaction/SaveInterface.h"
 #include "CheckPoint.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class AURA_API ACheckPoint : public APlayerStart
+class AURA_API ACheckPoint : public APlayerStart,public ISaveInterface
 {
 	GENERATED_BODY()
 public:
@@ -33,4 +34,11 @@ public:
 	//碰撞后，检查点被激活时触发
 	UFUNCTION()
 	void HandleGlowEffect();
+
+	UPROPERTY()
+	bool bReached=false;
+
+	virtual void LoadActor_Implementation() override;
+
+	virtual bool ShouldLoadTransform_Implementation() override{return false;};
 };

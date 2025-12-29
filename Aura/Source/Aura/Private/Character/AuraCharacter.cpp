@@ -290,6 +290,8 @@ void AAuraCharacter::LoadProgress() const
 			UAuraAbilitySystemLibrary::InitializeDefaultAttributesFromSaveData(this,GetAbilitySystemComponent(),SaveObject);
 
 			GetAbilitySystemComponent()->AddCharacterAbilitiesFromSaveDate(SaveObject);
+
+			AuraGameMode->LoadWorldState(GetWorld());
 		}
 	}
 }

@@ -52,6 +52,44 @@ struct FSavedAbility
 		return !(*this == Right);
 	}
 };
+//保存场景中的Actor
+USTRUCT()
+struct FSaveActor
+{
+	GENERATED_BODY()
+	UPROPERTY()
+	FName ActorName=FName();
+
+	UPROPERTY()
+	FTransform Transform=FTransform();
+
+	//Actor身上序列号的数据，必须通过UPROPERTY定义过，旨在保存存档时使用
+	UPROPERTY()
+	TArray<uint8> Bytes;
+
+	inline bool operator==(const FSaveActor& Right) const
+	{
+		return ActorName == Right.ActorName;
+	}
+	
+	inline bool operator!=(const FSaveActor& Right) const
+	{
+		return !(*this == Right);
+	}
+	
+};
+//地图相关数据
+USTRUCT()
+struct FSaveMap
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY()
+	FString MapAssetName;
+
+	UPROPERTY()
+	TArray<FSaveActor> SavedActors;
+};
 UCLASS(BlueprintType)
 class AURA_API ULoadScreenSaveGame : public ULocalPlayerSaveGame
 {
@@ -107,4 +145,12 @@ public:
 	UPROPERTY()
 	TArray<FSavedAbility> SavedAbilities;
 
+	//地图相关
+	UPROPERTY()
+	TArray<FSaveMap> SavedMaps;
+	//通过地图名称获取地图数据
+	FSaveMap GetSaveMapWithMapName(const FString& InMapName);
+
+	//判断存档是否由对应的地图数据
+	bool HasMap(const FString& InMapName);
 };
