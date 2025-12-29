@@ -153,4 +153,8 @@ public:
 
 	//判断存档是否由对应的地图数据
 	bool HasMap(const FString& InMapName);
+
+	//地图资源路径
+	UPROPERTY()
+	FString MapAssetName=FString(TEXT("默认地图资源名称"));
 };

@@ -38,7 +38,7 @@ void ACheckPoint::OnSphereComponentOverlap(UPrimitiveComponent* OverlappedCompon
 		if (AMyGameModeBase* AuraGameMode=Cast<AMyGameModeBase>(UGameplayStatics::GetGameMode(this)))
 		{
 			//保存场景状态
-			AuraGameMode->SaveWorldState(GetWorld());
+			AuraGameMode->SaveWorldState(GetWorld(),FString(""));
 		}
 		//修改存档当前的碰撞点
 		IPlayerInterface::Execute_SaveProgress(OtherActor,PlayerStartTag);

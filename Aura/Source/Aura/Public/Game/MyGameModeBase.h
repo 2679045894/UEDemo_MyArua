@@ -73,10 +73,12 @@ public:
 	void SaveInGameProgressData(ULoadScreenSaveGame* SaveObject) const;
 
 	//保存关卡中的状态到当前存档中
-	void SaveWorldState(const UWorld* World);
+	void SaveWorldState(const UWorld* World,const FString& DestinationMapAssetName);
 
 	//从存档中加载当前关卡的状态
 	void LoadWorldState(const UWorld* World)const;
+
+	FString GetMapNameFromMapAssetName(const FString& MapAssetName);
 private:
 	//高亮已经激活的检查点
 	void HighlightEnabledCheckPoints(TArray<AActor*> CheckPoints);

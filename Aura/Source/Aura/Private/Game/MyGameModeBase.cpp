@@ -172,7 +172,7 @@ void AMyGameModeBase::SaveInGameProgressData(ULoadScreenSaveGame* SaveObject) co
 	UGameplayStatics::SaveGameToSlot(SaveObject,SlotName, SlotIndex);
 }
 
-void AMyGameModeBase::SaveWorldState(const UWorld* World)
+void AMyGameModeBase::SaveWorldState(const UWorld* World,const FString& DestinationMapAssetName=FString(""))
 {
 	FString SavedMapName=World->GetName();
 	SavedMapName.RemoveFromStart(World->StreamingLevelsPrefix);
@@ -181,6 +181,11 @@ void AMyGameModeBase::SaveWorldState(const UWorld* World)
 	check(Instance);
 	ULoadScreenSaveGame* SaveObject=GetSaveSlotData(Instance->LoadSlotName,Instance->LoadSlotIndex);
 	check(SaveObject);
+	if (DestinationMapAssetName!=FString(""))
+	{
+		SaveObject->MapAssetName=DestinationMapAssetName;
+		SaveObject->MapName=GetMapNameFromMapAssetName(DestinationMapAssetName);
+	}
 	if (!SaveObject->HasMap(SavedMapName))
 	{
 		FSaveMap SavedMap=FSaveMap();
@@ -258,6 +263,18 @@ void AMyGameModeBase::LoadWorldState(const UWorld* World) const
 			}
 		}
 	}
+}
+
+FString AMyGameModeBase::GetMapNameFromMapAssetName(const FString& MapAssetName)
+{
+	for (auto& Map:Maps)
+	{
+		if (Map.Value.ToSoftObjectPath().GetAssetName()==MapAssetName)
+		{
+			return Map.Key;
+		}
+	}
+	return FString();
 }
 
 void AMyGameModeBase::HighlightEnabledCheckPoints(TArray<AActor*> CheckPoints)
