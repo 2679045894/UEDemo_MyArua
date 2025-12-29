@@ -245,6 +245,22 @@ void AAuraCharacter::SaveProgress_Implementation(FName CheckpointTag)
 			SaveObject->Vigor=UAuraAttributeSet::GetVigorAttribute().GetNumericValue(GetAttributeSet());
 
 			SaveObject->bFirstTimeLoadIn=false;
+
+			if (!HasAuthority())return;
+			FForEachAbility SaveAbilityDelegate;
+			SaveAbilityDelegate.BindLambda([this, SaveObject](const FGameplayAbilitySpec& Spec)
+			{
+				FSavedAbility SavedAbility=FSavedAbility();
+				UAbilityInfo* AbilityInfo=UAuraAbilitySystemLibrary::GetActiveAbilityInfo(this);
+				SavedAbility.AbilityTag=GetAbilitySystemComponent()->GetAbilityTagFromSpec(Spec);
+				SavedAbility.GameplayAbility=AbilityInfo->FindAbilityInfoForTag(SavedAbility.AbilityTag).Ability;
+				SavedAbility.AbilityInputTag=GetAbilitySystemComponent()->GetInputTagFromSpec(Spec);
+				SavedAbility.AbilityLevel=Spec.Level;
+				SavedAbility.AbilityStatusTag=GetAbilitySystemComponent()->GetStatusTagFromSpec(Spec);
+				SavedAbility.AbilityType=GetAbilitySystemComponent()->GetAbilityTypeTagFromSpec(Spec);
+				SaveObject->SavedAbilities.AddUnique(SavedAbility);
+			});
+			GetAbilitySystemComponent()->ForEachAbility(SaveAbilityDelegate);
 			AuraGameMode->SaveInGameProgressData(SaveObject);
 		}
 	}
@@ -273,7 +289,7 @@ void AAuraCharacter::LoadProgress() const
 		{
 			UAuraAbilitySystemLibrary::InitializeDefaultAttributesFromSaveData(this,GetAbilitySystemComponent(),SaveObject);
 
-			AddCharacterAbilities();
+			GetAbilitySystemComponent()->AddCharacterAbilitiesFromSaveDate(SaveObject);
 		}
 	}
 }

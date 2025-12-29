@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
+#include "Game/LoadScreenSaveGame.h"
 #include "AuraAbilitySystemComponent.generated.h"
 
 //广播标签
@@ -52,6 +53,7 @@ public:
 	static FGameplayTag GetAbilityTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
 	static FGameplayTag GetInputTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
 	static FGameplayTag GetStatusTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
+	FGameplayTag GetAbilityTypeTagFromSpec(const FGameplayAbilitySpec& AbilitySpec) const;
 	FGameplayAbilitySpec* GetSpecFromAbilityTag(const FGameplayTag& AbilityTag);
 
 	//客户端更新UI
@@ -108,5 +110,8 @@ public:
 
 	UFUNCTION(NetMulticast,Unreliable)
 	void MulticastActivatePassiveEffect(const FGameplayTag& AbilityTag,const bool bActive);
+
+	UFUNCTION()
+	void AddCharacterAbilitiesFromSaveDate(ULoadScreenSaveGame* SaveObject);
 	
 };

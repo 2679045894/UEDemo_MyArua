@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Abilities/GameplayAbility.h"
 #include "GameFramework/SaveGame.h"
 #include "LoadScreenSaveGame.generated.h"
 
@@ -12,6 +13,44 @@ enum ESaveSlotStatus
 	Vacant,
 	EnterName,
 	Taken
+};
+
+USTRUCT(BlueprintType)
+struct FSavedAbility
+{
+	GENERATED_BODY()
+	//需要存储的技能
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<UGameplayAbility> GameplayAbility;
+	//当前技能等级
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int32 AbilityLevel=1;
+	//当前技能标签
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FGameplayTag AbilityTag;
+	//当前技能状态标签
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FGameplayTag AbilityStatusTag;
+	//当前技能装配到的插槽
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FGameplayTag AbilityInputTag;
+	//当前技能类型
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FGameplayTag AbilityType;
+	//自定义运算符==，如果左右都是FSavedAbility类型的值，将通过函数内的值判断是否相等。
+	inline bool operator==(const FSavedAbility& Right) const
+	{
+		// 建议比较多个字段以确保唯一性
+		return AbilityTag.MatchesTagExact(Right.AbilityTag) &&
+			   AbilityInputTag == Right.AbilityInputTag &&
+			   AbilityType == Right.AbilityType;
+	}
+    
+	// 同时添加 != 运算符
+	inline bool operator!=(const FSavedAbility& Right) const
+	{
+		return !(*this == Right);
+	}
 };
 UCLASS(BlueprintType)
 class AURA_API ULoadScreenSaveGame : public ULocalPlayerSaveGame
@@ -64,4 +103,8 @@ public:
 	float Resilience=0;
 	UPROPERTY()
 	float Vigor=0;
+	//技能容器
+	UPROPERTY()
+	TArray<FSavedAbility> SavedAbilities;
+
 };

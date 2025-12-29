@@ -118,7 +118,7 @@ void UAuraAbilitySystemComponent::ForEachAbility(const FForEachAbility& Delegate
 	for (const FGameplayAbilitySpec&AbilitySpec:GetActivatableAbilities())
 	{
 		//在判断的同时传参(AbilitySpec)
-		if (!Delegate.ExecuteIfBound(AbilitySpec))
+		if (!Delegate.ExecuteIfBound(AbilitySpec))//相当于Delegate.Broadcast
 		{
 			UE_LOG(LogAura,Error,TEXT("在函数[%hs]运行委托失败"),__FUNCTION__);
 		}
@@ -162,6 +162,14 @@ FGameplayTag UAuraAbilitySystemComponent::GetStatusTagFromSpec(const FGameplayAb
 		}
 	}
 	return FGameplayTag();
+}
+
+FGameplayTag UAuraAbilitySystemComponent::GetAbilityTypeTagFromSpec(const FGameplayAbilitySpec& AbilitySpec) const
+{
+	UAbilityInfo* AbilityInfo=UAuraAbilitySystemLibrary::GetActiveAbilityInfo(this);
+	check(AbilityInfo);
+	FAuraAbilityInfo Info=AbilityInfo->FindAbilityInfoForTag(GetAbilityTagFromSpec(AbilitySpec));
+	return Info.AbilityType;
 }
 
 FGameplayAbilitySpec* UAuraAbilitySystemComponent::GetSpecFromAbilityTag(const FGameplayTag& AbilityTag)
@@ -331,8 +339,35 @@ void UAuraAbilitySystemComponent::AssignSlotToAbility(FGameplayAbilitySpec& Spec
 	Spec.DynamicAbilityTags.AddTag(AuraGameplayTags.Abilities_Status_Equipped);
 }
 
+void UAuraAbilitySystemComponent::AddCharacterAbilitiesFromSaveDate(ULoadScreenSaveGame* SaveObject)
+{
+	for (FSavedAbility& SavedAbility:SaveObject->SavedAbilities)
+	{
+		FGameplayAbilitySpec AbilitySpec=FGameplayAbilitySpec(SavedAbility.GameplayAbility,SavedAbility.AbilityLevel);
+		AbilitySpec.DynamicAbilityTags.AddTag(SavedAbility.AbilityInputTag);
+		AbilitySpec.DynamicAbilityTags.AddTag(SavedAbility.AbilityStatusTag);
+		if (SavedAbility.AbilityType.MatchesTag(FAuraGameplayTags::Get().Abilities_Type_Offensive))
+		{
+			GiveAbility(AbilitySpec);
+		}
+		else if (SavedAbility.AbilityType.MatchesTag(FAuraGameplayTags::Get().Abilities_Type_Passive))
+		{
+			if (SavedAbility.AbilityStatusTag.MatchesTag(FAuraGameplayTags::Get().Abilities_Status_Equipped))
+			{
+				GiveAbilityAndActivateOnce(AbilitySpec);
+			}
+			else
+			{
+				GiveAbility(AbilitySpec);
+			}
+		}
+	}
+	bStartupAbilitiesGiven=true;
+	AbilitiesGivenDelegate.Broadcast();
+}
+
 void UAuraAbilitySystemComponent::MulticastActivatePassiveEffect_Implementation(const FGameplayTag& AbilityTag,
-	const bool bActive)
+                                                                                const bool bActive)
 {
 	ActivePassiveEffectDelegate.Broadcast(AbilityTag,bActive);
 }
