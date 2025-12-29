@@ -54,6 +54,9 @@ void AAuraHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySyst
 	OverplayWidget = Cast<UAuraUserWidget>(Widget);
 	const FWidgetControllerParams WidgetControllerParams(PC, PS, ASC, AS);
 	UOverplayWidgetController* WidgetController = GetOverPlayWidgetController(WidgetControllerParams);
+	
+	GetAttributeMenuWidgetController(WidgetControllerParams);
+	GetSpellMenuWidgetController(WidgetControllerParams);
 
 	OverplayWidget->SetWidgetController(WidgetController);
 	OverplayWidgetController->BroadcastInitialValues();
