@@ -77,4 +77,12 @@ private:
 	virtual TSubclassOf<UGameplayEffect> GetSecondaryAttributes_Implementation() override;
 
 	virtual TSubclassOf<UGameplayEffect> GetVitalAttributes_Implementation() override;
+
+	UPROPERTY(EditDefaultsOnly)
+	float DeathTime=5.f;
+
+	FTimerHandle DeathTimer;
+
+	UFUNCTION()
+	virtual void Die(const FVector& DeathImpulse) override;
 };

@@ -79,6 +79,8 @@ public:
 	void LoadWorldState(const UWorld* World)const;
 
 	FString GetMapNameFromMapAssetName(const FString& MapAssetName);
+
+	void PlayerDied(const UObject* Character);
 private:
 	//高亮已经激活的检查点
 	void HighlightEnabledCheckPoints(TArray<AActor*> CheckPoints);

@@ -278,6 +278,13 @@ FString AMyGameModeBase::GetMapNameFromMapAssetName(const FString& MapAssetName)
 	return FString();
 }
 
+void AMyGameModeBase::PlayerDied(const UObject* Character)
+{
+	ULoadScreenSaveGame* SaveObject=RetrieveInGameSaveData();
+	check(SaveObject);
+	UGameplayStatics::OpenLevelBySoftObjectPtr(Character,Maps.FindChecked(SaveObject->MapName));
+}
+
 void AMyGameModeBase::HighlightEnabledCheckPoints(TArray<AActor*> CheckPoints)
 {
 	ULoadScreenSaveGame* SaveObject=RetrieveInGameSaveData();

@@ -307,6 +307,23 @@ TSubclassOf<UGameplayEffect> AAuraCharacter::GetVitalAttributes_Implementation()
 	return DefaultVitalAttributes;
 }
 
+void AAuraCharacter::Die(const FVector& DeathImpulse)
+{
+	Super::Die(DeathImpulse);
+	FTimerDelegate DeathTimerDelegate;
+	DeathTimerDelegate.BindLambda([this]()
+	{
+		if (AMyGameModeBase* AuraGameMode=Cast<AMyGameModeBase>(UGameplayStatics::GetGameMode(this)))
+		{
+			AuraGameMode->PlayerDied(this);
+		}
+	});
+	//通过定时器触发对应委托
+	GetWorldTimerManager().SetTimer(DeathTimer,DeathTimerDelegate,DeathTime,false);
+	//防止相机在角色死亡后跟随移动
+	TopDownCameraComponent->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+}
+
 void AAuraCharacter::MulticastLevelUpParticles_Implementation() const
 {
 	if (IsValid(LevelUpNiagaraComponent))
