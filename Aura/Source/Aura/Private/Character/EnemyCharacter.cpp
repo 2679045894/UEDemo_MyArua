@@ -129,6 +129,11 @@ void AEnemyCharacter::Die(const FVector& DeathImpulse)
 	
 }
 
+void AEnemyCharacter::SetLevel(int32 InLevel)
+{
+	Level=InLevel;
+}
+
 void AEnemyCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);

@@ -183,6 +183,7 @@ void AMyGameModeBase::SaveWorldState(const UWorld* World,const FString& Destinat
 	check(SaveObject);
 	if (DestinationMapAssetName!=FString(""))
 	{
+		//进入传送点时进行这个逻辑，因为进入传送点之后，玩家所在关卡变化，因此要更新当前存档所在的地图
 		SaveObject->MapAssetName=DestinationMapAssetName;
 		SaveObject->MapName=GetMapNameFromMapAssetName(DestinationMapAssetName);
 	}

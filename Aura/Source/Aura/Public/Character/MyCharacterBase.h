@@ -30,6 +30,8 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	void SetCharacterClass(ECharacterClass InClass) { CharacterClass = InClass; }
+
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
@@ -62,7 +64,6 @@ protected:
 	//初始化属性(应用初始化游戏效果)
 	virtual void InitializeDefaultAttributes() const;
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass,float Level) const;
-
 
 	//实现战斗接口的获取等级方法
 	virtual int32 GetPlayerLevel_Implementation() override;

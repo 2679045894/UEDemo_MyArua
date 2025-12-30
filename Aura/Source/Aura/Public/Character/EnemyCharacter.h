@@ -34,7 +34,7 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
-	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Level")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Level")
 	int32 Level=1;
 	
 	UPROPERTY(BlueprintAssignable)
@@ -59,6 +59,9 @@ public:
 	float LifeSpan=5.f;
 
 	virtual void Die(const FVector& DeathImpulse) override;
+
+	UFUNCTION(BlueprintCallable)
+	void SetLevel(int32 InLevel);
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category="AI")
