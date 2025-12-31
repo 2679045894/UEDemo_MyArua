@@ -126,7 +126,7 @@ void AEnemyCharacter::Die(const FVector& DeathImpulse)
 {
 	SetLifeSpan(LifeSpan);
 	Super::Die(DeathImpulse);
-	
+	DropLoot();
 }
 
 void AEnemyCharacter::SetLevel(int32 InLevel)

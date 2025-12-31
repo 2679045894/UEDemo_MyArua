@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "AuraAbilityTypes.h"
 #include "Data/CharacterClassInfo.h"
+#include "Data/LootTiers.h"
 #include "Engine/OverlapResult.h"
 #include "Interaction/CombatInterface.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
@@ -160,4 +161,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static void InitializeDefaultAttributesFromSaveData(const UObject* WorldContextObject,UAbilitySystemComponent* InASC,ULoadScreenSaveGame* InSaveObject);
+
+	UFUNCTION(BlueprintCallable)
+	static ULootTiers* GetLootTiers(const UObject* WorldObject);
+
 };

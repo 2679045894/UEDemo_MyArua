@@ -34,6 +34,8 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	virtual void Tick(float DeltaSeconds) override;
+
 public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="SceneComponents")
 	TObjectPtr<USceneComponent> SceneComponent;
@@ -78,5 +80,45 @@ public:
 	//物品级别
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="EffectActor Level")
 	float ActorLevel=1.f;
+
+	UPROPERTY(BlueprintReadWrite)
+	FVector CalculatedLocation;
+
+	//计算后的Actor旋转
+	UPROPERTY(BlueprintReadWrite)
+	FRotator CalculatedRotation;
+
+	//Actor石是否帧更新旋转
+	UPROPERTY(BlueprintReadWrite)
+	bool bRotates=false;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	float RotationRate=45.f;
+
+	//Actor是否更新位置
+	UPROPERTY(BlueprintReadWrite)
+	bool bSinusoidalMovement=false;
+
+	//正弦值-1到1,调整更新移动范围
+	UPROPERTY(BlueprintReadWrite)
+	float SineAmplitude=1.f;
+
+	//正弦运算，默认值为1秒一个循环
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	float SinePeriod=1.f;
+
+	UFUNCTION(BlueprintCallable)
+	void StartSinusoidalMovement();
+
+	UFUNCTION(BlueprintCallable)
+	void StartRotation();
+private:
+	UPROPERTY()
+	float RunningTime=0.f;
+	UPROPERTY()
+	FVector InitialLocation;
+	void ItemMovement(float DeltaTime);
+	
+	
 	
 };

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "LoadScreenSaveGame.h"
+#include "AbilitySystem/Data/LootTiers.h"
 #include "GameFramework/GameModeBase.h"
 #include "UI/MVVM/MVVM_LoadSlot.h"
 #include "MyGameModeBase.generated.h"
@@ -20,6 +21,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UAbilityInfo> AbilityInfo;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	TObjectPtr<ULootTiers> LootTiers;
 
 	/**
 	 * 创建新存档
@@ -81,6 +85,7 @@ public:
 	FString GetMapNameFromMapAssetName(const FString& MapAssetName);
 
 	void PlayerDied(const UObject* Character);
+
 private:
 	//高亮已经激活的检查点
 	void HighlightEnabledCheckPoints(TArray<AActor*> CheckPoints);

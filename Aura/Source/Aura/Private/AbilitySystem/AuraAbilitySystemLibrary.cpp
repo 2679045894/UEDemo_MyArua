@@ -621,6 +621,15 @@ void UAuraAbilitySystemLibrary::InitializeDefaultAttributesFromSaveData(const UO
 	}
 }
 
+ULootTiers* UAuraAbilitySystemLibrary::GetLootTiers(const UObject* WorldObject)
+{
+	if (AMyGameModeBase* AuraGameMode=Cast<AMyGameModeBase>(UGameplayStatics::GetGameMode(WorldObject)))
+	{
+		return AuraGameMode->LootTiers;
+	}
+	return nullptr;
+}
+
 	
 
 

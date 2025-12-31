@@ -7,10 +7,11 @@
 #include "GameFramework/Pawn.h"           // 包含APawn的头文件
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "Character/AuraCharacter.h"
+#include "Kismet/KismetMathLibrary.h"
 
 AEffectActor::AEffectActor()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 	SceneComponent=CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	SetRootComponent(SceneComponent);
 }
@@ -19,6 +20,16 @@ AEffectActor::AEffectActor()
 void AEffectActor::BeginPlay()
 {
 	Super::BeginPlay();
+	InitialLocation=GetActorLocation();
+	CalculatedLocation=InitialLocation;
+	CalculatedRotation=GetActorRotation();
+}
+
+void AEffectActor::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	RunningTime+=DeltaSeconds;
+	ItemMovement(DeltaSeconds);
 }
 
 void AEffectActor::ApplyEffectToActor(AActor* TargetActor, TSubclassOf<UGameplayEffect> GameplayEffectClass)
@@ -111,6 +122,36 @@ void AEffectActor::OnEndOverlap(AActor* TargetActor)
 		}
 	}
 
+}
+
+void AEffectActor::StartSinusoidalMovement()
+{
+	bSinusoidalMovement=true;
+	InitialLocation=GetActorLocation();
+	CalculatedLocation=InitialLocation;
+	
+}
+
+void AEffectActor::StartRotation()
+{
+	bRotates=true;
+	CalculatedRotation=GetActorRotation();
+}
+
+void AEffectActor::ItemMovement(float DeltaTime)
+{
+	//更新转向
+	if (bRotates)
+	{
+		const FRotator DeltaRotation(0.f,DeltaTime*RotationRate,0.F);
+		CalculatedRotation=UKismetMathLibrary::ComposeRotators(CalculatedRotation,DeltaRotation);
+	}
+	//更新位置
+	if (bSinusoidalMovement)
+	{
+		const float Sine=SineAmplitude*FMath::Sin(RunningTime*SinePeriod*6.28318f);
+		CalculatedLocation=InitialLocation+FVector(0,0,Sine);
+	}
 }
 
 
