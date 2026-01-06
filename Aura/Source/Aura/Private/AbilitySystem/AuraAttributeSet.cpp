@@ -14,6 +14,7 @@
 #include "GameFramework/Character.h"
 #include "Interaction/CombatInterface.h"
 #include "Interaction/PlayerInterface.h"
+#include "Kismet/GameplayStatics.h"
 #include "Player/MyPlayerController.h"
 
 UAuraAttributeSet::UAuraAttributeSet()
@@ -209,6 +210,11 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 	Super::PostGameplayEffectExecute(Data);
 	FEffectProperties Props;
 	SetEffectProperties(Data,Props);
+	if (Data.EvaluatedData.Attribute==GetStrengthAttribute())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, 
+	FString::Printf(TEXT("Strength: %f"), GetStrength()));
+	}
 
 	//如果死亡将不进行处理
 	if (Props.TargetCharacter->Implements<UCombatInterface>()&&ICombatInterface::Execute_IsDead(Props.TargetCharacter))return;
@@ -390,6 +396,10 @@ void UAuraAttributeSet::HandleIncomingDamage(FEffectProperties& Props)
 			if (!KnockbackForce.IsNearlyZero(1.f))
 			{
 				Props.TargetCharacter->LaunchCharacter(KnockbackForce,true,true);
+			}
+			if (ICombatInterface* CombatInterface=Cast<ICombatInterface>(Props.TargetCharacter))
+			{
+				CombatInterface->Execute_PlayHurtSound(Props.TargetCharacter);
 			}
 		}
 		const bool bBlockHit=UAuraAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);

@@ -168,7 +168,6 @@ void AMyPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 					{
 						//绘制样条线
 						Spline->AddSplinePoint(PointLocation,ESplineCoordinateSpace::Type::World);
-						DrawDebugSphere(GetWorld(),PointLocation,8.f,8,FColor::Green,false,5.f);
 					}
 					if (NavigationPath->PathPoints.Num()>0)
 					{

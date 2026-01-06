@@ -50,6 +50,7 @@ void ACheckPoint::HandleGlowEffect()
 {
 	//取消碰撞检查
 	CheckPointMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+	SphereComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
 	UMaterialInstanceDynamic* DynamicMaterial=UMaterialInstanceDynamic::Create(CheckPointMesh->GetMaterial(0),this);
 	CheckPointMesh->SetMaterial(0, DynamicMaterial);
 	CheckPointReached(DynamicMaterial);

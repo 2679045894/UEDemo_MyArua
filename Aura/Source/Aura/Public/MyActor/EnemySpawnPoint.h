@@ -17,7 +17,7 @@ class AURA_API AEnemySpawnPoint : public ATargetPoint
 public:
 	virtual void BeginPlay() override;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Enemy Class")
-	TSubclassOf<class AEnemyCharacter> EnemyClass;
+	TSubclassOf<AEnemyCharacter> EnemyClass;
 	UFUNCTION()
 	void SpawnEnemy() const;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category="Info")

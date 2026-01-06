@@ -43,7 +43,7 @@ void AAuraProjectile::BeginPlay()
     
 	SetLifeSpan(LifeSpan);
     
-	/*// 只在服务器创建音效组件，客户端跳过
+	// 只在服务器创建音效组件，客户端跳过
 	if (HasAuthority()) // 或者使用 GetNetMode() != NM_Client
 	{
 		if (LoopingSound && GetRootComponent())
@@ -60,7 +60,7 @@ void AAuraProjectile::BeginPlay()
 		// 客户端明确设置为nullptr
 		LoopingSoundComponent = nullptr;
 		UE_LOG(LogTemp, Verbose, TEXT("Client skipping LoopingSoundComponent creation"));
-	}*/
+	}
 }
 
 

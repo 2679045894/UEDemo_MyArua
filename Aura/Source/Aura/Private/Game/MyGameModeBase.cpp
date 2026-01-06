@@ -126,8 +126,32 @@ void AMyGameModeBase::TravelToMap(const UMVVM_LoadSlot* Slot)
 	const FString SlotName=Slot->GetSlotName();
 	const int32 SlotIndex=Slot->SlotIndex;
 
+	if (!HasAuthority()) return;
+    
+	if (UWorld* World = GetWorld())
+	{
+		FString MapName = Slot->GetMapName();
+        
+		// 检查地图是否存在
+		if (!Maps.Contains(MapName))
+		{
+			UE_LOG(LogTemp, Error, TEXT("Map '%s' not found in Maps table"), *MapName);
+			return;
+		}
+        
+		// 获取软引用
+		TSoftObjectPtr<UWorld> MapPtr = Maps[MapName];
+        
+		// 获取地图路径
+		FString MapPath = MapPtr.ToSoftObjectPath().GetLongPackageName();
+        
+		// 执行服务器旅行（所有客户端会跟随）
+		UE_LOG(LogTemp, Log, TEXT("Server traveling to map: %s"), *MapPath);
+		World->ServerTravel(FString::Printf(TEXT("%s?listen"), *MapPath));
+	}
+
 	//打开地图
-	UGameplayStatics::OpenLevelBySoftObjectPtr(Slot,Maps.FindChecked(Slot->GetMapName()));
+	//UGameplayStatics::OpenLevelBySoftObjectPtr(Slot,Maps.FindChecked(Slot->GetMapName()));
 }
 
 AActor* AMyGameModeBase::ChoosePlayerStart_Implementation(AController* Player)

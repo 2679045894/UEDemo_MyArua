@@ -9,6 +9,7 @@
 #include "AI/AuraAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 
 void AEnemyCharacter::BeginPlay()
@@ -126,7 +127,17 @@ void AEnemyCharacter::Die(const FVector& DeathImpulse)
 {
 	SetLifeSpan(LifeSpan);
 	Super::Die(DeathImpulse);
+	PlayDeadSound_Implementation();
 	DropLoot();
+	AAIController* AIController = GetController<AAIController>();
+	if (AIController)
+	{
+		// 方法2：完全停止
+		if (UBehaviorTreeComponent* BTComp = Cast<UBehaviorTreeComponent>(AIController->BrainComponent))
+		{
+			BTComp->StopTree();
+		}
+	}
 }
 
 void AEnemyCharacter::SetLevel(int32 InLevel)
@@ -160,4 +171,20 @@ AActor* AEnemyCharacter::GetCombatTarget_Implementation()
 int32 AEnemyCharacter::GetPlayerLevel_Implementation()
 {
 	return Level;
+}
+
+void AEnemyCharacter::PlayDeadSound_Implementation()
+{
+	if (IsValid(DeadSound))
+	{
+		UGameplayStatics::PlaySoundAtLocation(this,DeadSound,GetActorLocation());
+	}
+}
+
+void AEnemyCharacter::PlayHurtSound_Implementation()
+{
+	if (IsValid(HurtSound))
+	{
+		UGameplayStatics::PlaySoundAtLocation(this,HurtSound,GetActorLocation());
+	}
 }

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
+#include "Data/AbilityInfo.h"
 #include "Game/LoadScreenSaveGame.h"
 #include "AuraAbilitySystemComponent.generated.h"
 
@@ -19,7 +20,7 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FActivePassiveEffect,const FGameplayTag&,co
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType, Blueprintable)
 class AURA_API UAuraAbilitySystemComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()
@@ -27,6 +28,8 @@ public:
 	//初始化并设置 Ability System 的 Actor 信息，并绑定关键的委托。
 	void AbilityActorInfoSet();
 	FEffectAssetTags EffectAssetTags;
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UAbilityInfo> AbilityInfo;
 protected:
 	//当任何 Gameplay Effect 应用到拥有此 ASC 的 Actor 时触发的回调函数。
 	UFUNCTION(Client,Reliable)

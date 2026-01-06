@@ -44,7 +44,7 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	TObjectPtr<USkeletalMeshComponent> Weapon;
 protected:
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="GAS")
 	TObjectPtr<UAuraAbilitySystemComponent> AbilitySystemComponent;
 	
 	UPROPERTY(BlueprintReadOnly)
@@ -63,6 +63,7 @@ protected:
 	virtual void InitialAbilityActorInfo();
 	//初始化属性(应用初始化游戏效果)
 	virtual void InitializeDefaultAttributes() const;
+	UFUNCTION(BlueprintCallable)
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass,float Level) const;
 
 	//实现战斗接口的获取等级方法

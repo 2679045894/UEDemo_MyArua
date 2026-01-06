@@ -41,6 +41,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<USceneComponent> PassiveEffectAttachComponent;
 
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<USoundBase> LevelUpSound;
 	
 private:
 	virtual void InitialAbilityActorInfo()override;

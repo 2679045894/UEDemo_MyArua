@@ -103,5 +103,10 @@ public:
 	bool GetIsBeingShock();
 
 	virtual FOnDamageSignature& GetOnDamageDelegate()=0;
-	
+
+	UFUNCTION(BlueprintNativeEvent,BlueprintCallable)
+	void PlayHurtSound();
+
+	UFUNCTION(BlueprintNativeEvent,BlueprintCallable)
+	void PlayDeadSound();
 };

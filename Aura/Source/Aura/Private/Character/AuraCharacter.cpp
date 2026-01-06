@@ -251,9 +251,10 @@ void AAuraCharacter::SaveProgress_Implementation(FName CheckpointTag)
 			SaveAbilityDelegate.BindLambda([this, SaveObject](const FGameplayAbilitySpec& Spec)
 			{
 				FSavedAbility SavedAbility=FSavedAbility();
-				UAbilityInfo* AbilityInfo=UAuraAbilitySystemLibrary::GetActiveAbilityInfo(this);
+				//UAbilityInfo* AbilityInfo=UAuraAbilitySystemLibrary::GetActiveAbilityInfo(this);
+				
 				SavedAbility.AbilityTag=GetAbilitySystemComponent()->GetAbilityTagFromSpec(Spec);
-				SavedAbility.GameplayAbility=AbilityInfo->FindAbilityInfoForTag(SavedAbility.AbilityTag).Ability;
+				SavedAbility.GameplayAbility=GetAbilitySystemComponent()->AbilityInfo->FindAbilityInfoForTag(SavedAbility.AbilityTag).Ability;
 				SavedAbility.AbilityInputTag=GetAbilitySystemComponent()->GetInputTagFromSpec(Spec);
 				SavedAbility.AbilityLevel=Spec.Level;
 				SavedAbility.AbilityStatusTag=GetAbilitySystemComponent()->GetStatusTagFromSpec(Spec);
@@ -333,6 +334,7 @@ void AAuraCharacter::MulticastLevelUpParticles_Implementation() const
 		const FRotator ToCameraRotation=(CameraLocation-NiagaraSystemLocation).Rotation();
 		LevelUpNiagaraComponent->SetWorldRotation(ToCameraRotation);
 		LevelUpNiagaraComponent->Activate(true);
+		UGameplayStatics::PlaySoundAtLocation(this,LevelUpSound,GetActorLocation());
 	}
 }
 

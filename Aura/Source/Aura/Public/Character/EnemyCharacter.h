@@ -22,6 +22,10 @@ class AURA_API AEnemyCharacter : public AMyCharacterBase,public IEnemyInterface
 
 	virtual void BeginPlay() override;
 public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TObjectPtr<USoundBase> HurtSound;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TObjectPtr<USoundBase> DeadSound;
 	AEnemyCharacter();
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
@@ -84,4 +88,8 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void DropLoot();
+
+	virtual void PlayDeadSound_Implementation() override;
+
+	virtual void PlayHurtSound_Implementation() override;
 };
