@@ -210,11 +210,6 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 	Super::PostGameplayEffectExecute(Data);
 	FEffectProperties Props;
 	SetEffectProperties(Data,Props);
-	if (Data.EvaluatedData.Attribute==GetStrengthAttribute())
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, 
-	FString::Printf(TEXT("Strength: %f"), GetStrength()));
-	}
 
 	//如果死亡将不进行处理
 	if (Props.TargetCharacter->Implements<UCombatInterface>()&&ICombatInterface::Execute_IsDead(Props.TargetCharacter))return;
@@ -346,8 +341,6 @@ void UAuraAttributeSet::SendXPEvent(const FEffectProperties& Props)
 		PayLoad.EventTag=GameplayTags.Attributes_Meta_IncomingXP;
 		PayLoad.EventMagnitude=XPReward;
 		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Props.SourceCharacter,GameplayTags.Attributes_Meta_IncomingXP,PayLoad);
-
-		GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Cyan,"send");
 	}
 }
 
@@ -423,15 +416,11 @@ void UAuraAttributeSet::HandleIncomingXP(const FEffectProperties& Props)
 		int32 NewLevelUp=NewLevel-CurrentLevel;
 		if (NewLevelUp>0)
 		{
-			for (int32 i=CurrentLevel;i<=NewLevelUp;i++)
-			{
-				int32 AttributePointsReward=IPlayerInterface::Execute_GetAttributePointReward(Props.SourceCharacter,NewLevel);
-				int32 SpellPointsReward=IPlayerInterface::Execute_GetSpellPointReward(Props.SourceCharacter,NewLevel);
+			int32 AttributePointsReward=IPlayerInterface::Execute_GetAttributePointReward(Props.SourceCharacter,CurrentLevel);
+			int32 SpellPointsReward=IPlayerInterface::Execute_GetSpellPointReward(Props.SourceCharacter,CurrentLevel);
 
-				IPlayerInterface::Execute_AddToAttributePoints(Props.SourceCharacter,AttributePointsReward);
-				IPlayerInterface::Execute_AddToSpellPoints(Props.SourceCharacter,SpellPointsReward);
-					
-			}
+			IPlayerInterface::Execute_AddToAttributePoints(Props.SourceCharacter,AttributePointsReward);
+			IPlayerInterface::Execute_AddToSpellPoints(Props.SourceCharacter,SpellPointsReward);
 			IPlayerInterface::Execute_AddToPlayerLevel(Props.SourceCharacter,NewLevelUp);
 			IPlayerInterface::Execute_LevelUp(Props.SourceCharacter);
 

@@ -23,7 +23,6 @@ public:
 
 	UFUNCTION(BlueprintCallable,Category="Projectile")
 	virtual void SpawnProjectile(const FVector & ProjectileTargetLocation);
-	
 	//火球类
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AAuraProjectile> ProjectileClass;

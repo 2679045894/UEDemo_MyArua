@@ -16,6 +16,8 @@ void UOverplayWidgetController::BroadcastInitialValues()
 	OnMaxHealthChanged.Broadcast(GetAuraAttributeSet()->GetMaxHealth());
 	OnManaChanged.Broadcast(GetAuraAttributeSet()->GetMana());
 	OnMaxManaChanged.Broadcast(GetAuraAttributeSet()->GetMaxMana());
+	OnPlayerStateChangedDelegate.Broadcast(GetAuraPlayerState()->GetPlayerLevel());
+	OnXPPercentChangedDelegate.Broadcast(0);
 }
 
 // 绑定属性变化委托，建立属性变化时的回调机制。自动调用

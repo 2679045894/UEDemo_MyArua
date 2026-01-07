@@ -13,6 +13,10 @@ void AEnemySpawnPoint::BeginPlay()
 
 void AEnemySpawnPoint::SpawnEnemy() const
 {
+	if (!HasAuthority())
+	{
+		return;
+	}
 	check(EnemyClass)
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;

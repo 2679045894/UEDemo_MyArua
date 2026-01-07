@@ -60,7 +60,7 @@ public:
 	//重写战斗接口的获取蒙太奇函数
 	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
 
-	float LifeSpan=5.f;
+	float LifeSpan=2.f;
 
 	virtual void Die(const FVector& DeathImpulse) override;
 

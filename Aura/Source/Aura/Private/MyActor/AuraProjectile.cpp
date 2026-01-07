@@ -78,7 +78,6 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 {
 	if (!IsValid(DamageEffectParams.SourceASC))
 	{
-		GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Cyan,TEXT("SourceASC is null"));
 		return;
 	}
 	AActor* SourceAvatarActor=DamageEffectParams.SourceASC->GetAvatarActor();

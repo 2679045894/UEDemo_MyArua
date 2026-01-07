@@ -37,10 +37,10 @@ protected:
 	FGameplayTag CooldownTag;
 
 	//监听冷却标签回调函数
-	void CooldownTagChanged(const FGameplayTag InCooldownTag,int32 NewCount)const;
+	void CooldownTagChanged(const FGameplayTag InCooldownTag,int32 NewCount);
 
 	//监听ASC激活GE的回调
-	void OnActiveEffectAdded(UAbilitySystemComponent* TargetASC, const FGameplayEffectSpec& SpecApplied, FActiveGameplayEffectHandle ActiveEffectHandle) const;
-	
-	
+	void OnActiveEffectAdded(UAbilitySystemComponent* TargetASC, const FGameplayEffectSpec& SpecApplied, FActiveGameplayEffectHandle ActiveEffectHandle);
+
+	bool bIsFirstAttempt=false;
 };

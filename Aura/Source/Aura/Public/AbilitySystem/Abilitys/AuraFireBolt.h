@@ -17,6 +17,14 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SpawnProjectiles(const FVector& ProjectileTargetLocation,const FName SocketName,
 		const FGameplayTag& SocketTag,bool bOverridePitch,float PitchOverride,AActor* HomingTarget);
+	UFUNCTION(BlueprintCallable, Category = "FireBolt")
+	void RequestSpawnProjectiles(const FVector& ProjectileTargetLocation, FName SocketName, 
+								 const FGameplayTag& SocketTag, bool bOverridePitch = false, 
+								 float PitchOverride = 0.0f, AActor* HomingTarget = nullptr);
+	UFUNCTION(Server, Reliable)
+	void ServerSpawnProjectiles(const FVector& ProjectileTargetLocation, FName SocketName,
+								const FGameplayTag& SocketTag, bool bOverridePitch,
+								float PitchOverride, AActor* HomingTarget);
 protected:
 
 

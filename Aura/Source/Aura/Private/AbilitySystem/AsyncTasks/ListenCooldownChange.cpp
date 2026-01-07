@@ -38,16 +38,35 @@ void UListenCooldownChange::EndTask()
 	MarkAsGarbage();
 }
 
-void UListenCooldownChange::CooldownTagChanged(const FGameplayTag InCooldownTag, int32 NewCount) const
+void UListenCooldownChange::CooldownTagChanged(const FGameplayTag InCooldownTag, int32 NewCount)
 {
-	if (NewCount==0)
+	if (!IsValid(ASC)) return;
+    
+	// 只在服务器或自主代理上处理冷却结束
+	if (!ASC->GetOwner()->HasAuthority() && !ASC->IsOwnerActorAuthoritative())
 	{
-		CooldownEnd.Broadcast(0.f);
+		// 对于客户端，需要更精确的判断
+		return;
+	}
+    
+	if (NewCount == 0)
+	{
+		// 添加额外验证，确保冷却确实结束了
+		FGameplayEffectQuery Query = FGameplayEffectQuery::MakeQuery_MatchAnyOwningTags(
+			CooldownTag.GetSingleTagContainer());
+		TArray<float> TimesRemaining = ASC->GetActiveEffectsTimeRemaining(Query);
+        
+		// 只有当确实没有剩余时间时才广播冷却结束
+		if (TimesRemaining.Num() == 0 || TimesRemaining[0] <= 0.1f)
+		{
+			CooldownEnd.Broadcast(0.f);
+			bIsFirstAttempt = false;
+		}
 	}
 }
 
 void UListenCooldownChange::OnActiveEffectAdded(UAbilitySystemComponent* TargetASC,
-	const FGameplayEffectSpec& SpecApplied, FActiveGameplayEffectHandle ActiveEffectHandle) const
+	const FGameplayEffectSpec& SpecApplied, FActiveGameplayEffectHandle ActiveEffectHandle)
 {
 	//获取设置到自身的所有标签
 	FGameplayTagContainer AssetTags;
@@ -75,8 +94,11 @@ void UListenCooldownChange::OnActiveEffectAdded(UAbilitySystemComponent* TargetA
 					TimeRemaining=TimesRemaining[i];
 				}
 			}
+			bIsFirstAttempt = true;
 			//广播初始时间
 			CooldownStart.Broadcast(TimeRemaining);
 		}
 	}
 }
+
+

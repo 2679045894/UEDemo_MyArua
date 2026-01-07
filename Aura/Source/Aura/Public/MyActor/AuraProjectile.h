@@ -50,7 +50,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	//自动销毁时间
-	float LifeSpan = 15.f;
+	float LifeSpan = 3.f;
 	UPROPERTY(BlueprintReadOnly)
 	bool bHit=false;
 	UFUNCTION(BlueprintCallable)

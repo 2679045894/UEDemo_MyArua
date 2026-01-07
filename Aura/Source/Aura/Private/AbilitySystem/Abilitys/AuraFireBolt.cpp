@@ -11,8 +11,6 @@
 void UAuraFireBolt::SpawnProjectiles(const FVector& ProjectileTargetLocation,FName SocketName,const FGameplayTag& SocketTag,
                                      bool bOverridePitch, float PitchOverride,AActor* HomingTarget)
 {
-	bool bIsServe=GetAvatarActorFromActorInfo()->HasAuthority();
-	if (!bIsServe)return;
 	if (GetAvatarActorFromActorInfo()->Implements<UCombatInterface>())
 	{
 		NumProjectiles=FMath::Max(MaxNumProjectiles,GetAbilityLevel());
@@ -59,6 +57,39 @@ void UAuraFireBolt::SpawnProjectiles(const FVector& ProjectileTargetLocation,FNa
 		}
 	}
 }
+
+void UAuraFireBolt::RequestSpawnProjectiles(const FVector& ProjectileTargetLocation, FName SocketName,
+	const FGameplayTag& SocketTag, bool bOverridePitch, float PitchOverride, AActor* HomingTarget)
+{
+	// 调试信息
+	FString DebugMsg = FString::Printf(TEXT("RequestSpawnProjectiles - HasAuthority: %s, Target: %s"),
+		GetAvatarActorFromActorInfo()->HasAuthority() ? TEXT("Yes") : TEXT("No"),
+		*ProjectileTargetLocation.ToString());
+	UKismetSystemLibrary::PrintString(this, DebugMsg, true, true, FColor::Yellow, 5.f);
+    
+	if (GetAvatarActorFromActorInfo()->HasAuthority())
+	{
+		// 服务器：直接生成
+		SpawnProjectiles(ProjectileTargetLocation, SocketName, SocketTag, 
+						bOverridePitch, PitchOverride, HomingTarget);
+	}
+	else
+	{
+		// 客户端：发送RPC到服务器
+		ServerSpawnProjectiles(ProjectileTargetLocation, SocketName, SocketTag,
+							  bOverridePitch, PitchOverride, HomingTarget);
+	}
+}
+
+void UAuraFireBolt::ServerSpawnProjectiles_Implementation(const FVector& ProjectileTargetLocation, FName SocketName,
+	const FGameplayTag& SocketTag, bool bOverridePitch, float PitchOverride, AActor* HomingTarget)
+{
+	UKismetSystemLibrary::PrintString(this, TEXT("Server received spawn request"), true, true, FColor::Green, 5.f);
+	SpawnProjectiles(ProjectileTargetLocation, SocketName, SocketTag,
+					bOverridePitch, PitchOverride, HomingTarget);
+}
+
+
 
 FString UAuraFireBolt::GetDescription(int32 Level)
 {

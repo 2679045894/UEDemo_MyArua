@@ -36,7 +36,6 @@ void UDeBuffNiagaraComponent::BeginPlay()
 
 void UDeBuffNiagaraComponent::DeBuffTagChanged(const FGameplayTag CallBackTag, int32 NewCount)
 {
-	GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Red,FString::Printf(TEXT("DeBuffTag:%d"),NewCount));
 	if (NewCount > 0)
 	{
 		Activate();
